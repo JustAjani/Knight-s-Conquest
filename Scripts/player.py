@@ -12,6 +12,7 @@ class Player:
         self.playerSpeed = 200
         self.gravity = 0.5
         self.velocity = [0,0]
+        self.player_rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
         self.playerX = SCREENW // 2 - self.size[0] //2
         self.playerY = SCREENH - self.size[1] //2 - self.floorY
         self.Jumping = False
@@ -31,12 +32,15 @@ class Player:
         self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
 
     def update(self):
+        print(f"Player position before input: {self.pos}")
         inputs = self.inputHandler.get_input()
         moving = False
         attack1 = False
         attack2 = False
 
         movement = self.playerSpeed * self.deltaTime
+        self.player_rect.x = self.pos[0]
+        self.player_rect.y = self.pos[1]
 
         if inputs['move_left']:
             self.pos[0] -= movement
@@ -57,6 +61,7 @@ class Player:
             attack2 = True
 
         self.animationUpdate(moving, self.Jumping, attack1,attack2)
+        print(f"Player position after input: {self.pos}")
 
     def animationUpdate(self, moving, jumping, attack1,attack2):
         now = pygame.time.get_ticks()
@@ -97,14 +102,13 @@ class Player:
              self.playerY = self.floorY - self.size[1]
              self.Jumping = True
     
-    def render(self):
+    def render(self, camera):
+        adjusted_pos = camera.apply(self)
         if self.flip:
-            current_anim =  self.image_left 
+            current_anim = self.image_left
         else:
             current_anim = self.image
-
-        self.game.screen.blit(current_anim,(self.pos[0],self.pos[1]))
-        pygame.display.update()
+        self.game.screen.blit(current_anim, adjusted_pos)
 
 
         
