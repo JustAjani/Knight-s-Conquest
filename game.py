@@ -1,6 +1,6 @@
 # game.py
 import pygame
-from util.settings import SCREENH, SCREENW, WORLD_WIDTH, WORLD_HEIGHT, HEROSPRITEPATH
+from util.settings import SCREENH, SCREENW,HEROSPRITEPATH
 from Scripts.player import Player
 from Scripts.assetManager import AssetManager
 from Scripts.InputHandler import InputHandler
@@ -24,14 +24,15 @@ class Game:
         self.PlayerInputHandler = InputHandler(player1_keys)
 
         self.assetManager = AssetManager()
+
         self.assetManager.load_sprite_sheet('knight_idle', HEROSPRITEPATH + "/Idle.png", (180, 180))
         self.assetManager.load_sprite_sheet('knight_run', HEROSPRITEPATH + "/Run.png", (180, 180))
         self.assetManager.load_sprite_sheet('knight_jump', HEROSPRITEPATH + "/Jump.png", (180, 180))
         self.assetManager.load_sprite_sheet('knight_attack', HEROSPRITEPATH + "/Attack1.png", (180, 180))
         self.assetManager.load_sprite_sheet('knight_attack2', HEROSPRITEPATH + "/Attack2.png", (180, 180))
 
-        self.player = Player(self, pos=[45, 60], size=[200, 200], inputHandler=self.PlayerInputHandler)
-        self.camera = Camera(self.player,WORLD_WIDTH,WORLD_HEIGHT)  # Use screen dimensions
+        self.player = Player(self, pos=[-5, 300], size=[400, 400], inputHandler=self.PlayerInputHandler)
+        self.camera = Camera(self.player,SCREENW,SCREENH)  # Use screen dimensions
 
     def run(self):
         while True:

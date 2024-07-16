@@ -10,6 +10,8 @@ As of July 16, 2024, the following features have been implemented:
 - **Player Movement**: Control the player using keyboard and mouse pad inputs.
 - **Attack Mechanics**: Implemented basic attack animations and mechanics for engaging with enemies.
 - **Animations**: Working animations for player movements and attacks.
+- **Player Camera**: Follows the player around...sorta not working
+- **Basic Audio**: Basic play audio
 
 ## Objectives
 The primary goals of this project are:

@@ -1,5 +1,5 @@
 import pygame
-from util.settings import SCREENH, SCREENW
+from util.settings import *
 
 class Player:
     def __init__(self, game, pos, size, inputHandler):
@@ -42,23 +42,30 @@ class Player:
         self.player_rect.x = self.pos[0]
         self.player_rect.y = self.pos[1]
 
-        if inputs['move_left']:
-            self.pos[0] -= movement
+        if inputs['move_left'] or inputs['move_right']:
+            if inputs['move_right']:
+                self.pos[0] += movement
+            else:
+                self.pos[0] -= movement
             moving = True
-            if not self.flip:
-                self.flip = True
-        if inputs['move_right']:
-            self.pos[0] += movement
-            moving = True
-            if self.flip:
-                self.flip = False
+            self.flip = inputs['move_left']
+            if not channel3.get_busy() and not channel4.get_busy():
+                channel3.play(rightfoot)  
+                channel4.play(leftfoot)  
+
         if inputs['jump']:
             if self.Jumping:
                 self.jump()
+
         if inputs['attack1'] or inputs['left_click']:
             attack1 = True
+            if not channel1.get_busy():  
+                channel1.play(attack1Sound)
+
         if inputs['attack2'] or inputs['right_click']:
             attack2 = True
+            if not channel2.get_busy():  
+                channel2.play(attack2Sound)
 
         self.animationUpdate(moving, self.Jumping, attack1,attack2)
         print(f"Player position after input: {self.pos}")
