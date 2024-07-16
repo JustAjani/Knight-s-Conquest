@@ -1,0 +1,5 @@
+
+SCREENH = 600
+SCREENW = 800
+
+HEROSPRITEPATH = "Assets\Hero Knight\Sprites"
