@@ -9,8 +9,9 @@ WORLD_HEIGHT = 1200  # Example height of the game world
 HEROSPRITEPATH = "Assets\Hero Knight\Sprites"
 MUSICPATH = 'audio/sword/'
 KNIGHTSOUND = 'audio/knight/'
+SKELETONPATH = 'Assets/Skeleton'
 
-pygame.mixer.init(frequency=44100, size=-16, channels=2)
+pygame.mixer.init(frequency=44100, size=-16, channels=4)
 channel1 = pygame.mixer.Channel(1)
 channel2 = pygame.mixer.Channel(2)
 channel3 = pygame.mixer.Channel(3)

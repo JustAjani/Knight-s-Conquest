@@ -1,10 +1,11 @@
 # game.py
 import pygame
-from util.settings import SCREENH, SCREENW,HEROSPRITEPATH
+from util.settings import SCREENH, SCREENW,HEROSPRITEPATH,SKELETONPATH
 from Scripts.player import Player
 from Scripts.assetManager import AssetManager
-from Scripts.InputHandler import InputHandler
+from Scripts.InputHandler import InputHandler, DummyInputHandler
 from Scripts.camera import Camera
+from Scripts.enemy import Enemy 
 import sys
 
 class Game:
@@ -22,6 +23,7 @@ class Game:
             'attack2': pygame.K_b
         }
         self.PlayerInputHandler = InputHandler(player1_keys)
+        self.enemyInputHandler = DummyInputHandler()
 
         self.assetManager = AssetManager()
 
@@ -31,8 +33,17 @@ class Game:
         self.assetManager.load_sprite_sheet('knight_attack', HEROSPRITEPATH + "/Attack1.png", (180, 180))
         self.assetManager.load_sprite_sheet('knight_attack2', HEROSPRITEPATH + "/Attack2.png", (180, 180))
 
+        #Enemy Animation
+        self.assetManager.load_sprite_sheet('skeleton_idle', SKELETONPATH + "/idle.png", (150,150))
+        self.assetManager.load_sprite_sheet('skeleton_walk', SKELETONPATH + "/Walk.png", (150,150))
+        self.assetManager.load_sprite_sheet('skeleton_attack',SKELETONPATH + "/Attack.png", (150,150))
+        self.assetManager.load_sprite_sheet('skeleton_death',SKELETONPATH + "/Death.png", (150,150))
+        self.assetManager.load_sprite_sheet('skeleton_shield', SKELETONPATH + "/Shield.png", (150,150))
+        
+        self.deltaTime = pygame.time.Clock().tick(60) / 1000
         self.player = Player(self, pos=[-5, 300], size=[400, 400], inputHandler=self.PlayerInputHandler)
-        self.camera = Camera(self.player,SCREENW,SCREENH)  # Use screen dimensions
+        self.enemy = Enemy(self, pos=[100,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler)
+        # self.camera = Camera(self.player,SCREENW,SCREENH)  # Use screen dimensions
 
     def run(self):
         while True:
@@ -41,12 +52,14 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-            self.player.update()
-            self.camera.update()
+            self.player.update(self.deltaTime)
+            self.enemy.update(self.deltaTime)
+            # self.camera.update()
 
             self.screen.fill('#f7b32b')
 
-            self.player.render(self.camera)
+            self.player.render()
+            self.enemy.render()
 
             pygame.display.update()
             self.clock.tick(60)

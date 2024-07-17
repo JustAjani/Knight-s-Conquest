@@ -19,3 +19,13 @@ class InputHandler:
             'right_click': mouse_buttons[2]  # Right mouse button
         }
 
+class DummyInputHandler:
+    def get_input(self):
+        return {
+            'move_left': False,
+            'move_right': False,
+            'jump': False,
+            'attack1': False,
+            'attack2': False
+        }
+

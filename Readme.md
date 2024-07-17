@@ -13,6 +13,9 @@ As of July 16, 2024, the following features have been implemented:
 - **Player Camera**: Follows the player around...sorta not working
 - **Basic Audio**: Basic play audio
 
+As of July 17,2024, the following feature have been implemented:
+- **Enemy AI**: Implemented basic enemy AI for attacking the player.[incomplete...enemy just moves back and forth]
+
 ## Objectives
 The primary goals of this project are:
 - **Learning Enemy AI**: Develop and understand the dynamics of enemy AI using Python.
