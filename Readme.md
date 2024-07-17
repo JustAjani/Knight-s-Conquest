@@ -14,7 +14,8 @@ As of July 16, 2024, the following features have been implemented:
 - **Basic Audio**: Basic play audio
 
 As of July 17,2024, the following feature have been implemented:
-- **Enemy AI**: Implemented basic enemy AI for attacking the player.[incomplete...enemy just moves back and forth]
+- **Enemy AI**: Implemented basic enemy AI for attacking the player.[they deal no damage atm]
+- **Health Bar**: Added health bar
 
 ## Objectives
 The primary goals of this project are:
