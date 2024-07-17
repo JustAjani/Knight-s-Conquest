@@ -8,7 +8,7 @@ class Player:
         self.size = list(size)
         self.floorY = SCREENH
         self.inputHandler = inputHandler
-        self.playerSpeed = 300
+        self.playerSpeed = 400
         self.gravity = 0.5
         self.velocity = [0,0]
         self.player_rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])

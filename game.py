@@ -41,15 +41,15 @@ class Game:
         self.assetManager.load_sprite_sheet('skeleton_death',SKELETONPATH + "/Death.png", (150,150))
         self.assetManager.load_sprite_sheet('skeleton_shield', SKELETONPATH + "/Shield.png", (150,150))
         
-        self.deltaTime = pygame.time.Clock().tick(60) / 1000
         self.player = Player(self, pos=[-5, 300], size=[400, 400], inputHandler=self.PlayerInputHandler)
         self.enemy = Enemy(self, pos=[100,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler)
         # self.camera = Camera(self.player,SCREENW,SCREENH)  # Use screen dimensions
 
-        self.health = Health(self,550, 50, 200, 20, 100, fg_color=(0, 128, 255), bg_color=(75, 0, 130))
+        self.health = Health(self,50, 20, 400, 20, 100, fg_color=(139,0,139), bg_color=(255, 0, 0))
 
     def run(self):
         while True:
+            self.deltaTime = pygame.time.Clock().tick(60) / 1000
             for event in pygame.event.get():
                 if event.type is pygame.QUIT:
                     pygame.quit()
@@ -57,13 +57,13 @@ class Game:
 
             self.player.update(self.deltaTime)
             self.enemy.update(self.deltaTime,self.player)
-            self.health.render()
             # self.camera.update()
 
             self.screen.fill('#f7b32b')
 
             self.player.render()
             self.enemy.render()
+            self.health.render()
 
             pygame.display.update()
             self.clock.tick(60)
