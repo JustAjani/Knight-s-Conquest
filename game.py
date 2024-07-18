@@ -1,10 +1,11 @@
 import pygame
-from util.settings import SCREENH, SCREENW,HEROSPRITEPATH,SKELETONPATH
+from util.settings import SCREENH, SCREENW,HEROSPRITEPATH,SKELETONPATH,GOBLINPATH
 from Scripts.player import Player
 from Scripts.assetManager import AssetManager
 from Scripts.InputHandler import InputHandler, DummyInputHandler
 from Scripts.camera import Camera
-from Scripts.BaseEnemy import Enemy 
+from Enemies.BaseEnemy import Enemy 
+from Enemies.Goblin import Goblin
 from Scripts.health import Health
 import sys
 
@@ -27,7 +28,8 @@ class Game:
         self.enemyInputHandler = DummyInputHandler()
 
         self.assetManager = AssetManager()
-
+        
+        #Player Animation
         self.assetManager.load_sprite_sheet('knight_idle', HEROSPRITEPATH + "/Idle.png", (180, 180))
         self.assetManager.load_sprite_sheet('knight_run', HEROSPRITEPATH + "/Run.png", (180, 180))
         self.assetManager.load_sprite_sheet('knight_jump', HEROSPRITEPATH + "/Jump.png", (180, 180))
@@ -40,10 +42,17 @@ class Game:
         self.assetManager.load_sprite_sheet('skeleton_attack',SKELETONPATH + "/Attack.png", (150,150))
         self.assetManager.load_sprite_sheet('skeleton_death',SKELETONPATH + "/Death.png", (150,150))
         self.assetManager.load_sprite_sheet('skeleton_shield', SKELETONPATH + "/Shield.png", (150,150))
+
+        #Goblin Animation
+        self.assetManager.load_sprite_sheet('goblin_idle', GOBLINPATH + '/Idle.png', (150,150))
+        self.assetManager.load_sprite_sheet('goblin_walk', GOBLINPATH + '/Run.png', (150,150))
+        self.assetManager.load_sprite_sheet('goblin_attack', GOBLINPATH + '/Attack.png', (150,150))
+        self.assetManager.load_sprite_sheet('goblin_death', GOBLINPATH + '/Death.png', (150,150))
+        self.assetManager.load_sprite_sheet('goblin_attack2', GOBLINPATH + '/Attack2.png', (150,150))
+
         
         self.player = Player(self, pos=[-5, 300], size=[400, 400], inputHandler=self.PlayerInputHandler)
         self.enemy = Enemy(self, pos=[105,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler)
-        # self.camera = Camera(self.player,SCREENW,SCREENH)  # Use screen dimensions
 
         self.health = Health(self,50, 20, 400, 20, 100, fg_color=(139,0,139), bg_color=(255, 0, 0))
 
@@ -57,7 +66,6 @@ class Game:
 
             self.player.update(self.deltaTime)
             self.enemy.update(self.deltaTime,self.player)
-            # self.camera.update()
 
             self.screen.fill('#f7b32b')
 

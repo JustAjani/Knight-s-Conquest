@@ -8,4 +8,5 @@ WORLD_HEIGHT = 1200  # Example height of the game world
 
 HEROSPRITEPATH = "Assets\Hero Knight\Sprites"
 SKELETONPATH = 'Assets/Skeleton'
+GOBLINPATH = 'Assets/Goblin'
 

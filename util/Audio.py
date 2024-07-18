@@ -15,7 +15,7 @@ def load_audio(path):
             return pygame.mixer.Sound(full_path)
     raise FileNotFoundError(f"Failed to load sound from any specified directory: {path}")
 
-pygame.mixer.init(frequency=44100, size=-16, channels=4)
+pygame.mixer.init(frequency=44100, size=-16, channels=5)
 channel1 = pygame.mixer.Channel(1)
 channel2 = pygame.mixer.Channel(2)
 channel3 = pygame.mixer.Channel(3)
