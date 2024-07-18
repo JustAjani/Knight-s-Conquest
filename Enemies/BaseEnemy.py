@@ -113,13 +113,9 @@ class Enemy(Player):
         if moving and self.currentAnimation != "run":
             self.currentAnimation = "run"
             self.frameIndex = 0
-        elif self.state == "attack" and self.currentAnimation != "attack":
+        elif self.state == "attack" and not self.currentAnimation.startswith("attack"):
             self.currentAnimation = "attack"
             self.frameIndex = 0
-        elif self.state == "attack2" and self.currentAnimation != "attack2":
-            self.currentAnimation = "attack2"
-            self.frameIndex = 0
-            
         if now - self.lastUpdate > int(1000 * self.animationSpeed):
             self.lastUpdate = now
             self.frameIndex += 1
@@ -128,3 +124,4 @@ class Enemy(Player):
 
         self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
         self.image_left = pygame.transform.flip(self.image, True, False)
+

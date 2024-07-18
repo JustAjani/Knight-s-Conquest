@@ -21,7 +21,8 @@ As of July 18,2024: Trying to fix yesterdays bugs:
 - **So far unsucessfull**: lack of knowledge I guess
 - **Expiremening with audio**: More audio more sync
 - **Enemy State Transition Better**: except when the game starts he just spin out of control (fixed added an idle state fixed the problem)
-- **New Enemy added**: A goblin [added second attack]
+- **New Enemy added**: A goblin
+- **Fixed State**: Fixed the transition between attack1 and attack2 for the goblin
 
 ## Objectives
 The primary goals of this project are:
