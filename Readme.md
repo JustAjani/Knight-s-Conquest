@@ -19,7 +19,7 @@ As of July 17,2024, the following feature have been implemented:
 
 As of July 18,2024: Trying to fix yesterdays bugs:
 - **so far unsucessfull**: lack of knowledge I guess
-- **expiremening with audio: 
+- **expiremening with audio**: 
 
 ## Objectives
 The primary goals of this project are:

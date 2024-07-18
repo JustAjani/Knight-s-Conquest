@@ -1,5 +1,7 @@
 import pygame
 from util.settings import *
+from util.Audio import *
+
 
 class Player:
     def __init__(self, game, pos, size, inputHandler):

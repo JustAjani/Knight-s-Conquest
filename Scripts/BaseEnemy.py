@@ -1,6 +1,6 @@
 import pygame
 from Scripts.player import Player
-from util.settings import *
+from util.Audio import *
 
 class Enemy(Player):
     def __init__(self, game, pos, size, moveDistance=100, inputHandler=None):
