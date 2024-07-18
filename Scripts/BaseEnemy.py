@@ -19,27 +19,46 @@ class Enemy(Player):
         self.lastUpdate = pygame.time.get_ticks()
         self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
 
-        # Movement attributes
         self.move_distance = moveDistance
-        self.start_pos = pos[0]  # Horizontal starting position
+        self.start_pos = pos[0]
         self.end_pos = self.start_pos + moveDistance
         self.speed = 100
-        self.state = "patrol"  # Initial state
-        self.state_cooldown = 1000  # Cooldown time in milliseconds
+        self.state = "idle"  # Start in idle state
+        self.state_cooldown = 2000  # Use same cooldown as post attack cooldown for initial idle
         self.last_state_change = pygame.time.get_ticks()
+        self.attack_range = 100
+        self.chase_range = 150  # Added buffer for chasing to provide hysteresis
+        self.post_attack_cooldown = 2000  # 2000 milliseconds or 2 seconds
+        self.last_attack_time = 0
 
     def update(self, deltaTime, player):
         self.adjustedspeed = self.speed * deltaTime
         current_time = pygame.time.get_ticks()
 
-        if current_time - self.last_state_change > self.state_cooldown:
-            if self.is_within_attack_range(player, 50):  # Closer range for attacks
+        if self.state == "idle":
+            if current_time - self.last_state_change > self.state_cooldown:
+                self.change_state("patrol")
+        else:
+            self.evaluate_combat_state(current_time, player)
+
+        self.handle_movement(player)
+        self.animationUpdate()
+
+    def evaluate_combat_state(self, current_time, player):
+        player_distance = abs(self.enemy_rect.x - player.pos[0])
+
+        if current_time - self.last_attack_time > self.post_attack_cooldown:
+            if player_distance <= self.attack_range:
                 self.change_state("attack")
-            elif self.is_within_attack_range(player):
+            elif player_distance <= self.chase_range:
                 self.change_state("chase")
             else:
                 self.change_state("patrol")
-        
+        else:
+            if self.state == "attack" and player_distance > self.attack_range + 20:  # Hysteresis buffer
+                self.change_state("chase")
+
+    def handle_movement(self, player):
         if self.state == "patrol":
             self.patrol()
         elif self.state == "chase":
@@ -47,12 +66,11 @@ class Enemy(Player):
         elif self.state == "attack":
             self.attack()
 
-        self.animationUpdate()
-
     def change_state(self, new_state):
         if new_state != self.state:
-            self.last_state_change = pygame.time.get_ticks()
+            print(f"Changing state from {self.state} to {new_state}")
             self.state = new_state
+            self.last_state_change = pygame.time.get_ticks()
 
     def patrol(self):
         if self.enemy_rect.x >= self.end_pos or self.enemy_rect.x <= self.start_pos:
@@ -79,6 +97,7 @@ class Enemy(Player):
         self.currentAnimation = "attack"  
         if not channel3.get_busy():
             channel3.play(attack1Sound)
+        self.last_attack_time = pygame.time.get_ticks()  # Update last attack time
 
     def is_within_attack_range(self, player, range=100, offset=30):
         distance = abs(self.enemy_rect.x - player.pos[0]) - offset

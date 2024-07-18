@@ -18,8 +18,9 @@ As of July 17,2024, the following feature have been implemented:
 - **Health Bar**: Added health bar
 
 As of July 18,2024: Trying to fix yesterdays bugs:
-- **so far unsucessfull**: lack of knowledge I guess
-- **expiremening with audio**: 
+- **So far unsucessfull**: lack of knowledge I guess
+- **Expiremening with audio**: More audio more sync
+- **Enemy State Transition Better**: except when the game starts he just spin out of control
 
 ## Objectives
 The primary goals of this project are:
