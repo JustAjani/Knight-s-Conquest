@@ -1,5 +1,6 @@
 import pygame
 from Scripts.player import Player
+from util.settings import *
 
 class Enemy(Player):
     def __init__(self, game, pos, size, moveDistance=100, inputHandler=None):
@@ -24,15 +25,20 @@ class Enemy(Player):
         self.end_pos = self.start_pos + moveDistance
         self.speed = 100
         self.state = "patrol"  # Initial state
+        self.state_cooldown = 1000  # Cooldown time in milliseconds
+        self.last_state_change = pygame.time.get_ticks()
 
     def update(self, deltaTime, player):
         self.adjustedspeed = self.speed * deltaTime
-        if self.is_within_attack_range(player, 50):  # Closer range for attacks
-            self.state = "attack"
-        elif self.is_within_attack_range(player):
-            self.state = "chase"
-        else:
-            self.state = "patrol"
+        current_time = pygame.time.get_ticks()
+
+        if current_time - self.last_state_change > self.state_cooldown:
+            if self.is_within_attack_range(player, 50):  # Closer range for attacks
+                self.change_state("attack")
+            elif self.is_within_attack_range(player):
+                self.change_state("chase")
+            else:
+                self.change_state("patrol")
         
         if self.state == "patrol":
             self.patrol()
@@ -43,14 +49,23 @@ class Enemy(Player):
 
         self.animationUpdate()
 
+    def change_state(self, new_state):
+        if new_state != self.state:
+            self.last_state_change = pygame.time.get_ticks()
+            self.state = new_state
+
     def patrol(self):
         if self.enemy_rect.x >= self.end_pos or self.enemy_rect.x <= self.start_pos:
             self.flip = not self.flip
 
         if self.flip:
             self.enemy_rect.x -= self.adjustedspeed
+            if not channel5.get_busy():  
+                channel5.play(skeletonWalk)
         else:
             self.enemy_rect.x += self.adjustedspeed
+            if not channel5.get_busy():  
+                channel5.play(skeletonWalk)
 
     def chase(self, player):
         if player.pos[0] > self.enemy_rect.x:
@@ -62,6 +77,8 @@ class Enemy(Player):
 
     def attack(self):
         self.currentAnimation = "attack"  
+        if not channel3.get_busy():
+            channel3.play(attack1Sound)
 
     def is_within_attack_range(self, player, range=100, offset=30):
         distance = abs(self.enemy_rect.x - player.pos[0]) - offset
@@ -74,10 +91,9 @@ class Enemy(Player):
     def animationUpdate(self):
         now = pygame.time.get_ticks()
         moving = self.state in ["patrol", "chase"]
-        if moving:
-            if self.currentAnimation != "run":
-                self.currentAnimation = "run"
-                self.frameIndex = 0
+        if moving and self.currentAnimation != "run":
+            self.currentAnimation = "run"
+            self.frameIndex = 0
         elif self.state == "attack" and self.currentAnimation != "attack":
             self.currentAnimation = "attack"
             self.frameIndex = 0

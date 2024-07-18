@@ -42,7 +42,7 @@ class Game:
         self.assetManager.load_sprite_sheet('skeleton_shield', SKELETONPATH + "/Shield.png", (150,150))
         
         self.player = Player(self, pos=[-5, 300], size=[400, 400], inputHandler=self.PlayerInputHandler)
-        self.enemy = Enemy(self, pos=[100,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler)
+        self.enemy = Enemy(self, pos=[105,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler)
         # self.camera = Camera(self.player,SCREENW,SCREENH)  # Use screen dimensions
 
         self.health = Health(self,50, 20, 400, 20, 100, fg_color=(139,0,139), bg_color=(255, 0, 0))

@@ -17,6 +17,10 @@ As of July 17,2024, the following feature have been implemented:
 - **Enemy AI**: Implemented basic enemy AI for attacking the player.[they deal no damage atm]
 - **Health Bar**: Added health bar
 
+As of July 18,2024: Trying to fix yesterdays bugs:
+- **so far unsucessfull**: lack of knowledge I guess
+- **expiremening with audio: 
+
 ## Objectives
 The primary goals of this project are:
 - **Learning Enemy AI**: Develop and understand the dynamics of enemy AI using Python.
