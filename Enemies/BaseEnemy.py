@@ -116,7 +116,10 @@ class Enemy(Player):
         elif self.state == "attack" and self.currentAnimation != "attack":
             self.currentAnimation = "attack"
             self.frameIndex = 0
-
+        elif self.state == "attack2" and self.currentAnimation != "attack2":
+            self.currentAnimation = "attack2"
+            self.frameIndex = 0
+            
         if now - self.lastUpdate > int(1000 * self.animationSpeed):
             self.lastUpdate = now
             self.frameIndex += 1
