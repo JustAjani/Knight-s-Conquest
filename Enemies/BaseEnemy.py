@@ -39,7 +39,7 @@ class Enemy(Player):
 
         if self.state == "idle":
             if current_time - self.last_state_change > self.state_cooldown:
-                self.change_state("patrol")
+                self.change_state("patrol",player)
         else:
             self.evaluate_combat_state(current_time, player)
 
@@ -49,16 +49,16 @@ class Enemy(Player):
     def evaluate_combat_state(self, current_time, player):
         player_distance = abs(self.enemy_rect.x - player.pos[0])
 
-        if current_time - self.last_attack_time > self.post_attack_cooldown:
+        if self.state == "attack" and current_time - self.last_attack_time > self.post_attack_cooldown:
+            if player_distance > self.attack_range + 20:  # Adding buffer
+                self.change_state("chase", player)
+        elif self.state != "attack":
             if player_distance <= self.attack_range:
-                self.change_state("attack")
+                self.change_state("attack", player)
             elif player_distance <= self.chase_range:
-                self.change_state("chase")
+                self.change_state("chase", player)
             else:
-                self.change_state("patrol")
-        else:
-            if self.state == "attack" and player_distance > self.attack_range + 20:  # Hysteresis buffer
-                self.change_state("chase")
+                self.change_state("patrol", player)
 
     def handle_movement(self, player):
         if self.state == "patrol":
@@ -68,11 +68,18 @@ class Enemy(Player):
         elif self.state == "attack":
             self.attack()
 
-    def change_state(self, new_state):
-        if new_state != self.state:
+    def change_state(self, new_state, player):
+        current_time = pygame.time.get_ticks()
+        if new_state != self.state and (current_time - self.last_state_change > self.state_cooldown):
             print(f"Changing state from {self.state} to {new_state}")
             self.state = new_state
-            self.last_state_change = pygame.time.get_ticks()
+            self.last_state_change = current_time
+
+            # Reset flip based on player position
+            if player.pos[0] > self.enemy_rect.x:
+                self.flip = False
+            else:
+                self.flip = True
 
     def patrol(self):
         if self.enemy_rect.x >= self.end_pos or self.enemy_rect.x <= self.start_pos:

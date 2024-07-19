@@ -60,8 +60,8 @@ class Game:
         self.assetManager.load_sprite_sheet('mushroom_attack3', MUSHROOMPATH + '/Attack3.png', (150,150))
         
         self.player = Player(self, pos=[-5, 300], size=[400, 400], inputHandler=self.PlayerInputHandler)
-        # self.enemy = Enemy(self, pos=[105,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler)
-        # self.goblin = Goblin(self,pos=[105,288], size=[400,400])
+        self.enemy = Enemy(self, pos=[105,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler)
+        self.goblin = Goblin(self,pos=[105,288], size=[400,400])
         self.mushroom = Mushroom(self,pos=[105,288], size=[400,400])
 
         self.health = Health(self,50, 20, 400, 20, 100, fg_color=(139,0,139), bg_color=(255, 0, 0))
@@ -75,15 +75,15 @@ class Game:
                     sys.exit()
 
             self.player.update(self.deltaTime)
-            # self.enemy.update(self.deltaTime,self.player)
-            # self.goblin.update(self.deltaTime,self.player)
+            self.enemy.update(self.deltaTime,self.player)
+            self.goblin.update(self.deltaTime,self.player)
             self.mushroom.update(self.deltaTime,self.player)
 
             self.screen.fill('#f7b32b')
 
             self.player.render()
-            # self.enemy.render()
-            # self.goblin.render()
+            self.enemy.render()
+            self.goblin.render()
             self.mushroom.render()
             self.health.render()
 

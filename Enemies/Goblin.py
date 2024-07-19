@@ -35,13 +35,16 @@ class Goblin(Enemy):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_attack_time > self.attack_cooldown:
             self.last_attack_time = current_time
-            if random.choice([True, False]):
-                self.currentAnimation = "attack"
-            else:
-                self.currentAnimation = "attack2"
+            # Choosing the attack type
+            attacks = {
+                "attack": attack1Sound,
+                "attack2": attack2Sound
+            }
+            chosen_attack = random.choice(list(attacks.keys()))
+            self.currentAnimation = chosen_attack
 
             if not channel3.get_busy():
-                    channel3.play(attack1Sound)
+                channel3.play(attacks[chosen_attack])  
 
             self.frameIndex = 0
             self.update_image()
