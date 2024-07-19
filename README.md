@@ -6,24 +6,30 @@
 "Knight's Conquest" is an action-adventure game inspired by the classic Castlevania series. The game combines traditional platformer elements with a fresh approach to enemy AI and level design.
 
 ## Current Progress
-As of July 16, 2024, the following features have been implemented:
-- **Player Movement**: Control the player using keyboard and mouse pad inputs.
-- **Attack Mechanics**: Implemented basic attack animations and mechanics for engaging with enemies.
-- **Animations**: Working animations for player movements and attacks.
-- **Player Camera**: Follows the player around...sorta not working
-- **Basic Audio**: Basic play audio
 
-As of July 17,2024, the following feature have been implemented:
-- **Enemy AI**: Implemented basic enemy AI for attacking the player.[they deal no damage atm]
-- **Health Bar**: Added health bar
+### As of July 16, 2024
+- **Player Movement**: Control the player using keyboard and mouse inputs.
+- **Attack Mechanics**: Basic attack animations and mechanics for engaging with enemies.
+- **Animations**: Functional animations for player movements and attacks.
+- **Player Camera**: Follows the player around (currently facing some issues).
+- **Basic Audio**: Implemented basic audio playback.
 
-As of July 18,2024: Trying to fix yesterdays bugs:
-- **So far unsucessfull**: lack of knowledge I guess
-- **Expiremening with audio**: More audio more sync
-- **Enemy State Transition Better**: except when the game starts he just spin out of control (fixed added an idle state fixed the problem)
-- **New Enemy added**: A goblin
-- **Fixed State**: Fixed the transition between attack1 and attack2 for the goblin
-- **New Enmey added**: A mushroom thingy
+### As of July 17, 2024
+- **Enemy AI**: Basic enemy AI for attacking the player (enemies currently deal no damage).
+- **Health Bar**: Added a health bar for the player.
+
+### As of July 18, 2024
+- **Bug Fixing**: Attempting to resolve issues from the previous day.
+- **Audio Improvements**: Experimenting with more synchronized audio.
+- **Enemy State Transition**: Improved enemy state transitions (fixed an issue where the enemy would spin out of control at game start by adding an idle state).
+- **New Enemy**: Added a goblin.
+- **State Fix**: Fixed the transition between attack1 and attack2 for the goblin.
+- **New Enemy**: Added a mushroom-like enemy.
+
+### As of July 19, 2024
+- **Enemy AI Issues**: Continuing to work on enemy AI bugs.
+- **Mushroom Enemy Update**: Added dynamic sound for movement and attack.
+- **Enemy AI Status**: Still experiencing some bugs.
 
 ## Objectives
 The primary goals of this project are:

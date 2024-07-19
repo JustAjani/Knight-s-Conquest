@@ -112,6 +112,10 @@ class Enemy(Player):
         elif self.name == "goblin":
             if not channel6.get_busy():
                 channel6.play(goblinwalk)
+        elif self.name == "mushroom":
+            if not channel7.get_busy():
+                channel7.play(mushroomWalk)
+
 
     def render(self):
         current_anim = self.image_left if self.flip else self.image

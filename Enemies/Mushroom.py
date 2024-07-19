@@ -12,7 +12,8 @@ class Mushroom(Enemy):
             "run": game.assetManager.get_asset('mushroom_walk'),
             "death": game.assetManager.get_asset('mushroom_death'),
             "attack": game.assetManager.get_asset('mushroom_attack'),
-            "attack2": game.assetManager.get_asset('mushroom_attack2')
+            "attack2": game.assetManager.get_asset('mushroom_attack2'),
+            "attack3": game.assetManager.get_asset('mushroom_attack3'),
         }
 
         # Debugging: Check the number of frames loaded for each animation
@@ -35,17 +36,21 @@ class Mushroom(Enemy):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_attack_time > self.attack_cooldown:
             self.last_attack_time = current_time
-            if random.choice([True, False]):
-                self.currentAnimation = "attack"
-            else:
-                self.currentAnimation = "attack2"
+            # Choosing the attack type
+            attacks = {
+                "attack": mushroomatt1,
+                "attack2": mushroomatt2,
+                "attack3": mushroomatt3  
+            }
+            chosen_attack = random.choice(list(attacks.keys()))
+            self.currentAnimation = chosen_attack
 
-            if not channel3.get_busy():
-                    channel3.play(attack1Sound)
+            if not channel8.get_busy():
+                channel8.play(attacks[chosen_attack])  
 
             self.frameIndex = 0
             self.update_image()
-    
+
 
     def update_image(self):
         if self.frameIndex < len(self.animations[self.currentAnimation]):
