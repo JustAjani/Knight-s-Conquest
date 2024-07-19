@@ -31,6 +31,8 @@ class Enemy(Player):
         self.post_attack_cooldown = 2000  # 2000 milliseconds or 2 seconds
         self.last_attack_time = 0
 
+        self.name = "skeleton"
+
     def update(self, deltaTime, player):
         self.adjustedspeed = self.speed * deltaTime
         current_time = pygame.time.get_ticks()
@@ -78,12 +80,10 @@ class Enemy(Player):
 
         if self.flip:
             self.enemy_rect.x -= self.adjustedspeed
-            if not channel5.get_busy():  
-                channel5.play(skeletonWalk)
         else:
             self.enemy_rect.x += self.adjustedspeed
-            if not channel5.get_busy():  
-                channel5.play(skeletonWalk)
+        
+        self.audioHandling()
 
     def chase(self, player):
         if player.pos[0] > self.enemy_rect.x:
@@ -92,6 +92,8 @@ class Enemy(Player):
         else:
             self.flip = True
             self.enemy_rect.x -= self.adjustedspeed
+        
+        self.audioHandling()
 
     def attack(self):
         self.currentAnimation = "attack"  
@@ -102,6 +104,14 @@ class Enemy(Player):
     def is_within_attack_range(self, player, range=100, offset=30):
         distance = abs(self.enemy_rect.x - player.pos[0]) - offset
         return distance <= range
+    
+    def audioHandling(self):
+        if self.name == "skeleton":
+            if not channel5.get_busy():  
+                    channel5.play(skeletonWalk)
+        elif self.name == "goblin":
+            if not channel6.get_busy():
+                channel6.play(goblinwalk)
 
     def render(self):
         current_anim = self.image_left if self.flip else self.image

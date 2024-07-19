@@ -23,6 +23,7 @@ As of July 18,2024: Trying to fix yesterdays bugs:
 - **Enemy State Transition Better**: except when the game starts he just spin out of control (fixed added an idle state fixed the problem)
 - **New Enemy added**: A goblin
 - **Fixed State**: Fixed the transition between attack1 and attack2 for the goblin
+- **New Enmey added**: A mushroom thingy
 
 ## Objectives
 The primary goals of this project are:

@@ -3,24 +3,24 @@ import random
 from Enemies.BaseEnemy import Enemy
 from util.Audio import *
 
-class Goblin(Enemy):
+class Mushroom(Enemy):
     def __init__(self, game, pos, size):
         super().__init__(game, pos, size)
 
         self.animations = {
-            "idle": game.assetManager.get_asset('goblin_idle'),
-            "run": game.assetManager.get_asset('goblin_walk'),
-            "death": game.assetManager.get_asset('goblin_death'),
-            "attack": game.assetManager.get_asset('goblin_attack'),
-            "attack2": game.assetManager.get_asset('goblin_attack2')
+            "idle": game.assetManager.get_asset('mushroom_idle'),
+            "run": game.assetManager.get_asset('mushroom_walk'),
+            "death": game.assetManager.get_asset('mushroom_death'),
+            "attack": game.assetManager.get_asset('mushroom_attack'),
+            "attack2": game.assetManager.get_asset('mushroom_attack2')
         }
 
         # Debugging: Check the number of frames loaded for each animation
         for key, frames in self.animations.items():
             print(f"Animation: {key}, Frames Loaded: {len(frames)}")
 
-        self.speed = 150
-        self.move_distance = 120
+        self.speed = 70
+        self.move_distance = 80
         self.enemy_rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
         self.frameIndex = 0
         self.currentAnimation = "idle"
@@ -28,7 +28,7 @@ class Goblin(Enemy):
         self.lastUpdate = pygame.time.get_ticks()
         self.attack_cooldown = 2000  # Increased cooldown to slow down attack transitions
         self.last_attack_time = pygame.time.get_ticks()
-        self.name = "goblin"
+        self.name = "mushroom"
         self.update_image()
 
     def attack(self):
