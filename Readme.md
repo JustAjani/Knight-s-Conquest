@@ -5,7 +5,7 @@
 ## Overview
 "Knight's Conquest" is an action-adventure game inspired by the classic Castlevania series. The game combines traditional platformer elements with a fresh approach to enemy AI and level design.
 
-#Credit
+##Credit
 - **Artist**: LuizMelo 
 
 ## Current Progress
@@ -33,6 +33,8 @@
 - **Enemy AI Issues**: Continuing to work on enemy AI bugs.
 - **Mushroom Enemy Update**: Added dynamic sound for movement and attack.
 - **Enemy AI Status**: Still experiencing some bugs.[Bugs are fixed...most of them]
+- **New Enemy**: Added a Bat enemy.
+- **New Enemy Status**: Have their own distinctive behaviours and sound [it has some bugs here and there but yeah]
 
 ## Objectives
 The primary goals of this project are:

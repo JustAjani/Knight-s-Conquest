@@ -59,6 +59,7 @@ class Enemy(Player):
                 self.change_state("chase", player)
             else:
                 self.change_state("patrol", player)
+         
 
     def handle_movement(self, player):
         if self.state == "patrol":
@@ -66,7 +67,7 @@ class Enemy(Player):
         elif self.state == "chase":
             self.chase(player)
         elif self.state == "attack":
-            self.attack()
+            self.attack(player)
 
     def change_state(self, new_state, player):
         current_time = pygame.time.get_ticks()
@@ -102,7 +103,7 @@ class Enemy(Player):
         
         self.audioHandling()
 
-    def attack(self):
+    def attack(self,player):
         self.currentAnimation = "attack"  
         if not channel3.get_busy():
             channel3.play(attack1Sound)
@@ -122,6 +123,9 @@ class Enemy(Player):
         elif self.name == "mushroom":
             if not channel7.get_busy():
                 channel7.play(mushroomWalk)
+        elif self.name == "flyingeye":
+            if not channel8.get_busy():
+                channel8.play(flyingEyeWalk)
 
 
     def render(self):
@@ -145,4 +149,6 @@ class Enemy(Player):
 
         self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
         self.image_left = pygame.transform.flip(self.image, True, False)
+    
+    
 

@@ -38,7 +38,8 @@ class Goblin(Enemy):
             # Choosing the attack type
             attacks = {
                 "attack": attack1Sound,
-                "attack2": attack2Sound
+                "attack2": attack2Sound,
+                "attack3": mushroomatt3
             }
             chosen_attack = random.choice(list(attacks.keys()))
             self.currentAnimation = chosen_attack

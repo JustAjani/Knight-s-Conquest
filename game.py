@@ -1,5 +1,5 @@
 import pygame
-from util.settings import SCREENH, SCREENW,HEROSPRITEPATH,SKELETONPATH,GOBLINPATH,MUSHROOMPATH
+from util.settings import SCREENH, SCREENW,HEROSPRITEPATH,SKELETONPATH,GOBLINPATH,MUSHROOMPATH,EYEPATH
 from Scripts.player import Player
 from Scripts.assetManager import AssetManager
 from Scripts.InputHandler import InputHandler, DummyInputHandler
@@ -7,6 +7,7 @@ from Scripts.camera import Camera
 from Enemies.BaseEnemy import Enemy 
 from Enemies.Goblin import Goblin
 from Enemies.Mushroom import Mushroom
+from Enemies.FlyingEye import FlyingEye
 from Scripts.health import Health
 import sys
 
@@ -58,11 +59,20 @@ class Game:
         self.assetManager.load_sprite_sheet('mushroom_death', MUSHROOMPATH + '/Death.png', (150,150))
         self.assetManager.load_sprite_sheet('mushroom_attack2', MUSHROOMPATH + '/Attack2.png', (150,150))
         self.assetManager.load_sprite_sheet('mushroom_attack3', MUSHROOMPATH + '/Attack3.png', (150,150))
+
+        #Flying Eye Animation
+        self.assetManager.load_sprite_sheet('eye_idle', EYEPATH + '/Flight.png', (150,150))
+        self.assetManager.load_sprite_sheet('eye_walk', EYEPATH + '/Flight.png', (150,150))
+        self.assetManager.load_sprite_sheet('eye_attack', EYEPATH + '/Attack.png', (150,150))
+        self.assetManager.load_sprite_sheet('eye_death', EYEPATH + '/Death.png', (150,150))
+        self.assetManager.load_sprite_sheet('eye_attack2', EYEPATH + '/Attack2.png', (150,150))
+        self.assetManager.load_sprite_sheet('eye_attack3', EYEPATH + '/Attack3.png', (150,150))
         
         self.player = Player(self, pos=[-5, 300], size=[400, 400], inputHandler=self.PlayerInputHandler)
-        self.enemy = Enemy(self, pos=[105,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler)
-        self.goblin = Goblin(self,pos=[105,288], size=[400,400])
-        self.mushroom = Mushroom(self,pos=[105,288], size=[400,400])
+        # self.enemy = Enemy(self, pos=[105,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler)
+        # self.goblin = Goblin(self,pos=[105,288], size=[400,400])
+        # self.mushroom = Mushroom(self,pos=[105,288], size=[400,400])
+        self.flyingEye = FlyingEye(self,pos=[105,20], size=[400,400])
 
         self.health = Health(self,50, 20, 400, 20, 100, fg_color=(139,0,139), bg_color=(255, 0, 0))
 
@@ -75,17 +85,19 @@ class Game:
                     sys.exit()
 
             self.player.update(self.deltaTime)
-            self.enemy.update(self.deltaTime,self.player)
-            self.goblin.update(self.deltaTime,self.player)
-            self.mushroom.update(self.deltaTime,self.player)
+            # self.enemy.update(self.deltaTime,self.player)
+            # self.goblin.update(self.deltaTime,self.player)
+            # self.mushroom.update(self.deltaTime,self.player)
+            self.flyingEye.update(self.deltaTime,self.player)
 
             self.screen.fill('#f7b32b')
 
             self.player.render()
-            self.enemy.render()
-            self.goblin.render()
-            self.mushroom.render()
-            self.health.render()
+            # self.enemy.render()
+            # self.goblin.render()
+            # self.mushroom.render()
+            # self.health.render()
+            self.flyingEye.render()
 
             pygame.display.update()
             self.clock.tick(60)

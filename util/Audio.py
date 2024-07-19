@@ -6,7 +6,8 @@ AUDIOFILES = {
     'KNIGHTSOUND' : 'audio/knight/',
     'SKELETSOUND' : 'audio/skeleton/',
     'GOBLINSOUND' : 'audio/goblin/',
-    'MUSHROOMSOUND' : 'audio/Mushroom/'
+    'MUSHROOMSOUND' : 'audio/Mushroom/',
+    'FLYINGSOUND': 'audio/FlyingEye'
 }
 
 def load_audio(path):
@@ -37,3 +38,5 @@ mushroomatt1 = load_audio('clap.wav')
 mushroomatt2 = load_audio('monster-bite.wav')
 mushroomatt3 = load_audio('projectile-hit.flac')
 mushroomWalk = load_audio('sludge-footsteps-1.wav')
+flyingEyeWalk = load_audio('wing-flap.wav')
+flyingAttack = load_audio('fast-collision-reverb.flac')
