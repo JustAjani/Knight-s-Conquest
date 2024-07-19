@@ -5,7 +5,7 @@
 ## Overview
 "Knight's Conquest" is an action-adventure game inspired by the classic Castlevania series. The game combines traditional platformer elements with a fresh approach to enemy AI and level design.
 
-##Credit
+## Credit
 - **Artist**: LuizMelo 
 
 ## Current Progress
