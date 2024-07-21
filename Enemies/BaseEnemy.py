@@ -5,6 +5,11 @@ from util.Audio import *
 class Enemy(Player):
     def __init__(self, game, pos, size, moveDistance=100, inputHandler=None):
         super().__init__(game, pos, size, inputHandler)
+
+        self.velocity_y = 0
+        self.grounded = False
+        self.ground_level = 600
+
         self.animations = {
             "idle": game.assetManager.get_asset('skeleton_idle'),
             "run": game.assetManager.get_asset('skeleton_walk'),
@@ -114,18 +119,20 @@ class Enemy(Player):
         return distance <= range
     
     def audioHandling(self):
-        if self.name == "skeleton":
-            if not channel5.get_busy():  
+        match self.name:
+            case "skeleton":
+                if not channel5.get_busy():
                     channel5.play(skeletonWalk)
-        elif self.name == "goblin":
-            if not channel6.get_busy():
-                channel6.play(goblinwalk)
-        elif self.name == "mushroom":
-            if not channel7.get_busy():
-                channel7.play(mushroomWalk)
-        elif self.name == "flyingeye":
-            if not channel8.get_busy():
-                channel8.play(flyingEyeWalk)
+            case "goblin":
+                if not channel6.get_busy():
+                    channel6.play(goblinWalk)
+            case "mushroom":
+                if not channel7.get_busy():
+                    channel7.play(mushroomWalk)
+            case "flyingeye":
+                if not channel8.get_busy():
+                    channel8.play(flyingEyeWalk)
+
 
 
     def render(self):

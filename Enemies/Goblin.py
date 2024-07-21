@@ -31,15 +31,14 @@ class Goblin(Enemy):
         self.name = "goblin"
         self.update_image()
 
-    def attack(self):
+    def attack(self,player):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_attack_time > self.attack_cooldown:
             self.last_attack_time = current_time
             # Choosing the attack type
             attacks = {
                 "attack": attack1Sound,
-                "attack2": attack2Sound,
-                "attack3": mushroomatt3
+                "attack2": attack2Sound
             }
             chosen_attack = random.choice(list(attacks.keys()))
             self.currentAnimation = chosen_attack

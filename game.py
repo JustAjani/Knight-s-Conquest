@@ -9,6 +9,7 @@ from Enemies.Goblin import Goblin
 from Enemies.Mushroom import Mushroom
 from Enemies.FlyingEye import FlyingEye
 from Scripts.health import Health
+from Scripts.Gravity import Gravity
 import sys
 
 class Game:
@@ -69,12 +70,15 @@ class Game:
         self.assetManager.load_sprite_sheet('eye_attack3', EYEPATH + '/Attack3.png', (150,150))
         
         self.player = Player(self, pos=[-5, 300], size=[400, 400], inputHandler=self.PlayerInputHandler)
-        # self.enemy = Enemy(self, pos=[105,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler)
-        # self.goblin = Goblin(self,pos=[105,288], size=[400,400])
-        # self.mushroom = Mushroom(self,pos=[105,288], size=[400,400])
-        self.flyingEye = FlyingEye(self,pos=[105,20], size=[400,400])
+        
+        self.enemy = []
+        self.enemy.append(Enemy(self, pos=[105,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler))
+        self.enemy.append(Goblin(self,pos=[105,288], size=[400,400]))
+        self.enemy.append(Mushroom(self,pos=[105,288], size=[400,400]))
+        self.enemy.append(FlyingEye(self,pos=[105,20], size=[400,400]))
 
         self.health = Health(self,50, 20, 400, 20, 100, fg_color=(139,0,139), bg_color=(255, 0, 0))
+        self.gravity = Gravity()
 
     def run(self):
         while True:
@@ -84,20 +88,17 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-            self.player.update(self.deltaTime)
-            # self.enemy.update(self.deltaTime,self.player)
-            # self.goblin.update(self.deltaTime,self.player)
-            # self.mushroom.update(self.deltaTime,self.player)
-            self.flyingEye.update(self.deltaTime,self.player)
-
             self.screen.fill('#f7b32b')
 
+            self.player.update(self.deltaTime)
             self.player.render()
-            # self.enemy.render()
-            # self.goblin.render()
-            # self.mushroom.render()
-            # self.health.render()
-            self.flyingEye.render()
+            self.gravity.apply(self.player,self.deltaTime)
+            
+            for enemy in self.enemy:
+                self.gravity.apply(enemy, self.deltaTime)
+                enemy.update(self.deltaTime, self.player)
+                enemy.render()
+            
 
             pygame.display.update()
             self.clock.tick(60)

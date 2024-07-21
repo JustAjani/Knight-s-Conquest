@@ -6,7 +6,6 @@ from util.Audio import *
 class FlyingEye(Enemy):
     def __init__(self, game, pos, size):
         super().__init__(game, pos, size)
-        super().__init__(game, pos, size)
         self.SCREENH = (600 + 35)
 
         self.pos[1] = min(max(self.pos[1], 0), self.SCREENH  - self.size[1])

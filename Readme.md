@@ -37,6 +37,9 @@
 - **New Enemy Status**: Have their own distinctive behaviours and sound [it has some bugs here and there but yeah]
 - **Gravity Class**: Made by chatgpt [not yet implemented in the game mode as yet gonna make some changes]
 
+## As of July 21, 2024
+- **Gravity**: tweeking gravity logic
+
 ## Objectives
 The primary goals of this project are:
 - **Learning Enemy AI**: Develop and understand the dynamics of enemy AI using Python.

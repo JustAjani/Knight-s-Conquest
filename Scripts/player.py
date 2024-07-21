@@ -1,6 +1,7 @@
 import pygame
 from util.settings import *
 from util.Audio import *
+from Scripts.Gravity import Gravity 
 
 
 class Player:
@@ -14,10 +15,12 @@ class Player:
         self.gravity = 0.5
         self.velocity = [0,0]
         self.player_rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
-        self.playerX = SCREENW // 2 - self.size[0] //2
-        self.playerY = SCREENH - self.size[1] //2 - self.floorY
         self.Jumping = False
         self.flip = False
+        self.velocity_y = 0
+        self.grounded = False
+        self.ground_level = 600
+        self.gravity = Gravity()
         
         self.animations = {
               "idle": game.assetManager.get_asset('knight_idle'),
@@ -56,7 +59,7 @@ class Player:
 
         if inputs['jump']:
             if self.Jumping:
-                self.jump()
+                self.gravity.jump(self, jump_strength=250)
 
         if inputs['attack1'] or inputs['left_click']:
             attack1 = True
@@ -101,13 +104,6 @@ class Player:
         
         self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
         self.image_left = pygame.transform.flip(self.image,True,False)
-
-    def jump(self):
-        if self.Jumping:
-            self.playerY -= self.velocity[1]
-        elif self.playerY >= self.floorY - self.size[1]:
-             self.playerY = self.floorY - self.size[1]
-             self.Jumping = True
     
     def render(self):
         # adjusted_pos = camera.apply(self)
