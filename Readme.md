@@ -38,6 +38,7 @@
 ### July 21, 2024
 - **Gravity**: Tweaking gravity logic to affect both player and enemies.
 - **Save and Load Game**: Preliminary implementation as a test for future checkpoints, with assistance from ChatGPT[For Encryption].
+- **Tile Loader + Collision**: Player can collide with tiles [not yet tested]
 
 ## Objectives
 The primary goals of this project are:

@@ -1,5 +1,6 @@
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
+import hashlib
 import sys
 import json
 import os
@@ -16,7 +17,7 @@ class GameSaver:
     def serialize_game_state(self):
         player_state = {
             'position': self.game.player.pos,
-            'health': self.game.health.current
+            'health': self.game.health.current_health
         }
 
         enemies_state = []
@@ -54,18 +55,14 @@ class GameSaver:
     def load_game(self):
         try:
             with open(self.filename, 'rb') as f:
-                file_iv = f.read(AES.block_size)  # Read the IV from the file
+                iv = f.read(AES.block_size)
                 encrypted_data = f.read()
-                # Use the IV from the file to decrypt
-                cipher = AES.new(self.key, AES.MODE_CBC, file_iv)
-                state = json.loads(unpad(cipher.decrypt(encrypted_data), AES.block_size).decode('utf-8'))
-                self.deserialize_game_state(state)
+                cipher = AES.new(self.key, AES.MODE_CBC, iv)
+                decrypted_data = unpad(cipher.decrypt(encrypted_data), AES.block_size).decode('utf-8')
+                self.deserialize_game_state(json.loads(decrypted_data))
             print("Game loaded securely.")
-        except FileNotFoundError:
-            print("Save file not found. Starting a new game.")
         except Exception as e:
             print(f"Failed to load game: {e}")
-            print("Starting a new game.")
 
     def deserialize_game_state(self, state):
         self.game.player.pos = state['player']['position']

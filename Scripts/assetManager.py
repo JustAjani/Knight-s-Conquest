@@ -39,3 +39,24 @@ class AssetManager:
         Retrieve a specific frame from a loaded sprite sheet.
         """
         return self.assets[name][frame_index]
+    
+    def load_tiles(self, path, tile_properties):
+        tileset = pygame.image.load(path).convert_alpha()
+        tile_width, tile_height = self.tile_size
+        for y in range(0, tileset.get_height(), tile_height):
+            for x in range(0, tileset.get_width(), tile_width):
+                tile = tileset.subsurface((x, y, tile_width, tile_height))
+                properties = tile_properties.get((x // tile_width, y // tile_height), {})
+                self.tiles.append((tile, properties))
+
+    def check_collision(self, player_rect):
+        """
+        Check collision between the player and solid tiles.
+        Returns True if there is a collision.
+        """
+        for tile, properties in self.tiles:
+            if properties.get('solid', False):
+                tile_rect = pygame.Rect(tile.get_rect())
+                if tile_rect.colliderect(player_rect):
+                    return True
+        return False

@@ -90,11 +90,14 @@ class Game:
                     pygame.quit()
                     sys.exit()
             
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
-                    self.gameSaver.save_game()
-                if event.key == pygame.K_l:
-                    self.gameSaver.load_game()
+                if event.type == pygame.KEYDOWN:
+                    print("Key pressed:", pygame.key.name(event.key))  # Debug print for any key press
+                    if event.key == pygame.K_p:
+                        print("Save key pressed")  # Debug print for saving
+                        self.gameSaver.save_game()
+                    if event.key == pygame.K_l:
+                        print("Load key pressed")  # Debug print for loading
+                        self.gameSaver.load_game()
 
             self.screen.fill('#f7b32b')
 
