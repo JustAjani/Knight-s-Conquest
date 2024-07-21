@@ -10,6 +10,7 @@ from Enemies.Mushroom import Mushroom
 from Enemies.FlyingEye import FlyingEye
 from Scripts.health import Health
 from Scripts.Gravity import Gravity
+from util.SaveLoad import GameSaver
 import sys
 
 class Game:
@@ -79,6 +80,7 @@ class Game:
 
         self.health = Health(self,50, 20, 400, 20, 100, fg_color=(139,0,139), bg_color=(255, 0, 0))
         self.gravity = Gravity()
+        self.gameSaver = GameSaver(self)
 
     def run(self):
         while True:
@@ -87,6 +89,12 @@ class Game:
                 if event.type is pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    self.gameSaver.save_game()
+                if event.key == pygame.K_l:
+                    self.gameSaver.load_game()
 
             self.screen.fill('#f7b32b')
 

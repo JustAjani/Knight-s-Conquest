@@ -1,54 +1,53 @@
----
-
 # Knight's Conquest
 
 ## Overview
-"Knight's Conquest" is an action-adventure game inspired by the classic Castlevania series. The game combines traditional platformer elements with a fresh approach to enemy AI and level design.
+"Knight's Conquest" is an action-adventure game inspired by the classic Castlevania series. It combines traditional platformer elements with innovative enemy AI and level design.
 
-## Credit
+## Credits
 - **Artist**: LuizMelo 
 
 ## Current Progress
 
-### As of July 16, 2024
-- **Player Movement**: Control the player using keyboard and mouse inputs.
-- **Attack Mechanics**: Basic attack animations and mechanics for engaging with enemies.
-- **Animations**: Functional animations for player movements and attacks.
-- **Player Camera**: Follows the player around (currently facing some issues).
-- **Basic Audio**: Implemented basic audio playback.
+### July 16, 2024
+- **Player Movement**: Player can be controlled using keyboard and mouse inputs.
+- **Attack Mechanics**: Basic attack animations and mechanics for engaging enemies are functional.
+- **Animations**: Player movements and attacks are fully animated.
+- **Player Camera**: Camera follows the player, though some issues persist.
+- **Basic Audio**: Basic audio playback is implemented.
 
-### As of July 17, 2024
-- **Enemy AI**: Basic enemy AI for attacking the player (enemies currently deal no damage).
-- **Health Bar**: Added a health bar for the player.
+### July 17, 2024
+- **Enemy AI**: Basic enemy AI for attacking the player is implemented (enemies currently deal no damage).
+- **Health Bar**: Health bar for the player is added.
 
-### As of July 18, 2024
-- **Bug Fixing**: Attempting to resolve issues from the previous day.
-- **Audio Improvements**: Experimenting with more synchronized audio.
-- **Enemy State Transition**: Improved enemy state transitions (fixed an issue where the enemy would spin out of control at game start by adding an idle state).
-- **New Enemy**: Added a goblin.
-- **State Fix**: Fixed the transition between attack1 and attack2 for the goblin.
-- **New Enemy**: Added a mushroom-like enemy.
+### July 18, 2024
+- **Bug Fixing**: Addressed issues from the previous day.
+- **Audio Improvements**: Worked on synchronizing audio better.
+- **Enemy State Transition**: Enhanced enemy state transitions and fixed an issue where enemies would spin out of control at the game start by adding an idle state.
+- **New Enemy**: Added a goblin enemy.
+- **State Fix**: Fixed the transition between the goblin's attack1 and attack2.
+- **New Enemy**: Introduced a mushroom-like enemy.
 
-### As of July 19, 2024
-- **Enemy AI Issues**: Continuing to work on enemy AI bugs.
-- **Mushroom Enemy Update**: Added dynamic sound for movement and attack.
-- **Enemy AI Status**: Still experiencing some bugs.[Bugs are fixed...most of them]
-- **New Enemy**: Added a Bat enemy.
-- **New Enemy Status**: Have their own distinctive behaviours and sound [it has some bugs here and there but yeah]
-- **Gravity Class**: Made by chatgpt [not yet implemented in the game mode as yet gonna make some changes]
+### July 19, 2024
+- **Enemy AI Issues**: Continued resolving enemy AI bugs.
+- **Mushroom Enemy Update**: Added dynamic sound effects for movement and attack.
+- **Enemy AI Status**: Most bugs are fixed.
+- **New Enemy**: Added a bat enemy.
+- **New Enemy Status**: Bats have distinctive behaviors and sounds, though some bugs remain.
+- **Gravity Class**: Developed with the help of ChatGPT (not yet implemented in the game mode, further changes planned).
 
-## As of July 21, 2024
-- **Gravity**: tweeking gravity logic
+### July 21, 2024
+- **Gravity**: Tweaking gravity logic to affect both player and enemies.
+- **Save and Load Game**: Preliminary implementation as a test for future checkpoints, with assistance from ChatGPT[For Encryption].
 
 ## Objectives
 The primary goals of this project are:
-- **Learning Enemy AI**: Develop and understand the dynamics of enemy AI using Python.
-- **Mastering Tiled**: Gain proficiency in using the Tiled level editor to create engaging and visually appealing levels.
+- **Understanding Particle Effects**: Enhancing knowledge of particle effects to improve the visual appeal of enemy attacks and player movements, and to create a more immersive and engaging gameplay experience.
+- **Learning Enemy AI**: Developing and understanding the dynamics of enemy AI using Python.
+- **Mastering Tiled**: Gaining proficiency in using the Tiled level editor to create engaging and visually appealing levels.
 
 ## Technologies Used
 - **Programming Language**: Python
 - **Level Design**: Tiled Level Editor
+- **Game Engine**: Pygame
 
 Feel free to contribute or suggest improvements!
-
----

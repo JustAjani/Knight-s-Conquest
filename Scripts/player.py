@@ -3,7 +3,6 @@ from util.settings import *
 from util.Audio import *
 from Scripts.Gravity import Gravity 
 
-
 class Player:
     def __init__(self, game, pos, size, inputHandler):
         self.game = game
@@ -36,6 +35,7 @@ class Player:
         self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
 
     def update(self,deltaTime):
+        
         # print(f"Player position before input: {self.pos}")
         inputs = self.inputHandler.get_input()
         moving = False

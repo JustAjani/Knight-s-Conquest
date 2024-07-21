@@ -5,7 +5,6 @@ from util.Audio import *
 class Enemy(Player):
     def __init__(self, game, pos, size, moveDistance=100, inputHandler=None):
         super().__init__(game, pos, size, inputHandler)
-
         self.velocity_y = 0
         self.grounded = False
         self.ground_level = 600
@@ -39,6 +38,8 @@ class Enemy(Player):
         self.name = "skeleton"
 
     def update(self, deltaTime, player):
+        self.enemy_rect.y = self.pos[1]
+        
         self.adjustedspeed = self.speed * deltaTime
         current_time = pygame.time.get_ticks()
 
