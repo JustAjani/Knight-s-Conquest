@@ -40,6 +40,9 @@
 - **Save and Load Game**: Preliminary implementation as a test for future checkpoints, with assistance from ChatGPT[For Encryption].
 - **Tile Loader + Collision**: Player can collide with tiles [not yet tested]
 
+### July 24, 2024
+- **Implemented a state machine**: Hoping to fix most of the spinning animation effect while switching through states...works for skeleton and goblin. [No so much for the Mushroom and the Flying Eye]
+
 ## Objectives
 The primary goals of this project are:
 - **Understanding Particle Effects**: Enhancing knowledge of particle effects to improve the visual appeal of enemy attacks and player movements, and to create a more immersive and engaging gameplay experience.

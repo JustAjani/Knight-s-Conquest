@@ -1,6 +1,7 @@
 import pygame
 from Scripts.player import Player
 from util.Audio import *
+from stateManager.stateManager import StateMachine, PatrolState, ChaseState, AttackState
 
 class Enemy(Player):
     def __init__(self, game, pos, size, moveDistance=100, inputHandler=None):
@@ -27,66 +28,48 @@ class Enemy(Player):
         self.start_pos = pos[0]
         self.end_pos = self.start_pos + moveDistance
         self.speed = 100
-        self.state = "idle"  # Start in idle state
-        self.state_cooldown = 2000  # Use same cooldown as post attack cooldown for initial idle
+        self.state_cooldown = 2000
         self.last_state_change = pygame.time.get_ticks()
         self.attack_range = 100
-        self.chase_range = 150  # Added buffer for chasing to provide hysteresis
-        self.post_attack_cooldown = 2000  # 2000 milliseconds or 2 seconds
+        self.chase_range = 150
+        self.post_attack_cooldown = 2000
         self.last_attack_time = 0
 
         self.name = "skeleton"
+        
+        # Initialize state machine
+        self.state_machine = StateMachine(self)
+        self.state_machine.add_state('patrol', PatrolState(self))
+        self.state_machine.add_state('chase', ChaseState(self))
+        self.state_machine.add_state('attack', AttackState(self))
+        self.state_machine.change_state('patrol')
+        self.animating = False
 
     def update(self, deltaTime, player):
         self.enemy_rect.y = self.pos[1]
-        
         self.adjustedspeed = self.speed * deltaTime
         current_time = pygame.time.get_ticks()
 
-        if self.state == "idle":
-            if current_time - self.last_state_change > self.state_cooldown:
-                self.change_state("patrol",player)
-        else:
-            self.evaluate_combat_state(current_time, player)
-
-        self.handle_movement(player)
+        self.state_machine.update()
+        self.evaluate_combat_state(current_time, player)
         self.animationUpdate()
 
     def evaluate_combat_state(self, current_time, player):
         player_distance = abs(self.enemy_rect.x - player.pos[0])
 
-        if self.state == "attack" and current_time - self.last_attack_time > self.post_attack_cooldown:
-            if player_distance > self.attack_range + 20:  # Adding buffer
-                self.change_state("chase", player)
-        elif self.state != "attack":
+        if self.state_machine.current_state == self.state_machine.states['attack']:
+            if player_distance > self.attack_range + 20:
+                if player_distance > self.chase_range:
+                    self.state_machine.change_state('patrol')
+                else:
+                    self.state_machine.change_state('chase')
+        else:
             if player_distance <= self.attack_range:
-                self.change_state("attack", player)
+                self.state_machine.change_state('attack')
             elif player_distance <= self.chase_range:
-                self.change_state("chase", player)
+                self.state_machine.change_state('chase')
             else:
-                self.change_state("patrol", player)
-         
-
-    def handle_movement(self, player):
-        if self.state == "patrol":
-            self.patrol()
-        elif self.state == "chase":
-            self.chase(player)
-        elif self.state == "attack":
-            self.attack(player)
-
-    def change_state(self, new_state, player):
-        current_time = pygame.time.get_ticks()
-        if new_state != self.state and (current_time - self.last_state_change > self.state_cooldown):
-            print(f"Changing state from {self.state} to {new_state}")
-            self.state = new_state
-            self.last_state_change = current_time
-
-            # Reset flip based on player position
-            if player.pos[0] > self.enemy_rect.x:
-                self.flip = False
-            else:
-                self.flip = True
+                self.state_machine.change_state('patrol')
 
     def patrol(self):
         if self.enemy_rect.x >= self.end_pos or self.enemy_rect.x <= self.start_pos:
@@ -109,16 +92,32 @@ class Enemy(Player):
         
         self.audioHandling()
 
-    def attack(self,player):
-        self.currentAnimation = "attack"  
+    def attack(self, player):
         if not channel3.get_busy():
             channel3.play(attack1Sound)
-        self.last_attack_time = pygame.time.get_ticks()  # Update last attack time
+        self.last_attack_time = pygame.time.get_ticks()
 
-    def is_within_attack_range(self, player, range=100, offset=30):
-        distance = abs(self.enemy_rect.x - player.pos[0]) - offset
-        return distance <= range
+    def animationUpdate(self):
+        now = pygame.time.get_ticks()
+        moving = self.state_machine.current_state in [self.state_machine.states['patrol'], self.state_machine.states['chase']]
+        if moving and self.currentAnimation != "run":
+            self.currentAnimation = "run"
+            self.frameIndex = 0
+        elif self.state_machine.current_state == self.state_machine.states['attack'] and not self.currentAnimation.startswith("attack"):
+            self.currentAnimation = "attack"
+            self.frameIndex = 0
+        if self.animating and now - self.lastUpdate > int(1000 * self.animationSpeed):
+            self.lastUpdate = now
+            self.frameIndex = (self.frameIndex + 1) % len(self.animations[self.currentAnimation])
+            self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
+            self.image_left = pygame.transform.flip(self.image, True, False)
+
+        self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
+        self.image_left = pygame.transform.flip(self.image, True, False)
     
+    def continue_animation(self):
+        self.animating = True  
+
     def audioHandling(self):
         match self.name:
             case "skeleton":
@@ -134,29 +133,6 @@ class Enemy(Player):
                 if not channel8.get_busy():
                     channel8.play(flyingEyeWalk)
 
-
-
     def render(self):
         current_anim = self.image_left if self.flip else self.image
         self.game.screen.blit(current_anim, (self.enemy_rect.x, self.enemy_rect.y))
-
-    def animationUpdate(self):
-        now = pygame.time.get_ticks()
-        moving = self.state in ["patrol", "chase"]
-        if moving and self.currentAnimation != "run":
-            self.currentAnimation = "run"
-            self.frameIndex = 0
-        elif self.state == "attack" and not self.currentAnimation.startswith("attack"):
-            self.currentAnimation = "attack"
-            self.frameIndex = 0
-        if now - self.lastUpdate > int(1000 * self.animationSpeed):
-            self.lastUpdate = now
-            self.frameIndex += 1
-            if self.frameIndex >= len(self.animations[self.currentAnimation]):
-                self.frameIndex = 0  # Reset or loop the animation
-
-        self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
-        self.image_left = pygame.transform.flip(self.image, True, False)
-    
-    
-

@@ -1,7 +1,9 @@
+# goblin.py
 import pygame
 import random
 from Enemies.BaseEnemy import Enemy
 from util.Audio import *
+from stateManager.stateManager import SpecialGoblinAttackState
 
 class Goblin(Enemy):
     def __init__(self, game, pos, size):
@@ -15,10 +17,6 @@ class Goblin(Enemy):
             "attack2": game.assetManager.get_asset('goblin_attack2')
         }
 
-        # Debugging: Check the number of frames loaded for each animation
-        for key, frames in self.animations.items():
-            print(f"Animation: {key}, Frames Loaded: {len(frames)}")
-
         self.speed = 150
         self.move_distance = 120
         self.enemy_rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
@@ -26,16 +24,18 @@ class Goblin(Enemy):
         self.currentAnimation = "idle"
         self.animationSpeed = 0.1
         self.lastUpdate = pygame.time.get_ticks()
-        self.attack_cooldown = 2000  # Increased cooldown to slow down attack transitions
+        self.attack_cooldown = 2000
         self.last_attack_time = pygame.time.get_ticks()
         self.name = "goblin"
         self.update_image()
 
-    def attack(self,player):
+        self.state_machine.add_state('attack', SpecialGoblinAttackState(self))
+        self.state_machine.change_state('patrol')
+
+    def goblin_attack(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_attack_time > self.attack_cooldown:
             self.last_attack_time = current_time
-            # Choosing the attack type
             attacks = {
                 "attack": attack1Sound,
                 "attack2": attack2Sound
@@ -48,7 +48,6 @@ class Goblin(Enemy):
 
             self.frameIndex = 0
             self.update_image()
-    
 
     def update_image(self):
         if self.frameIndex < len(self.animations[self.currentAnimation]):
