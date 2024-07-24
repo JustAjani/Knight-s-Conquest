@@ -68,6 +68,10 @@ class FlyingEye(Enemy):
     def update(self, deltaTime, player):
         super().update(deltaTime, player)
         current_time = pygame.time.get_ticks()
+    
+        # Sync the enemy_rect to the new position
+        self.enemy_rect.x = self.pos[0]
+        self.enemy_rect.y = self.pos[1]
 
         # Check if the enemy should attack
         distance_to_player = abs(self.enemy_rect.x - player.pos[0])

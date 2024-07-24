@@ -1,4 +1,5 @@
 import random
+import pygame
 
 class State:
     def __init__(self, enemy):
@@ -99,17 +100,23 @@ class StateMachine:
         self.enemy = enemy
         self.states = {}
         self.current_state = None
+        self.last_state_change_time = 0
+        self.state_change_delay = 2000  # Delay in milliseconds
 
     def add_state(self, name, state):
         self.states[name] = state
 
     def change_state(self, new_state):
-        if self.current_state:
-            self.current_state.exit()
-        self.current_state = self.states[new_state]
-        self.current_state.enter()
+        current_time = pygame.time.get_ticks()
+        if self.current_state is not new_state and (current_time - self.last_state_change_time > self.state_change_delay):
+            if self.current_state:
+                self.current_state.exit()
+            self.current_state = self.states[new_state]
+            self.current_state.enter()
+            self.last_state_change_time = current_time  # Update the last state change time
 
     def update(self):
         if self.current_state:
             self.current_state.execute()
+
 

@@ -42,6 +42,7 @@
 
 ### July 24, 2024
 - **Implemented a state machine**: Hoping to fix most of the spinning animation effect while switching through states...works for skeleton and goblin. [No so much for the Mushroom and the Flying Eye]
+- **Animations Fix**: After the state machine was implemented alot of things broke including movement animation. Now that's fixed
 
 ## Objectives
 The primary goals of this project are:
