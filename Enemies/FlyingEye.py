@@ -94,8 +94,3 @@ class FlyingEye(Enemy):
             self.frameIndex = (self.frameIndex + 1) % len(self.animations[self.currentAnimation])
             self.lastUpdate = current_time
             self.update_image()
-
-# Specialized attack state for FlyingEye
-class SpecialFlyingEyeAttackState(AttackState):
-    def execute(self):
-        self.enemy.flying_eye_attack()

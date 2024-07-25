@@ -35,6 +35,8 @@ class Enemy(Player):
         self.post_attack_cooldown = 2000
         self.last_attack_time = 0
 
+        self.last_flip_time = pygame.time.get_ticks()
+        self.flip_cooldown = 500  # 500 milliseconds between flips
         self.name = "skeleton"
         
         # Initialize state machine
@@ -53,6 +55,16 @@ class Enemy(Player):
         self.state_machine.update()
         self.evaluate_combat_state(current_time, player)
         self.animationUpdate()
+    
+    def update_flip(self, player):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_flip_time > self.flip_cooldown:
+            if player.pos[0] > self.enemy_rect.x:
+                self.flip = False
+                self.last_flip_time = current_time
+            elif player.pos[0] < self.enemy_rect.x:
+                self.flip = True
+                self.last_flip_time = current_time
 
     def evaluate_combat_state(self, current_time, player):
         player_distance = abs(self.enemy_rect.x - player.pos[0])

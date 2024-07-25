@@ -28,9 +28,11 @@ class PatrolState(State):
 
 class ChaseState(State):
     def enter(self):
-        self.enemy.currentAnimation = "run"
+        print(f"Entering {type(self).__name__} state")
+        self.enemy.currentAnimation = "run" if type(self).__name__ == "PatrolState" else "attack"
         self.enemy.frameIndex = 0
-        print("Entering Chase State")
+        self.enemy.animationUpdate()  # Ensure the animation is updated immediately
+
 
     def execute(self):
         self.enemy.chase(self.enemy.game.player)
@@ -108,12 +110,12 @@ class StateMachine:
 
     def change_state(self, new_state):
         current_time = pygame.time.get_ticks()
-        if self.current_state is not new_state and (current_time - self.last_state_change_time > self.state_change_delay):
+        if self.current_state != new_state and (current_time - self.last_state_change_time > self.state_change_delay):
             if self.current_state:
                 self.current_state.exit()
             self.current_state = self.states[new_state]
             self.current_state.enter()
-            self.last_state_change_time = current_time  # Update the last state change time
+            self.last_state_change_time = current_time
 
     def update(self):
         if self.current_state:

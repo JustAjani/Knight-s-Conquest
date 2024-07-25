@@ -49,6 +49,7 @@ The primary goals of this project are:
 - **Understanding Particle Effects**: Enhancing knowledge of particle effects to improve the visual appeal of enemy attacks and player movements, and to create a more immersive and engaging gameplay experience.
 - **Learning Enemy AI**: Developing and understanding the dynamics of enemy AI using Python.
 - **Mastering Tiled**: Gaining proficiency in using the Tiled level editor to create engaging and visually appealing levels.
+- **Flip Direction Fix**: I added a delay to the flip trigger so the directions change to frequently causing the spinning effect. [it was that simple but too me eternity to figure out...the power of underlooking stuff]
 
 ## Technologies Used
 - **Programming Language**: Python
