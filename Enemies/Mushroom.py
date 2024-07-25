@@ -38,15 +38,15 @@ class Mushroom(Enemy):
         if current_time - self.last_attack_time > self.attack_cooldown:
             self.last_attack_time = current_time
             attacks = {
-                "attack": mushroomatt1,
-                "attack2": mushroomatt2,
-                "attack3": mushroomatt3  
+                "attack": self.channel.play(self.audio_player.mushroomatt1),
+                "attack2": self.channel.play(self.audio_player.mushroomatt2),
+                "attack3": self.channel.play(self.audio_player.mushroomatt3) 
             }
             chosen_attack = random.choice(list(attacks.keys()))
             self.currentAnimation = chosen_attack
 
-            if not channel8.get_busy():
-                channel8.play(attacks[chosen_attack])  
+            if not self.channel.get_busy():
+                self.audio_player.enqueue_sound(attacks[chosen_attack])  
 
             self.frameIndex = 0
             self.update_image()

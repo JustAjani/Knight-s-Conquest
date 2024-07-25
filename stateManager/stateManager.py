@@ -33,7 +33,6 @@ class ChaseState(State):
         self.enemy.frameIndex = 0
         self.enemy.animationUpdate()  # Ensure the animation is updated immediately
 
-
     def execute(self):
         self.enemy.chase(self.enemy.game.player)
 
@@ -56,6 +55,7 @@ class FlyingEyePatrolState(State):
     def enter(self):
         super().enter()
         self.enemy.currentAnimation = "run"
+        self.enemy.frameIndex = 0
         # Set a new target y within bounds
         self.enemy.target_y = random.randint(0, self.enemy.SCREENH - self.enemy.size[1])
 
@@ -113,12 +113,23 @@ class StateMachine:
         if self.current_state != new_state and (current_time - self.last_state_change_time > self.state_change_delay):
             if self.current_state:
                 self.current_state.exit()
+            try:
+                self.current_state = self.states[new_state]
+            except KeyError as e:
+                print(f"Error: Attempted to change state to {new_state}, but no such state exists. Exception: {e}")
+                return
             self.current_state = self.states[new_state]
             self.current_state.enter()
             self.last_state_change_time = current_time
 
     def update(self):
         if self.current_state:
+            try:
+                self.current_state.execute()
+            except Exception as e:
+                print(f"Error: Exception occurred while executing state {self.current_state.__class__.__name__}. Exception: {e}")
+
+
             self.current_state.execute()
 
 

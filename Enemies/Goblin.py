@@ -37,14 +37,14 @@ class Goblin(Enemy):
         if current_time - self.last_attack_time > self.attack_cooldown:
             self.last_attack_time = current_time
             attacks = {
-                "attack": attack1Sound,
-                "attack2": attack2Sound
+                "attack": self.channel.play(self.audio_player.attack1Sound),
+                "attack2": self.channel.play(self.audio_player.attack2Sound)
             }
             chosen_attack = random.choice(list(attacks.keys()))
             self.currentAnimation = chosen_attack
 
-            if not channel3.get_busy():
-                channel3.play(attacks[chosen_attack])  
+            if not self.channel.get_busy():
+                self.audio_player.enqueue_sound(attacks[chosen_attack])  
 
             self.frameIndex = 0
             self.update_image()

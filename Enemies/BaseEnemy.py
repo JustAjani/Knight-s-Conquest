@@ -24,6 +24,10 @@ class Enemy(Player):
         self.lastUpdate = pygame.time.get_ticks()
         self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
 
+        self.audio_player = AudioPlayer()
+        self.audio_player.setup_sounds()
+        self.channel = self.audio_player.get_channel()
+
         self.move_distance = moveDistance
         self.start_pos = pos[0]
         self.end_pos = self.start_pos + moveDistance
@@ -57,14 +61,18 @@ class Enemy(Player):
         self.animationUpdate()
     
     def update_flip(self, player):
+        """
+        Update the flip state of the enemy based on the player's position.
+        """
         current_time = pygame.time.get_ticks()
-        if current_time - self.last_flip_time > self.flip_cooldown:
-            if player.pos[0] > self.enemy_rect.x:
-                self.flip = False
-                self.last_flip_time = current_time
-            elif player.pos[0] < self.enemy_rect.x:
+
+        if current_time - self.last_flip_time >= self.flip_cooldown:
+            if player.pos[0] < self.enemy_rect.centerx:
                 self.flip = True
-                self.last_flip_time = current_time
+            else:
+                self.flip = False
+
+            self.last_flip_time = current_time
 
     def evaluate_combat_state(self, current_time, player):
         player_distance = abs(self.enemy_rect.x - player.pos[0])
@@ -92,7 +100,7 @@ class Enemy(Player):
         else:
             self.enemy_rect.x += self.adjustedspeed
         
-        self.audioHandling()
+        self.handleAudio()
 
     def chase(self, player):
         if player.pos[0] > self.enemy_rect.x:
@@ -102,16 +110,15 @@ class Enemy(Player):
             self.flip = True
             self.enemy_rect.x -= self.adjustedspeed
         
-        self.audioHandling()
+        self.handleAudio()
 
     def attack(self, player):
-        if not channel3.get_busy():
-            channel3.play(attack1Sound)
+        self.audio_player.enqueue_sound(self.audio_player.attack1Sound)
         self.last_attack_time = pygame.time.get_ticks()
 
     def animationUpdate(self):
         now = pygame.time.get_ticks()
-        moving = self.state_machine.current_state in [self.state_machine.states['patrol'], self.state_machine.states['chase']]
+        moving = self.state_machine.current_state in [self.state_machine.states['patrol']],[self.state_machine.states['chase']]
         if moving and self.currentAnimation != "run":
             self.currentAnimation = "run"
             self.frameIndex = 0
@@ -127,23 +134,27 @@ class Enemy(Player):
         self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
         self.image_left = pygame.transform.flip(self.image, True, False)
     
+    # def update_image(self):
+    #     if self.frameIndex < len(self.animations[self.currentAnimation]):
+    #         print(f"Current Animation: {self.currentAnimation}")
+    #         self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
+    #         print(f"Frame Index: {self.frameIndex}")
+    #     else:
+    #         print(f"Error: Frame index out of range for animation {self.currentAnimation}")
+    
     def continue_animation(self):
         self.animating = True  
 
-    def audioHandling(self):
-        match self.name:
-            case "skeleton":
-                if not channel5.get_busy():
-                    channel5.play(skeletonWalk)
-            case "goblin":
-                if not channel6.get_busy():
-                    channel6.play(goblinWalk)
-            case "mushroom":
-                if not channel7.get_busy():
-                    channel7.play(mushroomWalk)
-            case "flyingeye":
-                if not channel8.get_busy():
-                    channel8.play(flyingEyeWalk)
+    def handleAudio(self):
+        audio_map = {
+            "skeleton": self.channel.play(self.audio_player.skeletonWalk),
+            "goblin": self.channel.play(self.audio_player.goblinWalk),
+            "mushroom": self.channel.play(self.audio_player.mushroomWalk),
+            "flyingeye": self.channel.play(self.audio_player.flyingEyeWalk),
+        }
+        audio_channel = audio_map.keys()
+        if audio_channel and not self.channel.get_busy():
+            self.audio_player.enqueue_sound(audio_channel)
 
     def render(self):
         current_anim = self.image_left if self.flip else self.image

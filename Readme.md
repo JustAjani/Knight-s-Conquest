@@ -43,6 +43,10 @@
 ### July 24, 2024
 - **Implemented a state machine**: Hoping to fix most of the spinning animation effect while switching through states...works for skeleton and goblin. [No so much for the Mushroom and the Flying Eye]
 - **Animations Fix**: After the state machine was implemented alot of things broke including movement animation. Now that's fixed
+- **Animation flip error fix**: Added a delay tto the flip trigger so the enemy won't spin out of control when switching from states frequently.
+
+### July 25, 2024
+- **Refactoring Hell**: Everything is broken...[audio and animation wise[for based enemy that is]]
 
 ## Objectives
 The primary goals of this project are:

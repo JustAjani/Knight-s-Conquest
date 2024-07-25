@@ -11,6 +11,7 @@ from Enemies.FlyingEye import FlyingEye
 from Scripts.health import Health
 from Scripts.Gravity import Gravity
 from util.SaveLoad import GameSaver
+from util.Audio import AudioPlayer
 import sys
 
 class Game:
@@ -73,14 +74,15 @@ class Game:
         self.player = Player(self, pos=[-5, 300], size=[400, 400], inputHandler=self.PlayerInputHandler)
         
         self.enemy = []
-        # self.enemy.append(Enemy(self, pos=[105,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler))
-        self.enemy.append(Goblin(self,pos=[105,288], size=[400,400]))
-        self.enemy.append(Mushroom(self,pos=[105,288], size=[400,400]))
+        self.enemy.append(Enemy(self, pos=[105,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler))
+        # self.enemy.append(Goblin(self,pos=[105,288], size=[400,400]))
+        # self.enemy.append(Mushroom(self,pos=[105,288], size=[400,400]))
         # self.enemy.append(FlyingEye(self,pos=[105,20], size=[400,400]))
 
         self.health = Health(self,50, 20, 400, 20, 100, fg_color=(139,0,139), bg_color=(255, 0, 0))
         self.gravity = Gravity()
         self.gameSaver = GameSaver(self)
+        self.audio_player = AudioPlayer()
 
     def run(self):
         while True:
@@ -91,7 +93,7 @@ class Game:
                     sys.exit()
             
                 if event.type == pygame.KEYDOWN:
-                    print("Key pressed:", pygame.key.name(event.key))  # Debug print for any key press
+                    # print("Key pressed:", pygame.key.name(event.key))  # Debug print for any key press
                     if event.key == pygame.K_p:
                         # print("Save key pressed")  # Debug print for saving
                         self.gameSaver.save_game()
@@ -100,7 +102,7 @@ class Game:
                         self.gameSaver.load_game()
 
             self.screen.fill('#f7b32b')
-
+ 
             self.player.update(self.deltaTime)
             self.player.render()
             # self.gravity.apply(self.player,self.deltaTime)
@@ -109,6 +111,8 @@ class Game:
                 # self.gravity.apply(enemy, self.deltaTime)
                 enemy.update(self.deltaTime, self.player)
                 enemy.render()
+            
+            self.audio_player.update()
             
             pygame.display.update()
             self.clock.tick(60)

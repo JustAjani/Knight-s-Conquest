@@ -20,6 +20,10 @@ class Player:
         self.grounded = False
         self.ground_level = 600
         self.gravity = Gravity()
+
+        self.audio_player = AudioPlayer()
+        self.audio_player.setup_sounds()
+        self.channel = self.audio_player.get_channel()
         
         self.animations = {
               "idle": game.assetManager.get_asset('knight_idle'),
@@ -53,9 +57,9 @@ class Player:
                 self.pos[0] -= movement
             moving = True
             self.flip = inputs['move_left']
-            if not channel3.get_busy() and not channel4.get_busy():
-                channel3.play(rightfoot)  
-                channel4.play(leftfoot)  
+            if not self.channel.get_busy():
+                self.audio_player.enqueue_sound(self.audio_player.rightfoot)  
+                self.audio_player.enqueue_sound(self.audio_player.leftfoot)  
 
         if inputs['jump']:
             if self.Jumping:
@@ -63,13 +67,13 @@ class Player:
 
         if inputs['attack1'] or inputs['left_click']:
             attack1 = True
-            if not channel1.get_busy():  
-                channel1.play(attack1Sound)
+            if not self.channel.get_busy():  
+                self.audio_player.enqueue_sound(self.audio_player.attack1Sound)
 
         if inputs['attack2'] or inputs['right_click']:
             attack2 = True
-            if not channel2.get_busy():  
-                channel2.play(attack2Sound)
+            if not self.channel.get_busy():  
+               self.audio_player.enqueue_sound(self.audio_player.attack2Sound)
 
         self.animationUpdate(moving, self.Jumping, attack1,attack2)
         # print(f"Player position after input: {self.pos}")
