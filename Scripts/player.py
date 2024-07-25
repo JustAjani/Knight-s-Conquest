@@ -1,6 +1,6 @@
 import pygame
 from util.settings import *
-from util.Audio import *
+from util.Audio import AudioPlayer
 from Scripts.Gravity import Gravity 
 
 class Player:
@@ -16,6 +16,7 @@ class Player:
         self.player_rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
         self.Jumping = False
         self.flip = False
+        
         self.velocity_y = 0
         self.grounded = False
         self.ground_level = 600
@@ -73,7 +74,7 @@ class Player:
         if inputs['attack2'] or inputs['right_click']:
             attack2 = True
             if not self.channel.get_busy():  
-               self.audio_player.enqueue_sound(self.audio_player.attack2Sound)
+                self.audio_player.enqueue_sound(self.audio_player.attack2Sound)
 
         self.animationUpdate(moving, self.Jumping, attack1,attack2)
         # print(f"Player position after input: {self.pos}")
@@ -83,9 +84,11 @@ class Player:
         if attack1:
             self.currentAnimation != "attack1"
             self.currentAnimation = "attack1"
+            self.frameIndex = 0
         elif attack2:
             self.currentAnimation != "attack2"
             self.currentAnimation = "attack2"
+            self.frameIndex = 0
         elif moving:
             if self.currentAnimation != "run":
                 self.currentAnimation = "run"

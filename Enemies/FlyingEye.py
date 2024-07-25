@@ -23,6 +23,10 @@ class FlyingEye(Enemy):
             "attack3": game.assetManager.get_asset('eye_attack3'),
         }
 
+        self.audio_player = AudioPlayer()
+        self.audio_player.setup_sounds()
+        self.channel = self.audio_player.get_channel()
+
         self.speed = 70
         self.move_distance = 80
         self.enemy_rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
@@ -45,13 +49,12 @@ class FlyingEye(Enemy):
         if current_time - self.last_attack_time > self.attack_cooldown and distance_to_player <= self.attack_range:
             self.last_attack_time = current_time
             attacks = {
-                "attack": self.channel.play(self.audio_player.mushroomatt2),
-                "attack2": self.channel.play(self.audio_player.flyingAttack),
-                "attack3": self.channel.play(self.audio_player.mushroomatt3) 
+                "attack": self.audio_player.enqueue_sound(self.audio_player.mushroomatt2),
+                "attack2": self.audio_player.enqueue_sound(self.audio_player.flyingAttack),
+                "attack3": self.audio_player.enqueue_sound(self.audio_player.mushroomatt3)  
             }
             chosen_attack = random.choice(list(attacks.keys()))
             self.currentAnimation = chosen_attack
-
             if not self.channel.get_busy():
                 self.audio_player.enqueue_sound(attacks[chosen_attack])  
 

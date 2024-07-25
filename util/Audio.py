@@ -16,6 +16,7 @@ class AudioPlayer:
         pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=1024)
         self.channels = []
         self.sound_queue = deque()  # Queue to hold sounds to be played
+        self.currently_playing = {}
 
     def enqueue_sound(self, sound):
         """Add a sound to the queue to be played."""
@@ -33,11 +34,12 @@ class AudioPlayer:
         return self.channels[0]  # Return the first channel as a fallback
 
     def play_sound(self, sound):
-        """Play a sound on an available channel."""
         channel = self.get_channel()
-        if channel.get_busy():
-            channel.stop()  # Optional: stop the current sound if busy
-        channel.play(sound)
+        if channel:
+            print(f"Attempting to play sound on channel {self.channels.index(channel)}")
+            channel.play(sound)
+        else:
+            print("Failed to obtain a channel")
 
     def update(self):
         """Update method to manage and play sounds from the queue."""
@@ -45,13 +47,12 @@ class AudioPlayer:
         if self.sound_queue:
             sound_to_play = self.sound_queue.popleft()  # Get the next sound from the queue
             self.play_sound(sound_to_play)  # Play the sound
+        self.print_currently_playing()
 
     def cleanup_channels(self):
         """Clean up unused channels to optimize resource usage."""
-        before_cleanup = len(self.channels)
         self.channels = [channel for channel in self.channels if channel.get_busy()]
-        after_cleanup = len(self.channels)
-        print(f"Cleaned up channels: {before_cleanup} to {after_cleanup}")
+        self.currently_playing = {channel: sound for channel, sound in self.currently_playing.items() if channel.get_busy()}
 
     def load_audio(self, path):
         """Load audio from the specified path."""
@@ -76,3 +77,11 @@ class AudioPlayer:
         self.mushroomWalk = self.load_audio('sludge-footsteps-1.wav')
         self.flyingEyeWalk = self.load_audio('wing-flap.wav')
         self.flyingAttack = self.load_audio('fast-collision-reverb.flac')
+    
+    def print_currently_playing(self):
+        """Print the current sounds being played on all channels."""
+        if not self.currently_playing:
+            print("No sound is currently playing.")
+        else:
+            for channel, sound in self.currently_playing.items():
+                print(f"Channel {self.channels.index(channel)} is playing: {sound}")

@@ -1,4 +1,3 @@
-# goblin.py
 import pygame
 import random
 from Enemies.BaseEnemy import Enemy
@@ -37,8 +36,8 @@ class Goblin(Enemy):
         if current_time - self.last_attack_time > self.attack_cooldown:
             self.last_attack_time = current_time
             attacks = {
-                "attack": self.channel.play(self.audio_player.attack1Sound),
-                "attack2": self.channel.play(self.audio_player.attack2Sound)
+                "attack": self.audio_player.enqueue_sound(self.audio_player.attack1Sound),
+                "attack2": self.audio_player.enqueue_sound(self.audio_player.attack2Sound)
             }
             chosen_attack = random.choice(list(attacks.keys()))
             self.currentAnimation = chosen_attack
