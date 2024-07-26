@@ -29,15 +29,18 @@ class AudioPlayer:
         self.update_thread.start()
 
     def enqueue_sound(self, sound_data):
-        current_time = pygame.time.get_ticks()
-        last_played = self.sound_last_played.get(sound_data.sound, 0)
-        if (current_time - last_played) >= self.DEBOUNCE_INTERVAL:
-            with self.lock:
-                self.sound_queue.append(sound_data)
-                self.sound_last_played[sound_data.sound] = current_time
-                print(f"Enqueued {sound_data.sound} with priority {sound_data.priority}")
+        if sound_data and sound_data.sound:
+            current_time = pygame.time.get_ticks()
+            last_played = self.sound_last_played.get(sound_data.sound, 0)
+            if (current_time - last_played) >= self.DEBOUNCE_INTERVAL:
+                with self.lock:
+                    self.sound_queue.append(sound_data)
+                    self.sound_last_played[sound_data.sound] = current_time
+                    print(f"Enqueued {sound_data.sound} with priority {sound_data.priority}")
+            else:
+                print(f"Debounced {sound_data.sound}")
         else:
-            print(f"Debounced {sound_data.sound}")
+            print("Attempted to enqueue invalid or non-existent sound.")
 
     def run_update(self):
         while self.running:
