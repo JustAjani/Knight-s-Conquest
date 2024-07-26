@@ -2,6 +2,7 @@ import pygame
 import os
 import time
 from collections import deque
+import threading
 
 class AudioPlayer:
     AUDIOFILES = {
@@ -18,12 +19,20 @@ class AudioPlayer:
         self.channels = []
         self.sound_queue = deque()  # Queue to hold sounds to be played
         self.currently_playing = {}
+        self.running = True  # Control running state
+        self.update_thread = threading.Thread(target=self.run_update)  # Create the update thread
+        self.update_thread.start()  # Start the update thread
 
     def enqueue_sound(self, sound):
         """Add a sound to the queue to be played."""
         print(f"Enqueuing sound: {sound}")  # Debugging print
         self.sound_queue.append(sound)
         
+    def run_update(self):
+        """Thread target that updates the audio player state."""
+        while self.running:
+            self.update()
+            time.sleep(0.1)  # Update interval, can be adjusted for responsiveness or efficiency
 
     def get_channel(self):
         """Find an available channel for playing audio."""
@@ -54,6 +63,11 @@ class AudioPlayer:
             print(f"Playing sound: {sound_to_play} at {time.time()}")  # Debugging print
             self.play_sound(sound_to_play)  # Play the sound
         self.print_currently_playing()
+    
+    def stop(self):
+        """Stop the update thread."""
+        self.running = False
+        self.update_thread.join()  # Wait for the thread to finish
 
     def cleanup_channels(self):
         """Clean up unused channels to optimize resource usage."""

@@ -46,8 +46,9 @@
 - **Flip Direction Fixed**: I added a delay to the flip trigger so the directions change to frequently causing the spinning effect. [it was that simple but too me eternity to figure out...the power of underlooking stuff]
 
 ### July 25, 2024
-- **Refactoring Hel**l: Everything is broken...[audio and animation wise[for based enemy that is]]
+- **Refactoring Hel**: Everything is broken...[audio and animation wise[for based enemy that is]]
 - **Ai States Fixed**: The Enemy ai was messed up it's animation and everything. The Audio is still broken
+- **Audio Fix**: The audio is fixed now...[for the most part, add threading to manage the queue but there's some inconsistency]
 
 ## Objectives
 The primary goals of this project are:
