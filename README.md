@@ -43,6 +43,7 @@
 ### July 24, 2024
 - **Implemented a state machine**: Hoping to fix most of the spinning animation effect while switching through states...works for skeleton and goblin. [No so much for the Mushroom and the Flying Eye]
 - **Animations Fix**: After the state machine was implemented alot of things broke including movement animation. Now that's fixed
+- **Flip Direction Fixed**: I added a delay to the flip trigger so the directions change to frequently causing the spinning effect. [it was that simple but too me eternity to figure out...the power of underlooking stuff]
 
 ### July 25, 2024
 - **Refactoring Hel**l: Everything is broken...[audio and animation wise[for based enemy that is]]
@@ -53,7 +54,6 @@ The primary goals of this project are:
 - **Understanding Particle Effects**: Enhancing knowledge of particle effects to improve the visual appeal of enemy attacks and player movements, and to create a more immersive and engaging gameplay experience.
 - **Learning Enemy AI**: Developing and understanding the dynamics of enemy AI using Python.
 - **Mastering Tiled**: Gaining proficiency in using the Tiled level editor to create engaging and visually appealing levels.
-- **Flip Direction Fix**: I added a delay to the flip trigger so the directions change to frequently causing the spinning effect. [it was that simple but too me eternity to figure out...the power of underlooking stuff]
 
 ## Technologies Used
 - **Programming Language**: Python

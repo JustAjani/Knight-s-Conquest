@@ -1,5 +1,6 @@
 import pygame
 import os
+import time
 from collections import deque
 
 class AudioPlayer:
@@ -20,7 +21,9 @@ class AudioPlayer:
 
     def enqueue_sound(self, sound):
         """Add a sound to the queue to be played."""
+        print(f"Enqueuing sound: {sound}")  # Debugging print
         self.sound_queue.append(sound)
+        
 
     def get_channel(self):
         """Find an available channel for playing audio."""
@@ -31,21 +34,24 @@ class AudioPlayer:
             new_channel = pygame.mixer.Channel(len(self.channels))
             self.channels.append(new_channel)
             return new_channel
-        return self.channels[0]  # Return the first channel as a fallback
+        return None  # Don't fallback to the first channel, return None if all are busy
 
     def play_sound(self, sound):
         channel = self.get_channel()
         if channel:
             print(f"Attempting to play sound on channel {self.channels.index(channel)}")
             channel.play(sound)
+            self.currently_playing[channel] = sound  # Track the sound being played
         else:
             print("Failed to obtain a channel")
-
+  
     def update(self):
         """Update method to manage and play sounds from the queue."""
         self.cleanup_channels()  # Clean up channels that are no longer active
+        print(f"Update called at {time.time()}, Queue size before playing: {len(self.sound_queue)}")  # Debugging print
         if self.sound_queue:
             sound_to_play = self.sound_queue.popleft()  # Get the next sound from the queue
+            print(f"Playing sound: {sound_to_play} at {time.time()}")  # Debugging print
             self.play_sound(sound_to_play)  # Play the sound
         self.print_currently_playing()
 

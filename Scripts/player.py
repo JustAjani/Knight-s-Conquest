@@ -84,11 +84,9 @@ class Player:
         if attack1:
             self.currentAnimation != "attack1"
             self.currentAnimation = "attack1"
-            self.frameIndex = 0
         elif attack2:
             self.currentAnimation != "attack2"
             self.currentAnimation = "attack2"
-            self.frameIndex = 0
         elif moving:
             if self.currentAnimation != "run":
                 self.currentAnimation = "run"
