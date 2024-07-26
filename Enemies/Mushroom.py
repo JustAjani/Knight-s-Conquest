@@ -45,7 +45,7 @@ class Mushroom(Enemy):
             chosen_attack = random.choice(list(attacks.keys()))
             self.currentAnimation = chosen_attack
 
-            if not self.audio_player.get_channel(2):
+            if self.audio_player.get_channel(2):
                 self.audio_player.enqueue_sound(attacks[chosen_attack])  
 
             self.frameIndex = 0

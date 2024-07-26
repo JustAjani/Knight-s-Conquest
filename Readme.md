@@ -53,6 +53,7 @@
 ### July 26, 2024
 - **Audio Fix**: The respected audio is outputed properly [except for player]
 - **Animation Fix**: The animation is fixed now...[except for the flying eye enemy]
+- **Audio Update**: works good...had to add a debounce system to prevent repeated trigger of audio when they should be triggered once [still breaks the game over time]
 
 ## Objectives
 The primary goals of this project are:

@@ -136,16 +136,16 @@ class Enemy(Player):
     def audioHandling(self):
         match self.name:
             case "skeleton":
-                if not self.audio_player.get_channel(2):
+                if self.audio_player.get_channel(2):
                     self.audio_player.enqueue_sound(self.audio_player.skeletonWalk)
             case "goblin":
-                if not self.audio_player.get_channel(2):
+                if self.audio_player.get_channel(2):
                     self.audio_player.enqueue_sound(self.audio_player.goblinWalk)
             case "mushroom":
-                if not self.audio_player.get_channel(2):
+                if self.audio_player.get_channel(2):
                     self.audio_player.enqueue_sound(self.audio_player.mushroomWalk)
             case "flyingeye":
-                if not self.audio_player.get_channel(1):
+                if self.audio_player.get_channel(2):
                     self.audio_player.enqueue_sound(self.audio_player.flyingEyeWalk)
 
 

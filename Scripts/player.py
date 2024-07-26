@@ -57,7 +57,7 @@ class Player:
                 self.pos[0] -= movement
             moving = True
             self.flip = inputs['move_left']
-            if not self.audio_player.get_channel(1):
+            if self.audio_player.get_channel(1):
                 self.audio_player.enqueue_sound(self.audio_player.rightfoot)  
                 self.audio_player.enqueue_sound(self.audio_player.leftfoot)  
 
@@ -67,12 +67,12 @@ class Player:
 
         if inputs['attack1'] or inputs['left_click']:
             attack1 = True
-            if not self.audio_player.get_channel(3):  
+            if self.audio_player.get_channel(2):  
                 self.audio_player.enqueue_sound(self.audio_player.attack1Sound)
 
         if inputs['attack2'] or inputs['right_click']:
             attack2 = True
-            if not self.audio_player.get_channel(3):  
+            if self.audio_player.get_channel(2):  
                 self.audio_player.enqueue_sound(self.audio_player.attack2Sound)
 
         self.animationUpdate(moving, self.Jumping, attack1,attack2)
