@@ -52,9 +52,10 @@
 
 ### July 26, 2024
 - **Audio Fix**: Properly outputted respective audio (except for the player).
-- **Animation Fix**: Fixed most animation issues (except for the flying eye enemy).
+- **Animation Fix**: Fixed most animation issues (except for the skeleton enemy).
 - **Audio Update**: Added a debounce system to prevent repeated audio triggers. However, this sometimes breaks the game over time.
 - **Audio Fix**: Implemented error handling in enqueue_sound() to deal with null data, edited debounce system to prevent rapid channel creation.
+- **Attempting to fix Flying Eye State Manager**: it's comming along slowly...to slow to be honest
 
 ## Objectives
 The primary goals of this project are:

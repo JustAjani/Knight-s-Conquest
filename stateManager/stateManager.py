@@ -4,6 +4,7 @@ import pygame
 class State:
     def __init__(self, enemy):
         self.enemy = enemy
+        self.deltaTime = pygame.time.Clock().tick(60) / 1000
 
     def enter(self):
         pass
@@ -55,18 +56,22 @@ class AttackState(State):
 class FlyingEyePatrolState(State):
     def enter(self):
         super().enter()
-        self.enemy.currentAnimation = "run"
+        self.enemy.currentAnimation = "run" 
         # Set a new target y within bounds
         self.enemy.target_y = random.randint(0, self.enemy.SCREENH - self.enemy.size[1])
 
     def execute(self):
-        # Move vertically towards target_y
+        self.enemy.enemy_rect.y = self.enemy.pos[0]
+        self.enemy.enemy_rect.x = self.enemy.pos[1]
+
         if self.enemy.enemy_rect.y < self.enemy.target_y:
-            self.enemy.enemy_rect.y += self.enemy.speed
+            self.enemy.enemy_rect.y += self.enemy.speed * self.deltaTime  # Adjust this calculation
+            print(f"Moving down to target. New y: {self.enemy.enemy_rect.y}")
         elif self.enemy.enemy_rect.y > self.enemy.target_y:
-            self.enemy.enemy_rect.y -= self.enemy.speed
+            self.enemy.enemy_rect.y -= self.enemy.speed * self.deltaTime  # Adjust this calculation
+            print(f"Moving up to target. New y: {self.enemy.enemy_rect.y}")
         else:
-            # Target reached, pick a new target
+            print("Target Y reached, changing state.")
             self.enemy.change_state('flying_eye_patrol')
 
     def exit(self):
@@ -80,10 +85,10 @@ class FlyingEyeAttackState(State):
 
     def execute(self):
         # Assume the attack involves some sort of dive or projectile
-        self.enemy.flying_eye_attack()
+        self.enemy.attack(self.enemy.game.player)
         # Check if attack is completed
         if not self.enemy.is_attacking:
-            self.enemy.change_state('flying_eye_patrol')
+            self.enemy.state_machine.change_state('flying_eye_patrol')
 
     def exit(self):
         super().exit()

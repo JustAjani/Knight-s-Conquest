@@ -52,6 +52,7 @@ class Enemy(Player):
 
     def update(self, deltaTime, player):
         self.enemy_rect.y = self.pos[1]
+        self.enemy_rect.x = self.pos[0]
         self.adjustedspeed = self.speed * deltaTime
         current_time = pygame.time.get_ticks()
 
@@ -152,3 +153,4 @@ class Enemy(Player):
     def render(self):
         current_anim = self.image_left if self.flip else self.image
         self.game.screen.blit(current_anim, (self.enemy_rect.x, self.enemy_rect.y))
+        print(f"Rendering at x: {self.enemy_rect.x}, y: {self.enemy_rect.y}")  # Debugging output

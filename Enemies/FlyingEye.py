@@ -42,7 +42,9 @@ class FlyingEye(Enemy):
         self.state_machine.add_state('flying_eye_attack', FlyingEyeAttackState(self))
         self.state_machine.change_state('flying_eye_patrol')
 
-    def flying_eye_attack(self):
+        self.is_attacking = False
+
+    def attack(self,player):
         current_time = pygame.time.get_ticks()
         distance_to_player = abs(self.enemy_rect.x - self.game.player.pos[0])
         if current_time - self.last_attack_time > self.attack_cooldown and distance_to_player <= self.attack_range:
@@ -56,9 +58,11 @@ class FlyingEye(Enemy):
             self.currentAnimation = chosen_attack
             if self.audio_player.get_channel(2):
                 self.audio_player.enqueue_sound(attacks[chosen_attack])  
+        else:
+            self.is_attacking = False
 
-            self.frameIndex = 0
-            self.update_image()
+        self.frameIndex = 0
+        self.update_image()
 
     def update_image(self):
         if self.frameIndex < len(self.animations[self.currentAnimation]):
@@ -70,29 +74,29 @@ class FlyingEye(Enemy):
     def update(self, deltaTime, player):
         super().update(deltaTime, player)
         current_time = pygame.time.get_ticks()
-    
-        # Sync the enemy_rect to the new position
-        self.enemy_rect.x = self.pos[0]
-        self.enemy_rect.y = self.pos[1]
 
         # Check if the enemy should attack
         distance_to_player = abs(self.enemy_rect.x - player.pos[0])
-        if distance_to_player <= self.attack_range and self.state_machine.current_state != "attacking":
-            self.state_machine.change_state('attack')
+        if distance_to_player <= self.attack_range and self.state_machine.current_state != "flying_eye_attack":
+            self.state_machine.change_state('flying_eye_attack')
         
-        if self.state_machine.current_state == "attacking":
+        if self.state_machine.current_state == "flying_eye_attack":
             if self.enemy_rect.y < self.target_y:
                 self.enemy_rect.y = min(self.enemy_rect.y + self.speed * deltaTime, self.target_y)
             else:
-                self.state_machine.change_state('returning')
+                self.state_machine.change_state('flying_eye_patrol')
         
-        elif self.state_machine.current_state == "returning":
+        elif self.state_machine.current_state == "flying_eye_patrol":
             if self.enemy_rect.y > self.original_y:
                 self.enemy_rect.y = max(self.enemy_rect.y - self.speed * deltaTime, self.original_y)
             else:
                 self.state_machine.change_state('idle')
+        
+        self.state_machine.update()
 
         if current_time - self.lastUpdate > 1000 * self.animationSpeed:
             self.frameIndex = (self.frameIndex + 1) % len(self.animations[self.currentAnimation])
             self.lastUpdate = current_time
             self.update_image()
+        
+        
