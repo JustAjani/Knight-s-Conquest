@@ -26,7 +26,6 @@ class Enemy(Player):
 
         self.audio_player = AudioPlayer()
         self.audio_player.setup_sounds()
-        self.channel = self.audio_player.get_channel()
 
         self.move_distance = moveDistance
         self.start_pos = pos[0]
@@ -109,7 +108,7 @@ class Enemy(Player):
         self.audioHandling()
 
     def attack(self, player):
-        if not self.channel.get_busy():
+        if not self.audio_player.get_channel(2):
             self.audio_player.sound_queue(self.audio_player.attack1Sound)
         self.last_attack_time = pygame.time.get_ticks()
 
@@ -137,16 +136,16 @@ class Enemy(Player):
     def audioHandling(self):
         match self.name:
             case "skeleton":
-                if not self.channel.get_busy():
+                if not self.audio_player.get_channel(2):
                     self.audio_player.enqueue_sound(self.audio_player.skeletonWalk)
             case "goblin":
-                if not self.channel.get_busy():
+                if not self.audio_player.get_channel(2):
                     self.audio_player.enqueue_sound(self.audio_player.goblinWalk)
             case "mushroom":
-                if not self.channel.get_busy():
+                if not self.audio_player.get_channel(2):
                     self.audio_player.enqueue_sound(self.audio_player.mushroomWalk)
             case "flyingeye":
-                if not self.channel.get_busy():
+                if not self.audio_player.get_channel(1):
                     self.audio_player.enqueue_sound(self.audio_player.flyingEyeWalk)
 
 

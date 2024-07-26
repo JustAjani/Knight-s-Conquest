@@ -24,7 +24,6 @@ class Player:
 
         self.audio_player = AudioPlayer()
         self.audio_player.setup_sounds()
-        self.channel = self.audio_player.get_channel()
         
         self.animations = {
               "idle": game.assetManager.get_asset('knight_idle'),
@@ -58,7 +57,7 @@ class Player:
                 self.pos[0] -= movement
             moving = True
             self.flip = inputs['move_left']
-            if not self.channel.get_busy():
+            if not self.audio_player.get_channel(1):
                 self.audio_player.enqueue_sound(self.audio_player.rightfoot)  
                 self.audio_player.enqueue_sound(self.audio_player.leftfoot)  
 
@@ -68,12 +67,12 @@ class Player:
 
         if inputs['attack1'] or inputs['left_click']:
             attack1 = True
-            if not self.channel.get_busy():  
+            if not self.audio_player.get_channel(3):  
                 self.audio_player.enqueue_sound(self.audio_player.attack1Sound)
 
         if inputs['attack2'] or inputs['right_click']:
             attack2 = True
-            if not self.channel.get_busy():  
+            if not self.audio_player.get_channel(3):  
                 self.audio_player.enqueue_sound(self.audio_player.attack2Sound)
 
         self.animationUpdate(moving, self.Jumping, attack1,attack2)

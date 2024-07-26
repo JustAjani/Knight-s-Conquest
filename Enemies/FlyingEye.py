@@ -25,7 +25,6 @@ class FlyingEye(Enemy):
 
         self.audio_player = AudioPlayer()
         self.audio_player.setup_sounds()
-        self.channel = self.audio_player.get_channel()
 
         self.speed = 70
         self.move_distance = 80
@@ -55,7 +54,7 @@ class FlyingEye(Enemy):
             }
             chosen_attack = random.choice(list(attacks.keys()))
             self.currentAnimation = chosen_attack
-            if not self.channel.get_busy():
+            if not self.audio_player.get_channel(2):
                 self.audio_player.enqueue_sound(attacks[chosen_attack])  
 
             self.frameIndex = 0
