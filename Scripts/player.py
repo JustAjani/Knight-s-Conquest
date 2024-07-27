@@ -86,12 +86,12 @@ class Player:
             if self.Jumping:
                 self.gravity.jump(self, jump_strength=250)
 
-        if inputs['attack1'] or inputs['left_click']:
+        if inputs['attack1']:
             attack1 = True
             if self.audio_player.get_channel(2):  
                 self.audio_player.enqueue_sound(self.audio_player.attack1Sound)
 
-        if inputs['attack2'] or inputs['right_click']:
+        if inputs['attack2']:
             attack2 = True
             if self.audio_player.get_channel(2):  
                 self.audio_player.enqueue_sound(self.audio_player.attack2Sound)

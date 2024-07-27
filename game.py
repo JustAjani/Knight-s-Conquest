@@ -25,9 +25,9 @@ class Game:
         player1_keys = {
             'left': pygame.K_a,
             'right': pygame.K_d,
-            'jump': pygame.K_SPACE,
-            'attack1': pygame.K_v,
-            'attack2': pygame.K_b,
+            'jump': pygame.K_SPACE, # X - PS   
+            'attack1': pygame.K_v,  # B - Xbox, circle - PS
+            'attack2': pygame.K_b,  # X - Xbox, Triangle - PS
         }
         self.PlayerInputHandler = InputHandler(player1_keys)
         self.enemyInputHandler = DummyInputHandler()
@@ -75,8 +75,8 @@ class Game:
         
         self.enemy = []
         # self.enemy.append(Enemy(self, pos=[105,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler))
-        self.enemy.append(Goblin(self,pos=[105,288], size=[400,400]))
-        self.enemy.append(Mushroom(self,pos=[105,288], size=[400,400]))
+        # self.enemy.append(Goblin(self,pos=[105,288], size=[400,400]))
+        # self.enemy.append(Mushroom(self,pos=[105,288], size=[400,400]))
         # self.enemy.append(FlyingEye(self,pos=[105,20], size=[400,400]))
 
         self.health = Health(self,50, 20, 400, 20, 100, fg_color=(139,0,139), bg_color=(255, 0, 0))

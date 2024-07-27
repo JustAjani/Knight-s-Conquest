@@ -59,6 +59,7 @@
 
 ### July 27, 2024
 - **added docstring to files**: Trying to improve readility also for future me to remember what each of these functions do.
+- **controller compatibility**: PlayStation & Xbox
 
 ## Objectives
 The primary goals of this project are:
