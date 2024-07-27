@@ -59,7 +59,9 @@
 
 ### July 27, 2024
 - **added docstring to files**: Trying to improve readility also for future me to remember what each of these functions do.
-- **controller compatibility**: PlayStation & Xbox
+- **controller compatibility**: PlayStation & Xbox 
+- **Improved Save State Manager**: Using Firebase to handle save and load state data.
+- **More AI work**: Attempting to Fix the Flying Eye Enemy...not comming along good.
 
 ## Objectives
 The primary goals of this project are:

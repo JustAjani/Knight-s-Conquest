@@ -75,7 +75,6 @@ class Enemy(Player):
             None
         """
         self.enemy_rect.y = self.pos[1]
-        self.enemy_rect.x = self.pos[0]
         self.adjustedspeed = self.speed * deltaTime
         current_time = pygame.time.get_ticks()
 
