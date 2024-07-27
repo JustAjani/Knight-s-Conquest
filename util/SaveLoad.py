@@ -7,12 +7,6 @@ import sys
 import json
 import os
 
-# Initialize Firebase
-cred = credentials.Certificate('JSON/knight-s-conquest-firebase-adminsdk-cn4w0-1488726de2.json')
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://knight-s-conquest-default-rtdb.firebaseio.com'
-})
-
 class GameSaver:
     def __init__(self, game, path='game_states/default_save', key=None):
         """
