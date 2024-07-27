@@ -6,15 +6,19 @@ import json
 import os
 
 class GameSaver:
-    def __init__(self, game, filename='JSON\savegame.json', key=None):
+    def __init__(self, game, filename='JSON/savegame.json', key=None):
+        """
+        Initialize the GameSaver with game reference, filename, and encryption key.
+        """
         self.game = game
         self.filename = filename
-        # Generate a random 16-byte key or use an existing key
         self.key = key if key else os.urandom(16)
-        # Initialization vector should be random
         self.iv = os.urandom(AES.block_size)
 
     def serialize_game_state(self):
+        """
+        Serialize the game state to a dictionary.
+        """
         player_state = {
             'position': self.game.player.pos,
             'health': self.game.health.current_health
@@ -32,27 +36,38 @@ class GameSaver:
         return game_state
 
     def encrypt(self, plaintext):
+        """
+        Encrypt the plaintext using AES encryption.
+        """
         cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
         return cipher.encrypt(pad(plaintext.encode('utf-8'), AES.block_size))
 
     def decrypt(self, ciphertext):
+        """
+        Decrypt the ciphertext using AES decryption.
+        """
         cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
         return unpad(cipher.decrypt(ciphertext), AES.block_size).decode('utf-8')
 
     def save_game(self):
+        """
+        Save the encrypted game state to a file.
+        """
         try:
             state = json.dumps(self.serialize_game_state())
             encrypted_data = self.encrypt(state)
             with open(self.filename, 'wb') as f:
-                f.write(self.iv)  # Write the IV at the beginning of the file
+                f.write(self.iv)
                 f.write(encrypted_data)
                 f.flush()
             print("Game saved securely.")
         except Exception as e:
             print(f"Error saving game: {e}")
 
-
     def load_game(self):
+        """
+        Load and decrypt the game state from a file.
+        """
         try:
             with open(self.filename, 'rb') as f:
                 iv = f.read(AES.block_size)
@@ -65,8 +80,11 @@ class GameSaver:
             print(f"Failed to load game: {e}")
 
     def deserialize_game_state(self, state):
+        """
+        Deserialize the game state from a dictionary and apply it to the game.
+        """
         self.game.player.pos = state['player']['position']
-        self.game.health.current = state['player']['health']
+        self.game.health.current_health = state['player']['health']
 
         self.game.enemy = []
         for enemy_data in state['enemies']:

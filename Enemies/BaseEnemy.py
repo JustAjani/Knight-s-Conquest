@@ -5,6 +5,19 @@ from stateManager.stateManager import StateMachine, PatrolState, ChaseState, Att
 
 class Enemy(Player):
     def __init__(self, game, pos, size, moveDistance=100, inputHandler=None):
+        """
+        Initializes an instance of the Enemy class.
+
+        Args:
+            game (Game): The game instance.
+            pos (tuple): The position of the enemy as a tuple (x, y).
+            size (tuple): The size of the enemy as a tuple (width, height).
+            moveDistance (int, optional): The distance the enemy can move. Defaults to 100.
+            inputHandler (InputHandler, optional): The input handler for the game. Defaults to None.
+
+        Returns:
+            None
+        """
         super().__init__(game, pos, size, inputHandler)
         self.velocity_y = 0
         self.grounded = False
@@ -51,6 +64,16 @@ class Enemy(Player):
         self.animating = False
 
     def update(self, deltaTime, player):
+        """
+        Updates the enemy's position, state, and animation based on the given time delta and player position.
+
+        Parameters:
+            deltaTime (float): The time difference between the current and previous frames in seconds.
+            player (Player): The player object that the enemy is interacting with.
+
+        Returns:
+            None
+        """
         self.enemy_rect.y = self.pos[1]
         self.enemy_rect.x = self.pos[0]
         self.adjustedspeed = self.speed * deltaTime
@@ -61,6 +84,15 @@ class Enemy(Player):
         self.animationUpdate()
     
     def update_flip(self, player):
+        """
+        Updates the flip state of the enemy based on the player's position.
+
+        Parameters:
+            player (Player): The player object that the enemy is interacting with.
+
+        Returns:
+            None
+        """
         current_time = pygame.time.get_ticks()
         if current_time - self.last_flip_time > self.flip_cooldown:
             if player.pos[0] > self.enemy_rect.x:
@@ -71,6 +103,16 @@ class Enemy(Player):
                 self.last_flip_time = current_time
 
     def evaluate_combat_state(self, current_time, player):
+        """
+        Evaluates the combat state of the enemy based on the player's position.
+
+        Parameters:
+            current_time (int): The current time in milliseconds.
+            player (Player): The player object that the enemy is interacting with.
+
+        Returns:
+            None
+        """
         player_distance = abs(self.enemy_rect.x - player.pos[0])
 
         if self.state_machine.current_state == self.state_machine.states['attack']:
@@ -88,6 +130,18 @@ class Enemy(Player):
                 self.state_machine.change_state('patrol')
 
     def patrol(self):
+        """
+        Updates the enemy's position while patrolling.
+
+        This function checks if the enemy has reached the end position or start position. If it has, it flips the enemy's direction. 
+        Then, based on the flip direction, it moves the enemy towards the opposite direction.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
         if self.enemy_rect.x >= self.end_pos or self.enemy_rect.x <= self.start_pos:
             self.flip = not self.flip
 
@@ -99,6 +153,15 @@ class Enemy(Player):
         self.audioHandling()
 
     def chase(self, player):
+        """
+        Updates the enemy's position while chasing the player.
+
+        Parameters:
+            player (Player): The player object that the enemy is chasing.
+
+        Returns:
+            None
+        """
         if player.pos[0] > self.enemy_rect.x:
             self.flip = False
             self.enemy_rect.x += self.adjustedspeed
@@ -109,11 +172,36 @@ class Enemy(Player):
         self.audioHandling()
 
     def attack(self, player):
+        """
+        Attacks the player.
+
+        This function checks if there is no sound playing on channel 2 of the audio player. If not, it queues the attack1Sound from the audio player. 
+        It also updates the last_attack_time to the current time.
+
+        Parameters:
+            player (Player): The player object to attack.
+
+        Returns:
+            None
+        """
         if not self.audio_player.get_channel(2):
             self.audio_player.sound_queue(self.audio_player.attack1Sound)
         self.last_attack_time = pygame.time.get_ticks()
 
     def animationUpdate(self):
+        """
+        Update the animation of the enemy based on its current state.
+
+        This function checks the current state of the enemy and updates the animation accordingly. It checks if the enemy is moving and if the current animation is not "run". If so, it sets the current animation to "run" and resets the frame index to 0. If the enemy's state is "attack" and the current animation does not start with "attack", it sets the current animation to "attack" and resets the frame index to 0.
+
+        The function also checks if the enemy is animating and if the time elapsed since the last animation update is greater than the animation speed. If so, it updates the frame index by incrementing it by 1 modulo the length of the current animation. It then scales and flips the image of the current frame and updates the image and image_left attributes of the enemy.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
         now = pygame.time.get_ticks()
         moving = self.state_machine.current_state in [self.state_machine.states['patrol'], self.state_machine.states['chase']]
         if moving and self.currentAnimation != "run":
@@ -135,6 +223,17 @@ class Enemy(Player):
         self.animating = True  
 
     def audioHandling(self):
+        """
+        Handles audio playback based on the enemy's name.
+
+        This function checks the name of the enemy and plays the corresponding audio. It uses a match statement to check the name of the enemy and plays the appropriate audio. If the audio channel 2 is available, it enqueues the sound for the corresponding enemy.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
         match self.name:
             case "skeleton":
                 if self.audio_player.get_channel(2):
@@ -151,6 +250,17 @@ class Enemy(Player):
 
 
     def render(self):
+        """
+        Renders the current animation of the enemy on the game screen.
+
+        This function determines the current animation based on the enemy's flip status and blits it onto the game screen at the enemy's position. It also prints the coordinates of the enemy's rendering position for debugging purposes.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
         current_anim = self.image_left if self.flip else self.image
         self.game.screen.blit(current_anim, (self.enemy_rect.x, self.enemy_rect.y))
         print(f"Rendering at x: {self.enemy_rect.x}, y: {self.enemy_rect.y}")  # Debugging output

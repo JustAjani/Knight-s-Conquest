@@ -57,6 +57,9 @@
 - **Audio Fix**: Implemented error handling in enqueue_sound() to deal with null data, edited debounce system to prevent rapid channel creation.
 - **Attempting to fix Flying Eye State Manager**: it's comming along slowly...to slow to be honest
 
+### July 27, 2024
+- **added docstring to files**: Trying to improve readility also for future me to remember what each of these functions do.
+
 ## Objectives
 The primary goals of this project are:
 - **Understanding Particle Effects**: Enhance knowledge of particle effects to improve the visual appeal of enemy attacks and player movements, creating a more immersive gameplay experience.

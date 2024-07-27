@@ -5,6 +5,18 @@ from Scripts.Gravity import Gravity
 
 class Player:
     def __init__(self, game, pos, size, inputHandler):
+        """
+        Initializes a new instance of the Player class.
+
+        Parameters:
+            game (Game): The game object to which this player belongs.
+            pos (Tuple[int, int]): The initial position of the player as a tuple of x and y coordinates.
+            size (Tuple[int, int]): The size of the player as a tuple of width and height.
+            inputHandler (InputHandler): The input handler object to handle player input.
+
+        Returns:
+            None
+        """
         self.game = game
         self.pos = list(pos)
         self.size = list(size)
@@ -39,6 +51,15 @@ class Player:
         self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
 
     def update(self,deltaTime):
+        """
+        Updates the player's position and state based on the given time delta and input.
+
+        Parameters:
+            deltaTime (float): The time difference between the current and previous frames in seconds.
+
+        Returns:
+            None
+        """
         
         # print(f"Player position before input: {self.pos}")
         inputs = self.inputHandler.get_input()
@@ -79,6 +100,22 @@ class Player:
         # print(f"Player position after input: {self.pos}")
 
     def animationUpdate(self, moving, jumping, attack1,attack2):
+        """
+        Updates the animation of the player based on its current state.
+
+        This function checks the current state of the player and updates the animation accordingly. It checks if the player is attacking with attack1 or attack2, and if so, it sets the current animation to "attack1" or "attack2" respectively. If the player is moving, it checks if the current animation is not "run" and sets it to "run" with a frame index of 0. If the player is jumping, it checks if the current animation is not "jump" and sets it to "jump" with a frame index of 0. If none of the above conditions are met, it checks if the current animation is not "idle" and sets it to "idle" with a frame index of 0.
+
+        The function also checks if enough time has passed since the last animation update. If so, it updates the frame index by incrementing it by 1 modulo the length of the current animation. It then scales and flips the image of the current frame and updates the image and image_left attributes of the player.
+
+        Parameters:
+            moving (bool): Indicates whether the player is moving or not.
+            jumping (bool): Indicates whether the player is jumping or not.
+            attack1 (bool): Indicates whether the player is attacking with attack1 or not.
+            attack2 (bool): Indicates whether the player is attacking with attack2 or not.
+
+        Returns:
+            None
+        """
         now = pygame.time.get_ticks()
         if attack1:
             self.currentAnimation != "attack1"
@@ -110,6 +147,17 @@ class Player:
         self.image_left = pygame.transform.flip(self.image,True,False)
     
     def render(self):
+        """
+        Renders the current animation of the player on the game screen.
+
+        This function determines the current animation based on the player's flip status and blits it onto the game screen at the player's position. It also prints the coordinates of the player's rendering position for debugging purposes.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
         # adjusted_pos = camera.apply(self)
         if self.flip:
             current_anim = self.image_left

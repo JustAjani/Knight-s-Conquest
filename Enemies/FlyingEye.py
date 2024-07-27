@@ -6,6 +6,19 @@ from stateManager.stateManager import *
 
 class FlyingEye(Enemy):
     def __init__(self, game, pos, size):
+        """
+        Initializes a FlyingEye enemy object with the given game, position, and size.
+        
+        Args:
+            game (Game): The game object.
+            pos (list): The position of the enemy as a list [x, y].
+            size (list): The size of the enemy as a list [width, height].
+        
+        Returns:
+            None
+        
+        This function initializes a FlyingEye enemy object by setting its attributes such as the screen height, position, attack range, animations, audio player, speed, move distance, enemy rectangle, frame index, current animation, animation speed, last update time, attack cooldown, last attack time, name, and state machine. It also adds states to the state machine and sets the initial state to 'flying_eye_patrol'. The enemy object is not returned, but is initialized within this function.
+        """
         super().__init__(game, pos, size)
         self.SCREENH = 600 + 35
 
@@ -45,6 +58,17 @@ class FlyingEye(Enemy):
         self.is_attacking = False
 
     def attack(self,player):
+        """
+        Attacks the player if the cooldown has passed and the player is within the attack range.
+        
+        Args:
+            player (Player): The player object.
+        
+        Returns:
+            None
+        
+        This function checks if the current time minus the last attack time is greater than the attack cooldown and if the absolute difference between the enemy's x position and the player's x position is less than or equal to the attack range. If both conditions are met, it sets the last attack time to the current time, selects a random attack from a dictionary of attacks, sets the current animation to the chosen attack, and enqueues the chosen attack sound in the audio player if the second channel is available. If the conditions are not met, it sets the is_attacking attribute to False. It then resets the frame index and updates the image.
+        """
         current_time = pygame.time.get_ticks()
         distance_to_player = abs(self.enemy_rect.x - self.game.player.pos[0])
         if current_time - self.last_attack_time > self.attack_cooldown and distance_to_player <= self.attack_range:
@@ -65,6 +89,19 @@ class FlyingEye(Enemy):
         self.update_image()
 
     def update_image(self):
+        """
+        Updates the image of the object based on the current animation and frame index.
+
+        This function checks if the frame index is within the range of the current animation.
+        If it is, it scales and sets the image of the object to the corresponding frame.
+        It also prints the current animation and frame index.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
         if self.frameIndex < len(self.animations[self.currentAnimation]):
             self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
             print(f"Current Animation: {self.currentAnimation}, Frame Index: {self.frameIndex}")
@@ -72,6 +109,16 @@ class FlyingEye(Enemy):
             print(f"Error: Frame index out of range for animation {self.currentAnimation}")
 
     def update(self, deltaTime, player):
+        """
+        Updates the FlyingEye enemy's position, state, and animation based on the given time delta and player position.
+
+        Args:
+            deltaTime (float): The time difference between the current and previous frames in seconds.
+            player (Player): The player object that the enemy is interacting with.
+
+        Returns:
+            None
+        """
         super().update(deltaTime, player)
         current_time = pygame.time.get_ticks()
 

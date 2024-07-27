@@ -7,6 +7,17 @@ from stateManager.stateManager import SpecialMushroomAttackState
 
 class Mushroom(Enemy):
     def __init__(self, game, pos, size):
+        """
+        Initializes a new instance of the Mushroom class.
+
+        Parameters:
+            game (Game): The game object to which this mushroom belongs.
+            pos (Tuple[int, int]): The initial position of the mushroom as a tuple of x and y coordinates.
+            size (Tuple[int, int]): The size of the mushroom as a tuple of width and height.
+
+        Returns:
+            None
+        """
         super().__init__(game, pos, size)
 
         self.animations = {
@@ -34,6 +45,20 @@ class Mushroom(Enemy):
         self.state_machine.change_state('patrol')
 
     def mushroom_attack(self):
+        """
+        Executes a mushroom attack.
+
+        This function checks if the current time minus the last attack time is greater than the attack cooldown. If it is,
+        it updates the last attack time, selects a random attack from a dictionary of attacks, sets the current animation
+        to the chosen attack, and enqueues the chosen attack sound in the audio player if the second channel is available.
+        It then resets the frame index and updates the image.
+
+        Parameters:
+            self (object): The instance of the class.
+
+        Returns:
+            None
+        """
         current_time = pygame.time.get_ticks()
         if current_time - self.last_attack_time > self.attack_cooldown:
             self.last_attack_time = current_time

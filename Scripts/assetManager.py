@@ -5,6 +5,16 @@ class AssetManager:
         self.assets = {}
 
     def load_asset(self, name, path):
+        """
+        Load an asset image from the given path and store it in the assets dictionary with the given name.
+
+        Args:
+            name (str): The name of the asset.
+            path (str): The path to the asset image file.
+
+        Returns:
+            None
+        """
         image = pygame.image.load(path).convert_alpha()
         self.assets[name] = image
 
@@ -12,11 +22,34 @@ class AssetManager:
         return self.assets[name]
 
     def resize_asset(self, name, new_size):
+        """
+        Resize an asset image stored in the assets dictionary with the given name to the specified new size.
+
+        Parameters:
+            name (str): The name of the asset.
+            new_size (tuple): The new size of the asset image in pixels.
+
+        Returns:
+            None
+        """
         image = self.assets[name]
         scaled_image = pygame.transform.smoothscale(image, new_size)
         self.assets[name] = scaled_image
 
     def load_sprite_sheet(self, name, path, frame_dimensions):
+        """
+        Load a sprite sheet from the given path and store it in the assets dictionary with the given name.
+        The sprite sheet is divided into frames of specified dimensions, which are loaded into the assets dictionary.
+        
+        Args:
+            name (str): The name of the sprite sheet.
+            path (str): The path to the sprite sheet image file.
+            frame_dimensions (tuple): The dimensions of each frame in the sprite sheet.
+        
+        Returns:
+            None
+        
+        """
         sprite_sheet = pygame.image.load(path).convert_alpha()
         self.assets[name] = []
         sheet_width, sheet_height = sprite_sheet.get_size()
@@ -41,6 +74,17 @@ class AssetManager:
         return self.assets[name][frame_index]
     
     def load_tiles(self, path, tile_properties):
+        """
+        Load tiles from a tileset image file and store them in the `tiles` attribute of the `AssetManager` object.
+        
+        Parameters:
+            path (str): The path to the tileset image file.
+            tile_properties (dict): A dictionary containing tile properties for each tile in the tileset. The keys are tuples representing the x and y coordinates of the tile in the tileset, and the values are dictionaries containing the properties of the tile.
+        
+        Returns:
+            None
+        
+        """
         tileset = pygame.image.load(path).convert_alpha()
         tile_width, tile_height = self.tile_size
         for y in range(0, tileset.get_height(), tile_height):

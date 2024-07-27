@@ -2,9 +2,30 @@ import pygame
 
 class InputHandler:
     def __init__(self, key_map):
+        """
+        Initializes the InputHandler object with the given key_map.
+
+        Parameters:
+            key_map (dict): A dictionary mapping key names to their corresponding key codes.
+
+        Returns:
+            None
+        """
         self.key_map = key_map
 
     def get_input(self):
+        """
+        Returns a dictionary of input states based on the current state of the keyboard and mouse.
+
+        :return: A dictionary with the following keys:
+                 - 'move_left': Boolean indicating if the left arrow key is pressed.
+                 - 'move_right': Boolean indicating if the right arrow key is pressed.
+                 - 'jump': Boolean indicating if the space key is pressed.
+                 - 'attack1': Boolean indicating if the first attack key is pressed.
+                 - 'attack2': Boolean indicating if the second attack key is pressed.
+                 - 'left_click': Boolean indicating if the left mouse button is pressed.
+                 - 'right_click': Boolean indicating if the right mouse button is pressed.
+        """
         keys = pygame.key.get_pressed()
         mouse_buttons = pygame.mouse.get_pressed()  # Get mouse button states
         
