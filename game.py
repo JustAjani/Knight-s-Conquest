@@ -1,6 +1,6 @@
 import pygame
 import pygame.fastevent
-from util.settings import SCREENH, SCREENW,HEROSPRITEPATH,SKELETONPATH,GOBLINPATH,MUSHROOMPATH,EYEPATH
+from util.settings import SCREENH, SCREENW, HEROSPRITEPATH, SKELETONPATH, GOBLINPATH, MUSHROOMPATH, EYEPATH
 from Scripts.player import Player
 from Scripts.assetManager import AssetManager
 from Scripts.InputHandler import InputHandler, DummyInputHandler
@@ -18,7 +18,7 @@ import sys
 class Game:
     def __init__(self):
         pygame.init()
-        self.screenSize = (SCREENW,SCREENH)
+        self.screenSize = (SCREENW, SCREENH)
         self.screen = pygame.display.set_mode((SCREENW, SCREENH))
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("Knight's Conquest")
@@ -43,75 +43,79 @@ class Game:
         self.assetManager.load_sprite_sheet('knight_attack2', HEROSPRITEPATH + "/Attack2.png", (180, 180))
 
         #Enemy Animation
-        self.assetManager.load_sprite_sheet('skeleton_idle', SKELETONPATH + "/idle.png", (150,150))
-        self.assetManager.load_sprite_sheet('skeleton_walk', SKELETONPATH + "/Walk.png", (150,150))
-        self.assetManager.load_sprite_sheet('skeleton_attack',SKELETONPATH + "/Attack.png", (150,150))
-        self.assetManager.load_sprite_sheet('skeleton_death',SKELETONPATH + "/Death.png", (150,150))
-        self.assetManager.load_sprite_sheet('skeleton_shield', SKELETONPATH + "/Shield.png", (150,150))
+        self.assetManager.load_sprite_sheet('skeleton_idle', SKELETONPATH + "/idle.png", (150, 150))
+        self.assetManager.load_sprite_sheet('skeleton_walk', SKELETONPATH + "/Walk.png", (150, 150))
+        self.assetManager.load_sprite_sheet('skeleton_attack', SKELETONPATH + "/Attack.png", (150, 150))
+        self.assetManager.load_sprite_sheet('skeleton_death', SKELETONPATH + "/Death.png", (150, 150))
+        self.assetManager.load_sprite_sheet('skeleton_shield', SKELETONPATH + "/Shield.png", (150, 150))
 
         #Goblin Animation
-        self.assetManager.load_sprite_sheet('goblin_idle', GOBLINPATH + '/Idle.png', (150,150))
-        self.assetManager.load_sprite_sheet('goblin_walk', GOBLINPATH + '/Run.png', (150,150))
-        self.assetManager.load_sprite_sheet('goblin_attack', GOBLINPATH + '/Attack.png', (150,150))
-        self.assetManager.load_sprite_sheet('goblin_death', GOBLINPATH + '/Death.png', (150,150))
-        self.assetManager.load_sprite_sheet('goblin_attack2', GOBLINPATH + '/Attack2.png', (150,150))
+        self.assetManager.load_sprite_sheet('goblin_idle', GOBLINPATH + '/Idle.png', (150, 150))
+        self.assetManager.load_sprite_sheet('goblin_walk', GOBLINPATH + '/Run.png', (150, 150))
+        self.assetManager.load_sprite_sheet('goblin_attack', GOBLINPATH + '/Attack.png', (150, 150))
+        self.assetManager.load_sprite_sheet('goblin_death', GOBLINPATH + '/Death.png', (150, 150))
+        self.assetManager.load_sprite_sheet('goblin_attack2', GOBLINPATH + '/Attack2.png', (150, 150))
 
         #Mushroom Animation
-        self.assetManager.load_sprite_sheet('mushroom_idle', MUSHROOMPATH + '/Idle.png', (150,150))
-        self.assetManager.load_sprite_sheet('mushroom_walk', MUSHROOMPATH + '/Run.png', (150,150))
-        self.assetManager.load_sprite_sheet('mushroom_attack', MUSHROOMPATH + '/Attack.png', (150,150))
-        self.assetManager.load_sprite_sheet('mushroom_death', MUSHROOMPATH + '/Death.png', (150,150))
-        self.assetManager.load_sprite_sheet('mushroom_attack2', MUSHROOMPATH + '/Attack2.png', (150,150))
-        self.assetManager.load_sprite_sheet('mushroom_attack3', MUSHROOMPATH + '/Attack3.png', (150,150))
+        self.assetManager.load_sprite_sheet('mushroom_idle', MUSHROOMPATH + '/Idle.png', (150, 150))
+        self.assetManager.load_sprite_sheet('mushroom_walk', MUSHROOMPATH + '/Run.png', (150, 150))
+        self.assetManager.load_sprite_sheet('mushroom_attack', MUSHROOMPATH + '/Attack.png', (150, 150))
+        self.assetManager.load_sprite_sheet('mushroom_death', MUSHROOMPATH + '/Death.png', (150, 150))
+        self.assetManager.load_sprite_sheet('mushroom_attack2', MUSHROOMPATH + '/Attack2.png', (150, 150))
+        self.assetManager.load_sprite_sheet('mushroom_attack3', MUSHROOMPATH + '/Attack3.png', (150, 150))
 
         #Flying Eye Animation
-        self.assetManager.load_sprite_sheet('eye_idle', EYEPATH + '/Flight.png', (150,150))
-        self.assetManager.load_sprite_sheet('eye_walk', EYEPATH + '/Flight.png', (150,150))
-        self.assetManager.load_sprite_sheet('eye_attack', EYEPATH + '/Attack.png', (150,150))
-        self.assetManager.load_sprite_sheet('eye_death', EYEPATH + '/Death.png', (150,150))
-        self.assetManager.load_sprite_sheet('eye_attack2', EYEPATH + '/Attack2.png', (150,150))
-        self.assetManager.load_sprite_sheet('eye_attack3', EYEPATH + '/Attack3.png', (150,150))
+        self.assetManager.load_sprite_sheet('eye_idle', EYEPATH + '/Flight.png', (150, 150))
+        self.assetManager.load_sprite_sheet('eye_walk', EYEPATH + '/Flight.png', (150, 150))
+        self.assetManager.load_sprite_sheet('eye_attack', EYEPATH + '/Attack.png', (150, 150))
+        self.assetManager.load_sprite_sheet('eye_death', EYEPATH + '/Death.png', (150, 150))
+        self.assetManager.load_sprite_sheet('eye_attack2', EYEPATH + '/Attack2.png', (150, 150))
+        self.assetManager.load_sprite_sheet('eye_attack3', EYEPATH + '/Attack3.png', (150, 150))
         
         self.player = Player(self, pos=[-5, 300], size=[400, 400], inputHandler=self.PlayerInputHandler)
         
         self.enemies = []
-        # self.enemies.append(Enemy(self, pos=[105,288], size= [400,400], moveDistance=400, inputHandler=self.enemyInputHandler))
-        self.enemies.append(Goblin(self,pos=[105,288], size=[400,400]))
-        self.enemies.append(Mushroom(self,pos=[105,288], size=[400,400]))
-        # self.enemies.append(FlyingEye(self,pos=[105,20], size=[400,400]))
+        self.enemies.append(Goblin(self, pos=[105, 288], size=[400, 400]))
+        self.enemies.append(Mushroom(self, pos=[105, 288], size=[400, 400]))
 
-        self.health = Health(self,50, 20, 400, 20, 100, fg_color=(139,0,139), bg_color=(255, 0, 0))
+        self.health = Health(self, 50, 20, 400, 20, 100, fg_color=(139, 0, 139), bg_color=(255, 0, 0))
         self.gravity = Gravity()
         self.gameSaver = GameSaver(self)
 
     def run(self):
-        while True:
-            self.deltaTime = pygame.time.Clock().tick(60) / 1000
-            for event in pygame.event.get():
-                if event.type is pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                elif event.type == pygame.KEYDOWN:
-                    print("Key pressed:", pygame.key.name(event.key))  # Debug print for any key press
-                    if event.key == pygame.K_p:
-                        self.gameSaver.save_game()
-                    if event.key == pygame.K_l:
-                        self.gameSaver.load_game()
-                    if event.key == pygame.K_m:
-                        self.gameSaver.delete_game()
+        try:
+            while True:
+                self.deltaTime = pygame.time.Clock().tick(60) / 1000
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                    elif event.type == pygame.KEYDOWN:
+                        print("Key pressed:", pygame.key.name(event.key))  # Debug print for any key press
+                        if event.key == pygame.K_p:
+                            self.gameSaver.save_game()
+                        if event.key == pygame.K_l:
+                            self.gameSaver.load_game()
+                        if event.key == pygame.K_m:
+                            self.gameSaver.delete_game()
 
+                self.screen.fill('#f7b32b')
 
-            self.screen.fill('#f7b32b')
+                self.player.update(self.deltaTime)
+                self.player.render()
+                
+                for enemy in self.enemies:
+                    enemy.update(self.deltaTime, self.player)
+                    enemy.render()
+                
+                pygame.display.update()
+                self.deltaTime
+        except Exception as e:
+            self.handle_exception(e)
 
-            self.player.update(self.deltaTime)
-            self.player.render()
-            # self.gravity.apply(self.player,self.deltaTime)
-            
-            for enemy in self.enemies:
-                # self.gravity.apply(enemy, self.deltaTime)
-                enemy.update(self.deltaTime, self.player)
-                enemy.render()
-            
-            pygame.display.update()
-            self.deltaTime
+    def handle_exception(self, exception):
+        print(f"An error occurred: {exception}")
+        pygame.quit()
+        sys.exit()
+
 Game().run()

@@ -111,10 +111,24 @@ class Enemy(Player):
 
         Returns:
             None
+
+        This function calculates the distance between the enemy and the player using the enemy's position and the player's position.
+        It then checks the type of the current state of the enemy's state machine to determine the current combat state.
+        If the current state is 'attack', it checks if the player is outside the attack range and the chase range.
+        If the player is outside both ranges, the enemy transitions to the 'patrol' state.
+        If the player is within the chase range but outside the attack range, the enemy transitions to the 'chase' state.
+        If the player is within the attack range, the enemy transitions to the 'attack' state.
+        If the current state is not 'attack', it checks if the player is within the attack range or the chase range.
+        If the player is within the attack range, the enemy transitions to the 'attack' state.
+        If the player is within the chase range but outside the attack range, the enemy transitions to the 'chase' state.
+        If the player is outside both ranges, the enemy transitions to the 'patrol' state.
         """
         player_distance = abs(self.enemy_rect.x - player.pos[0])
 
-        if self.state_machine.current_state == self.state_machine.states['attack']:
+        # Get the type of the current state for comparison
+        current_state_type = type(self.state_machine.current_state)
+
+        if current_state_type == type(self.state_machine.states['attack']):
             if player_distance > self.attack_range + 20:
                 if player_distance > self.chase_range:
                     self.state_machine.change_state('patrol')
@@ -127,6 +141,7 @@ class Enemy(Player):
                 self.state_machine.change_state('chase')
             else:
                 self.state_machine.change_state('patrol')
+
 
     def patrol(self):
         """

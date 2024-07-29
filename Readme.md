@@ -67,7 +67,9 @@
 - **Sqlite integration**: I made a sqlite datbase to store data locally
 - **Sqlite N Firebase Syncronization**: Save the game locally and backs it up on the cloud
 - **Delete Save Data**: Function to delete the game save added.
-
+- **AssetManger Tweak**: Yeah tweak some stuff.
+- **GameSaver Update**: Now saves enemy states.
+- **Game Loop Tweek**: instead of a white screen or an unresponsive window, the program will terminate cleanly with an error message.
 
 ## Objectives
 The primary goals of this project are:
