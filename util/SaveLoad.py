@@ -8,8 +8,7 @@ from Crypto.Util.Padding import pad, unpad
 from Enemies.Goblin import Goblin
 from Enemies.Mushroom import Mushroom
 from Enemies.FlyingEye import FlyingEye
-from Enemies.BaseEnemy import Enemy  # if you also need the base class
-
+from Enemies.BaseEnemy import Enemy  
 class GameSaver:
     def __init__(self, game, path='game_states/default_save', key=None):
         """
