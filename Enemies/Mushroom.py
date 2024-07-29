@@ -79,9 +79,9 @@ class Mushroom(Enemy):
     def update_image(self):
         if self.frameIndex < len(self.animations[self.currentAnimation]):
             self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
-            print(f"Current Animation: {self.currentAnimation}, Frame Index: {self.frameIndex}")
-        else:
-            print(f"Error: Frame index out of range for animation {self.currentAnimation}")
+        #     print(f"Current Animation: {self.currentAnimation}, Frame Index: {self.frameIndex}")
+        # else:
+        #     print(f"Error: Frame index out of range for animation {self.currentAnimation}")
 
     def update(self, deltaTime, player):
         super().update(deltaTime, player)

@@ -262,4 +262,4 @@ class Enemy(Player):
         """
         current_anim = self.image_left if self.flip else self.image
         self.game.screen.blit(current_anim, (self.enemy_rect.x, self.enemy_rect.y))
-        print(f"Rendering at x: {self.enemy_rect.x}, y: {self.enemy_rect.y}")  # Debugging output
+        # print(f"Rendering at x: {self.enemy_rect.x}, y: {self.enemy_rect.y}")  # Debugging output

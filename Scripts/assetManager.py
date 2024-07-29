@@ -5,18 +5,15 @@ class AssetManager:
         self.assets = {}
 
     def load_asset(self, name, path):
-        """
-        Load an asset image from the given path and store it in the assets dictionary with the given name.
-
-        Args:
-            name (str): The name of the asset.
-            path (str): The path to the asset image file.
-
-        Returns:
-            None
-        """
-        image = pygame.image.load(path).convert_alpha()
-        self.assets[name] = image
+        if name in self.assets:
+            print(f"Asset '{name}' is already loaded.")
+            return
+        try:
+            image = pygame.image.load(path).convert_alpha()
+            self.assets[name] = image
+            print(f"Loaded asset '{name}' from {path}")
+        except pygame.error as e:
+            print(f"Failed to load asset '{name}' from {path}: {str(e)}")
 
     def get_asset(self, name):
         return self.assets[name]

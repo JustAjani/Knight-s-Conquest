@@ -1,4 +1,3 @@
-import pygame
 
 SCREENH = 600
 SCREENW = 800

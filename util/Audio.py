@@ -62,11 +62,11 @@ class AudioPlayer:
                 with self.lock:
                     self.sound_queue.append(sound_data)
                     self.sound_last_played[sound_data.sound] = current_time
-                    print(f"Enqueued {sound_data.sound} with priority {sound_data.priority}")
-            else:
-                print(f"Debounced {sound_data.sound}")
-        else:
-            print("Attempted to enqueue invalid or non-existent sound.")
+        #             print(f"Enqueued {sound_data.sound} with priority {sound_data.priority}")
+        #     else:
+        #         print(f"Debounced {sound_data.sound}")
+        # else:
+        #     print("Attempted to enqueue invalid or non-existent sound.")
 
     def run_update(self):
         """
@@ -136,9 +136,9 @@ class AudioPlayer:
         if channel:
             channel.play(sound_data.sound)
             self.currently_playing[channel] = sound_data
-            print(f"Playing sound on channel {self.channels.index(channel)} with priority {sound_data.priority}")
-        else:
-            print("Failed to obtain a channel")
+        #     print(f"Playing sound on channel {self.channels.index(channel)} with priority {sound_data.priority}")
+        # else:
+        #     print("Failed to obtain a channel")
 
     def update(self):
         """
@@ -225,17 +225,17 @@ class AudioPlayer:
         self.flyingEyeWalk = SoundData(self.load_audio('wing-flap.wav'), priority=1)
         self.flyingAttack = SoundData(self.load_audio('fast-collision-reverb.flac'), priority=3)
 
-    def print_currently_playing(self):
-        """
-        Prints the currently playing sounds and their associated priorities.
+    # def print_currently_playing(self):
+    #     """
+    #     Prints the currently playing sounds and their associated priorities.
 
-        This method iterates over the `currently_playing` dictionary and prints the channel index, sound being played, and priority for each sound.
+    #     This method iterates over the `currently_playing` dictionary and prints the channel index, sound being played, and priority for each sound.
 
-        Returns:
-            None
-        """
-        if not self.currently_playing:
-            print("No sound is currently playing.")
-        else:
-            for channel, sound_data in self.currently_playing.items():
-                print(f"Channel {self.channels.index(channel)} is playing: {sound_data.sound} with priority {sound_data.priority}")
+    #     Returns:
+    #         None
+    #     """
+    #     if not self.currently_playing:
+    #         print("No sound is currently playing.")
+    #     else:
+    #         for channel, sound_data in self.currently_playing.items():
+    #             print(f"Channel {self.channels.index(channel)} is playing: {sound_data.sound} with priority {sound_data.priority}")

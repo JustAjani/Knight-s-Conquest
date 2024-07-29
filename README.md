@@ -63,6 +63,12 @@
 - **Improved Save State Manager**: Using Firebase to handle save and load state data.
 - **More AI work**: Attempting to Fix the Flying Eye Enemy...not comming along good.
 
+### July 29,2024
+- **Sqlite integration**: I made a sqlite datbase to store data locally
+- **Sqlite N Firebase Syncronization**: Save the game locally and backs it up on the cloud
+- **Delete Save Data**: Function to delete the game save added.
+
+
 ## Objectives
 The primary goals of this project are:
 - **Understanding Particle Effects**: Enhance knowledge of particle effects to improve the visual appeal of enemy attacks and player movements, creating a more immersive gameplay experience.
