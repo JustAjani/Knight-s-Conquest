@@ -8,14 +8,25 @@ from Crypto.Util.Padding import pad, unpad
 from Enemies.Goblin import Goblin
 from Enemies.Mushroom import Mushroom
 from Enemies.FlyingEye import FlyingEye
-from Enemies.BaseEnemy import Enemy  # if you also need the base class
-
+from Enemies.BaseEnemy import Enemy  
+from stateManager.stateManager import *
+import threading
 
 # Initialize Firebase
 cred = credentials.Certificate('JSON/knight-s-conquest-firebase-adminsdk-cn4w0-1488726de2.json')
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://knight-s-conquest-default-rtdb.firebaseio.com'
 })
+
+state_mapping = {
+    'patrol': PatrolState,
+    'chase': ChaseState,
+    'attack': AttackState,
+    'FlyingEyePatrolState': FlyingEyePatrolState,
+    'FlyingEyeAttackState': FlyingEyeAttackState,
+    'SpecialGoblinAttackState': SpecialGoblinAttackState,
+    'SpecialMushroomAttackState': SpecialMushroomAttackState
+}
 
 class GameSaver:
     def __init__(self, game, path='game_states/default_save', key=None):
@@ -64,7 +75,7 @@ class GameSaver:
             {'type': enemy.__class__.__name__,
             'position': enemy.pos,
             'size': enemy.size,  # Ensure this is an attribute of your enemy objects
-            }
+            'currentState': type(enemy.state_machine.current_state).__name__}
             for enemy in self.game.enemies
         ]
         game_state = {'player': player_state, 'enemies': enemies_state}
@@ -79,7 +90,15 @@ class GameSaver:
 
     def save_game(self):
         """
+        Initiate a thread to save the encrypted game state to Firebase and local SQLite database.
+        """
+        thread = threading.Thread(target=self._save_game_thread)
+        thread.start()
+
+    def _save_game_thread(self):
+        """
         Save the encrypted game state to Firebase and local SQLite database.
+        This function is run in a separate thread to avoid blocking the main game loop.
         """
         try:
             state = self.serialize_game_state()
@@ -93,7 +112,7 @@ class GameSaver:
             conn = sqlite3.connect(self.local_db_path)
             cursor = conn.cursor()
             cursor.execute("INSERT INTO game_state (iv, data) VALUES (?, ?)",
-                           (self.iv.hex(), encrypted_data.hex()))
+                        (self.iv.hex(), encrypted_data.hex()))
             conn.commit()
             conn.close()
             print("Game saved securely to Firebase and locally.")
@@ -102,7 +121,15 @@ class GameSaver:
 
     def load_game(self, from_local=False):
         """
+        Initiate a thread to load and decrypt the game state from Firebase or local database.
+        """
+        thread = threading.Thread(target=self._load_game_thread, args=(from_local,))
+        thread.start()
+
+    def _load_game_thread(self, from_local):
+        """
         Load and decrypt the game state from Firebase or local database.
+        This function is run in a separate thread to avoid blocking the main game loop.
         """
         try:
             if from_local:
@@ -126,7 +153,7 @@ class GameSaver:
             print("Game loaded securely.")
         except Exception as e:
             print(f"Failed to load game: {e}")
-    
+        
     def delete_game(self):
         """
         Delete the game state from Firebase and the local SQLite database.
@@ -154,6 +181,21 @@ class GameSaver:
         return unpad(cipher.decrypt(ciphertext), AES.block_size).decode('utf-8')
 
     def deserialize_game_state(self, state_json):
+        """
+        Deserialize the game state from a JSON string and update the game objects accordingly.
+
+        Parameters:
+            state_json (str): The JSON string representing the game state.
+
+        Returns:
+            None
+
+        This function deserializes the game state from a JSON string and updates the game objects accordingly. It first loads the JSON string into a Python dictionary using the `json.loads()` function. Then, it updates the position of the player object in the game using the 'position' value from the 'player' key in the dictionary. It also updates the current health of the player object using the 'health' value from the 'player' key. After that, it clears the list of enemies in the game.
+
+        Next, it iterates over the 'enemies' key in the dictionary and creates an enemy object based on the 'type' value of each enemy data. It initializes the state machine for each enemy and populates it with all the states defined in the `state_mapping` dictionary. It then dynamically sets the current state of the enemy object using the 'currentState' value from the enemy data. Finally, it appends the enemy object to the list of enemies in the game.
+
+        Note: This function assumes that the `game` object has the necessary attributes and methods to update the game state.
+        """
         state = json.loads(state_json)
         self.game.player.pos = state['player']['position']
         self.game.health.current_health = state['player']['health']
@@ -167,13 +209,22 @@ class GameSaver:
                 enemy_class = Mushroom
             elif enemy_data['type'] == 'FlyingEye':
                 enemy_class = FlyingEye
-            elif enemy_data['type'] == 'Enemy':  # Base class, if needed
+            elif enemy_data['type'] == 'Enemy':
                 enemy_class = Enemy
 
             if enemy_class:
-                enemy = enemy_class(self.game,
-                                    pos=enemy_data['position'],
-                                    size=enemy_data['size'])  # Handle optional parameters
+                enemy = enemy_class(self.game, pos=enemy_data['position'], size=enemy_data['size'])
+                # Initialize the state machine for each enemy
+                enemy.state_machine = StateMachine(enemy)
+                # Populate all states in the state machine
+                for state_name, state_cls in state_mapping.items():
+                    enemy.state_machine.add_state(state_name, state_cls(enemy))
+                # Dynamically setting current state using a mapping
+                state_instance = enemy.state_machine.states.get(enemy_data['currentState'], State)
+                enemy.state_machine.current_state = state_instance
+                enemy.state_machine.current_state.enter()  # Initialize the state properly
                 self.game.enemies.append(enemy)
 
+
+            
 
