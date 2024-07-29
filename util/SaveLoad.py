@@ -12,12 +12,6 @@ from Enemies.BaseEnemy import Enemy
 from stateManager.stateManager import *
 import threading
 
-# Initialize Firebase
-cred = credentials.Certificate('JSON/knight-s-conquest-firebase-adminsdk-cn4w0-1488726de2.json')
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://knight-s-conquest-default-rtdb.firebaseio.com'
-})
-
 state_mapping = {
     'patrol': PatrolState,
     'chase': ChaseState,
