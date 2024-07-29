@@ -34,9 +34,9 @@ class GameSaver:
         Initializes a new instance of the GameSaver class.
 
         Args:
-            game (object): The game object to save.
-            path (str, optional): The path of the game state in Firebase. Defaults to 'game_states/default_save'.
-            key (bytes, optional): The encryption key for the game state. If not provided, a random key will be generated. Defaults to None.
+            game (object): The game object to be saved.
+            path (str, optional): The path to the database where the game state will be stored. Defaults to 'game_states/default_save'.
+            key (bytes, optional): The encryption key to be used for encrypting the game state. If not provided, a random 16-byte key will be generated. Defaults to None.
 
         Returns:
             None
@@ -47,11 +47,20 @@ class GameSaver:
         self.iv = os.urandom(AES.block_size)
         self.db_ref = db.reference(self.db_path)
         self.local_db_path = 'local_game_state.db'
+        self.lock = threading.Lock()
         self.init_local_db()
 
     def init_local_db(self):
         """
-        Initialize or create the local database and table.
+        Initializes a local SQLite database to store game state data.
+
+        This function creates a new SQLite database file at the specified `local_db_path` if it does not already exist. It then creates a table named 'game_state' with three columns: 'id' (primary key), 'iv' (text), and 'data' (text).
+
+        Parameters:
+            self (object): The instance of the class.
+
+        Returns:
+            None
         """
         conn = sqlite3.connect(self.local_db_path)
         cursor = conn.cursor()
@@ -65,7 +74,7 @@ class GameSaver:
         Serializes the game state into a JSON string.
 
         Returns:
-            str: The serialized game state in JSON format.
+            str: The JSON string representation of the game state.
         """
         player_state = {
             'position': self.game.player.pos,
@@ -73,116 +82,170 @@ class GameSaver:
         }
         enemies_state = [
             {'type': enemy.__class__.__name__,
-            'position': enemy.pos,
-            'size': enemy.size,  # Ensure this is an attribute of your enemy objects
-            'currentState': type(enemy.state_machine.current_state).__name__}
+             'position': enemy.pos,
+             'size': enemy.size,
+             'currentState': type(enemy.state_machine.current_state).__name__}
             for enemy in self.game.enemies
         ]
-        game_state = {'player': player_state, 'enemies': enemies_state}
+        audio_state = self.game.audioPlayer.get_audio_state()
+        game_state = {'player': player_state, 'enemies': enemies_state, 'audio': audio_state}
         return json.dumps(game_state)
 
     def encrypt(self, plaintext):
-        """
-        Encrypt the plaintext using AES encryption.
-        """
         cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
         return cipher.encrypt(pad(plaintext.encode('utf-8'), AES.block_size))
 
     def save_game(self):
-        """
-        Initiate a thread to save the encrypted game state to Firebase and local SQLite database.
-        """
         thread = threading.Thread(target=self._save_game_thread)
         thread.start()
 
     def _save_game_thread(self):
         """
-        Save the encrypted game state to Firebase and local SQLite database.
-        This function is run in a separate thread to avoid blocking the main game loop.
+        Save the game state to Firebase and locally.
+
+        This function saves the game state by serializing it, encrypting it, and storing it in both Firebase and a local SQLite database.
+
+        Parameters:
+            self (object): The instance of the class.
+        
+        Returns:
+            None
+        
+        Raises:
+            Exception: If an error occurs during the saving process.
         """
-        try:
-            state = self.serialize_game_state()
-            encrypted_data = self.encrypt(state)
-            # Save to Firebase
-            self.db_ref.set({
-                'iv': self.iv.hex(),
-                'data': encrypted_data.hex()
-            })
-            # Save locally
-            conn = sqlite3.connect(self.local_db_path)
-            cursor = conn.cursor()
-            cursor.execute("INSERT INTO game_state (iv, data) VALUES (?, ?)",
-                        (self.iv.hex(), encrypted_data.hex()))
-            conn.commit()
-            conn.close()
-            print("Game saved securely to Firebase and locally.")
-        except Exception as e:
-            print(f"Error saving game: {e}")
+        with self.lock:
+            try:
+                state = self.serialize_game_state()
+                encrypted_data = self.encrypt(state)
+                self.db_ref.set({
+                    'iv': self.iv.hex(),
+                    'data': encrypted_data.hex()
+                })
+                conn = sqlite3.connect(self.local_db_path)
+                cursor = conn.cursor()
+                cursor.execute("INSERT INTO game_state (iv, data) VALUES (?, ?)",
+                               (self.iv.hex(), encrypted_data.hex()))
+                conn.commit()
+                conn.close()
+                print("Game saved securely to Firebase and locally.")
+            except Exception as e:
+                print(f"Error saving game: {e}")
 
     def load_game(self, from_local=False):
         """
-        Initiate a thread to load and decrypt the game state from Firebase or local database.
+        Load a saved game from either the local database or the Firebase database.
+
+        Parameters:
+            from_local (bool): If True, load the game from the local database. If False, load the game from the Firebase database.
+
+        Returns:
+            None
+
+        This function starts a new thread to load a saved game by calling the `_load_game_thread` method with the `from_local` parameter. The game state is loaded from either the local database or the Firebase database based on the value of the `from_local` parameter.
+
+        Note:
+            - The `_load_game_thread` method is assumed to be defined elsewhere in the class and is responsible for loading the game state.
+            - The `self.lock` context manager is used to ensure thread safety during the loading process.
+            - The `self.db_ref` object is assumed to be an instance of a Firebase database reference.
         """
         thread = threading.Thread(target=self._load_game_thread, args=(from_local,))
         thread.start()
 
     def _load_game_thread(self, from_local):
         """
-        Load and decrypt the game state from Firebase or local database.
-        This function is run in a separate thread to avoid blocking the main game loop.
-        """
-        try:
-            if from_local:
-                conn = sqlite3.connect(self.local_db_path)
-                cursor = conn.cursor()
-                cursor.execute("SELECT iv, data FROM game_state ORDER BY id DESC LIMIT 1")
-                saved_data = cursor.fetchone()
-                conn.close()
-                if saved_data:
-                    iv, data = saved_data
-                    iv = bytes.fromhex(iv)
-                    encrypted_data = bytes.fromhex(data)
-            else:
-                saved_data = self.db_ref.get()
-                if saved_data:
-                    iv = bytes.fromhex(saved_data['iv'])
-                    encrypted_data = bytes.fromhex(saved_data['data'])
+        Load a saved game from either the local database or the Firebase database.
 
-            decrypted_data = self.decrypt(encrypted_data, iv)
-            self.deserialize_game_state(decrypted_data)
-            print("Game loaded securely.")
-        except Exception as e:
-            print(f"Failed to load game: {e}")
-        
+        Parameters:
+            from_local (bool): If True, load the game from the local database. If False, load the game from the Firebase database.
+
+        Returns:
+            None
+
+        This function loads a saved game by querying the appropriate database based on the value of the `from_local` parameter.
+        If `from_local` is True, it connects to the local database, retrieves the most recent saved game data, and decrypts it.
+        The decrypted data is then deserialized and used to restore the game state.
+        If `from_local` is False, it retrieves the saved game data from the Firebase database and performs the same decryption and deserialization steps.
+        If the game is loaded successfully, a message is printed to indicate that the game was loaded securely.
+        If an exception occurs during the loading process, an error message is printed.
+
+        Note:
+            - The `self.lock` context manager is used to ensure thread safety during the loading process.
+            - The `self.db_ref` object is assumed to be an instance of a Firebase database reference.
+            - The `self.deserialize_game_state` method is assumed to be defined elsewhere in the class and is responsible for deserializing the decrypted game data.
+            - The `self.decrypt` method is assumed to be defined elsewhere in the class and is responsible for decrypting the game data using the provided IV and cipher.
+        """
+        with self.lock:
+            try:
+                if from_local:
+                    conn = sqlite3.connect(self.local_db_path)
+                    cursor = conn.cursor()
+                    cursor.execute("SELECT iv, data FROM game_state ORDER BY id DESC LIMIT 1")
+                    saved_data = cursor.fetchone()
+                    conn.close()
+                    if saved_data:
+                        iv, data = saved_data
+                        iv = bytes.fromhex(iv)
+                        encrypted_data = bytes.fromhex(data)
+                else:
+                    saved_data = self.db_ref.get()
+                    if saved_data:
+                        iv = bytes.fromhex(saved_data['iv'])
+                        encrypted_data = bytes.fromhex(saved_data['data'])
+
+                decrypted_data = self.decrypt(encrypted_data, iv)
+                self.deserialize_game_state(decrypted_data)
+                print("Game loaded securely.")
+            except Exception as e:
+                print(f"Failed to load game: {e}")
+
     def delete_game(self):
         """
-        Delete the game state from Firebase and the local SQLite database.
+        Deletes the game state from both Firebase and the local database.
+
+        This function deletes the game state from the Firebase Realtime Database and the local SQLite database. It first deletes the game state from Firebase using the `delete()` method of the `db_ref` object. Then, it connects to the local SQLite database using the `connect()` method of the `sqlite3` module. It creates a cursor object and executes the SQL query to delete the game state from the `game_state` table using the `execute()` method of the cursor object. After that, it commits the changes to the database using the `commit()` method of the connection object. Finally, it closes the database connection using the `close()` method of the connection object.
+
+        If any exception occurs during the execution of this function, it prints an error message with the exception details.
+
+        Parameters:
+            self (GameSaver): The instance of the GameSaver class.
+
+        Returns:
+            None
         """
         try:
-            # Delete from Firebase
             self.db_ref.delete()
-
-            # Delete locally
             conn = sqlite3.connect(self.local_db_path)
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM game_state")  # This deletes all entries; adjust if needed
+            cursor.execute("DELETE FROM game_state")
             conn.commit()
             conn.close()
-
             print("Game state deleted from Firebase and locally.")
         except Exception as e:
             print(f"Error deleting game: {e}")
 
     def decrypt(self, ciphertext, iv):
         """
-        Decrypt the ciphertext using AES decryption.
+        Decrypts the given ciphertext using AES encryption with the CBC mode and the provided initialization vector (iv).
+
+        Parameters:
+            ciphertext (bytes): The encrypted data to be decrypted.
+            iv (bytes): The initialization vector used for decryption.
+
+        Returns:
+            str: The decrypted data as a UTF-8 encoded string.
+
+        This function creates a new AES cipher object with the provided key and CBC mode. It then decrypts the ciphertext using the cipher object and the provided initialization vector. The decrypted data is unpadded and decoded as a UTF-8 string.
+
+        Raises:
+            ValueError: If the ciphertext is not a multiple of the block size.
         """
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
         return unpad(cipher.decrypt(ciphertext), AES.block_size).decode('utf-8')
 
     def deserialize_game_state(self, state_json):
         """
-        Deserialize the game state from a JSON string and update the game objects accordingly.
+        Deserialize the game state from a JSON string and update the game object accordingly.
 
         Parameters:
             state_json (str): The JSON string representing the game state.
@@ -190,11 +253,9 @@ class GameSaver:
         Returns:
             None
 
-        This function deserializes the game state from a JSON string and updates the game objects accordingly. It first loads the JSON string into a Python dictionary using the `json.loads()` function. Then, it updates the position of the player object in the game using the 'position' value from the 'player' key in the dictionary. It also updates the current health of the player object using the 'health' value from the 'player' key. After that, it clears the list of enemies in the game.
+        This function loads the game state from the given JSON string and updates the game object accordingly. It sets the player's position and health, clears the list of enemies, and recreates the enemies based on the data in the JSON string. The enemies are created using the appropriate enemy class based on the enemy type in the JSON string. The state machine for each enemy is also set up with the appropriate states and the current state is set to the state specified in the JSON string. The audio state of the game is also updated based on the data in the JSON string.
 
-        Next, it iterates over the 'enemies' key in the dictionary and creates an enemy object based on the 'type' value of each enemy data. It initializes the state machine for each enemy and populates it with all the states defined in the `state_mapping` dictionary. It then dynamically sets the current state of the enemy object using the 'currentState' value from the enemy data. Finally, it appends the enemy object to the list of enemies in the game.
-
-        Note: This function assumes that the `game` object has the necessary attributes and methods to update the game state.
+        Note: This function assumes that the necessary enemy classes and state mapping are available in the global scope.
         """
         state = json.loads(state_json)
         self.game.player.pos = state['player']['position']
@@ -214,16 +275,16 @@ class GameSaver:
 
             if enemy_class:
                 enemy = enemy_class(self.game, pos=enemy_data['position'], size=enemy_data['size'])
-                # Initialize the state machine for each enemy
                 enemy.state_machine = StateMachine(enemy)
-                # Populate all states in the state machine
                 for state_name, state_cls in state_mapping.items():
                     enemy.state_machine.add_state(state_name, state_cls(enemy))
-                # Dynamically setting current state using a mapping
                 state_instance = enemy.state_machine.states.get(enemy_data['currentState'], State)
                 enemy.state_machine.current_state = state_instance
-                enemy.state_machine.current_state.enter()  # Initialize the state properly
+                enemy.state_machine.current_state.enter()
                 self.game.enemies.append(enemy)
+
+        self.game.audioPlayer.set_audio_state(state['audio'])
+
 
 
             

@@ -224,6 +224,47 @@ class AudioPlayer:
         self.mushroomWalk = SoundData(self.load_audio('sludge-footsteps-1.wav'), priority=2)
         self.flyingEyeWalk = SoundData(self.load_audio('wing-flap.wav'), priority=1)
         self.flyingAttack = SoundData(self.load_audio('fast-collision-reverb.flac'), priority=3)
+    
+    def get_audio_state(self):
+        """
+        Get the current audio state including currently playing sounds and their priorities.
+
+        Returns:
+            list: A list of tuples containing sound names and their priorities.
+        """
+        audio_state = []
+        for channel, sound_data in self.currently_playing.items():
+            sound_name = sound_data.sound.get_buffer().raw  # Assuming the sound name can be extracted or stored somehow
+            priority = sound_data.priority
+            audio_state.append((sound_name, priority))
+        return audio_state
+
+    def set_audio_state(self, audio_state):
+        """
+        Set the audio state to the provided state.
+
+        Args:
+            audio_state (list): A list of tuples containing sound names and their priorities.
+
+        Returns:
+            None
+        """
+        self.stop_all_sounds()
+        for sound_name, priority in audio_state:
+            sound = self.load_audio(sound_name)  # Assuming you have a way to load the sound by name
+            sound_data = SoundData(sound, priority)
+            self.play_sound(sound_data)
+
+    def stop_all_sounds(self):
+        """
+        Stop all currently playing sounds.
+
+        Returns:
+            None
+        """
+        for channel in self.channels:
+            channel.stop()
+        self.currently_playing.clear()
 
     # def print_currently_playing(self):
     #     """

@@ -6,6 +6,19 @@
 ## Credits
 - **Artist**: LuizMelo 
 
+## Objectives
+The primary goals of this project are:
+- **Understanding Particle Effects**: Enhance knowledge of particle effects to improve the visual appeal of enemy attacks and player movements, creating a more immersive gameplay experience.
+- **Learning Enemy AI**: Develop and understand the dynamics of enemy AI using Python.
+- **Mastering Tiled**: Gain proficiency in using the Tiled level editor to create engaging and visually appealing levels.
+
+## Technologies Used
+- **Programming Language**: Python
+- **Level Design**: Tiled Level Editor
+- **Game Engine**: Pygame
+
+Feel free to contribute or suggest improvements!
+
 ## Current Progress
 
 ### July 16, 2024
@@ -70,16 +83,4 @@
 - **AssetManger Tweak**: Yeah tweak some stuff.
 - **GameSaver Update**: Now saves enemy states.
 - **Game Loop Tweek**: instead of a white screen or an unresponsive window, the program will terminate cleanly with an error message.
-
-## Objectives
-The primary goals of this project are:
-- **Understanding Particle Effects**: Enhance knowledge of particle effects to improve the visual appeal of enemy attacks and player movements, creating a more immersive gameplay experience.
-- **Learning Enemy AI**: Develop and understand the dynamics of enemy AI using Python.
-- **Mastering Tiled**: Gain proficiency in using the Tiled level editor to create engaging and visually appealing levels.
-
-## Technologies Used
-- **Programming Language**: Python
-- **Level Design**: Tiled Level Editor
-- **Game Engine**: Pygame
-
-Feel free to contribute or suggest improvements!
+- **GameSaver Update**: The Game save the audio state and loads it back.

@@ -81,6 +81,7 @@ class Game:
         self.health = Health(self, 50, 20, 400, 20, 100, fg_color=(139, 0, 139), bg_color=(255, 0, 0))
         self.gravity = Gravity()
         self.gameSaver = GameSaver(self)
+        self.audioPlayer = AudioPlayer()
 
     def run(self):
         try:
@@ -100,6 +101,8 @@ class Game:
                             self.gameSaver.delete_game()
 
                 self.screen.fill('#f7b32b')
+
+                self.audioPlayer.update()
 
                 self.player.update(self.deltaTime)
                 self.player.render()
