@@ -54,6 +54,9 @@ class Enemy(Player):
         self.last_flip_time = pygame.time.get_ticks()
         self.flip_cooldown = 500  # 500 milliseconds between flips
         self.name = "skeleton"
+
+        self.attack_count = 0
+        self.is_third_attack = False
         
         # Initialize state machine
         self.state_machine = StateMachine(self)
@@ -201,6 +204,13 @@ class Enemy(Player):
         if not self.audio_player.get_channel(2):
             self.audio_player.sound_queue(self.audio_player.attack1Sound)
         self.last_attack_time = pygame.time.get_ticks()
+        
+        self.attack_count += 1
+        if self.attack_count % 3 == 0:
+            self.is_third_attack = True
+            self.trigger_ability()
+        else:
+            self.is_third_attack = False
 
     def animationUpdate(self):
         """
@@ -232,6 +242,7 @@ class Enemy(Player):
 
         self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
         self.image_left = pygame.transform.flip(self.image, True, False)
+        self.continue_animation()
     
     def continue_animation(self):
         self.animating = True  

@@ -10,4 +10,4 @@ SKELETONPATH = 'Assets/Skeleton'
 GOBLINPATH = 'Assets/Goblin'
 MUSHROOMPATH = 'Assets/Mushroom'
 EYEPATH = 'Assets/Flying eye'
-
+ABILPATH = 'Assets/Abilities'

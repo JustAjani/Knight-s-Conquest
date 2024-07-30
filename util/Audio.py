@@ -266,17 +266,17 @@ class AudioPlayer:
             channel.stop()
         self.currently_playing.clear()
 
-    # def print_currently_playing(self):
-    #     """
-    #     Prints the currently playing sounds and their associated priorities.
+    def print_currently_playing(self):
+        """
+        Prints the currently playing sounds and their associated priorities.
 
-    #     This method iterates over the `currently_playing` dictionary and prints the channel index, sound being played, and priority for each sound.
+        This method iterates over the `currently_playing` dictionary and prints the channel index, sound being played, and priority for each sound.
 
-    #     Returns:
-    #         None
-    #     """
-    #     if not self.currently_playing:
-    #         print("No sound is currently playing.")
-    #     else:
-    #         for channel, sound_data in self.currently_playing.items():
-    #             print(f"Channel {self.channels.index(channel)} is playing: {sound_data.sound} with priority {sound_data.priority}")
+        Returns:
+            None
+        """
+        if not self.currently_playing:
+            print("No sound is currently playing.")
+        else:
+            for channel, sound_data in self.currently_playing.items():
+                print(f"Channel {self.channels.index(channel)} is playing: {sound_data.sound} with priority {sound_data.priority}")

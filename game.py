@@ -1,6 +1,6 @@
 import pygame
 import pygame.fastevent
-from util.settings import SCREENH, SCREENW, HEROSPRITEPATH, SKELETONPATH, GOBLINPATH, MUSHROOMPATH, EYEPATH
+from util.settings import SCREENH, SCREENW, HEROSPRITEPATH, SKELETONPATH, GOBLINPATH, MUSHROOMPATH, EYEPATH, ABILPATH
 from Scripts.player import Player
 from Scripts.assetManager import AssetManager
 from Scripts.InputHandler import InputHandler, DummyInputHandler
@@ -71,12 +71,20 @@ class Game:
         self.assetManager.load_sprite_sheet('eye_death', EYEPATH + '/Death.png', (150, 150))
         self.assetManager.load_sprite_sheet('eye_attack2', EYEPATH + '/Attack2.png', (150, 150))
         self.assetManager.load_sprite_sheet('eye_attack3', EYEPATH + '/Attack3.png', (150, 150))
+
+        #Ability Animations
+        self.assetManager.load_sprite_sheet('M_Proectile', ABILPATH + '/M_Projectile_sprite.png', (150, 150))
+        self.assetManager.load_sprite_sheet('FE_Proectile', ABILPATH + '/FE_projectile_sprite.png', (150, 150))
+        self.assetManager.load_sprite_sheet('Bomb', ABILPATH + '/Bomb_sprite.png', (150, 150))
+        self.assetManager.load_sprite_sheet('Sword', ABILPATH + '/Sword_sprite.png', (150, 150))
         
         self.player = Player(self, pos=[-5, 300], size=[400, 400], inputHandler=self.PlayerInputHandler)
         
         self.enemies = []
-        self.enemies.append(Goblin(self, pos=[105, 288], size=[400, 400]))
-        self.enemies.append(Mushroom(self, pos=[105, 288], size=[400, 400]))
+        self.enemies.append(Enemy(self, pos=[105, 288], size=[400, 400], inputHandler=self.enemyInputHandler))
+        # self.enemies.append(Goblin(self, pos=[105, 288], size=[400, 400]))
+        # self.enemies.append(Mushroom(self, pos=[105, 288], size=[400, 400]))
+        # self.enemies.append(FlyingEye(self, pos=[105, 288], size=[400, 400]))
 
         self.health = Health(self, 50, 20, 400, 20, 100, fg_color=(139, 0, 139), bg_color=(255, 0, 0))
         self.gravity = Gravity()

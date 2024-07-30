@@ -84,3 +84,8 @@ Feel free to contribute or suggest improvements!
 - **GameSaver Update**: Now saves enemy states.
 - **Game Loop Tweek**: instead of a white screen or an unresponsive window, the program will terminate cleanly with an error message.
 - **GameSaver Update**: The Game save the audio state and loads it back.
+
+### July 30,2024
+- **Skeleton Animation**: Skeleton Animation Fixed
+- **Enemy Ai ability Class added**: Shoots prejectile when enemy enters attack 3 [not yet tested]
+
