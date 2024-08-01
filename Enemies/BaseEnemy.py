@@ -106,7 +106,7 @@ class Enemy(Player):
 
     def evaluate_combat_state(self, current_time, player):
         """
-        Evaluates the combat state of the enemy based on the player's position.
+        Evaluates the combat state of the enemy based on the current time and the player's position.
 
         Parameters:
             current_time (int): The current time in milliseconds.
@@ -115,36 +115,22 @@ class Enemy(Player):
         Returns:
             None
 
-        This function calculates the distance between the enemy and the player using the enemy's position and the player's position.
-        It then checks the type of the current state of the enemy's state machine to determine the current combat state.
-        If the current state is 'attack', it checks if the player is outside the attack range and the chase range.
-        If the player is outside both ranges, the enemy transitions to the 'patrol' state.
-        If the player is within the chase range but outside the attack range, the enemy transitions to the 'chase' state.
-        If the player is within the attack range, the enemy transitions to the 'attack' state.
-        If the current state is not 'attack', it checks if the player is within the attack range or the chase range.
-        If the player is within the attack range, the enemy transitions to the 'attack' state.
-        If the player is within the chase range but outside the attack range, the enemy transitions to the 'chase' state.
-        If the player is outside both ranges, the enemy transitions to the 'patrol' state.
+        This function calculates the distance between the enemy and the player and checks if it is within a certain range.
+        If the distance is less than or equal to 100, the enemy changes its state to 'attack'.
+        If the distance is less than or equal to 300, the enemy changes its state to 'chase'.
+        Otherwise, the enemy changes its state to 'patrol'.
+
+        The function also updates the time of the last state change to prevent frequent state changes.
         """
         player_distance = abs(self.enemy_rect.x - player.pos[0])
-
-        # Get the type of the current state for comparison
-        current_state_type = type(self.state_machine.current_state)
-
-        if current_state_type == type(self.state_machine.states['attack']):
-            if player_distance > self.attack_range + 20:
-                if player_distance > self.chase_range:
-                    self.state_machine.change_state('patrol')
-                else:
-                    self.state_machine.change_state('chase')
-        else:
-            if player_distance <= self.attack_range:
+        if current_time - self.last_state_change > self.state_cooldown:
+            if player_distance <= 100:
                 self.state_machine.change_state('attack')
-            elif player_distance <= self.chase_range:
+            elif player_distance <= 300:
                 self.state_machine.change_state('chase')
             else:
                 self.state_machine.change_state('patrol')
-
+            self.last_state_change = current_time  # Update the time of the last state change
 
     def patrol(self):
         """

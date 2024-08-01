@@ -1,4 +1,5 @@
 import random
+import threading
 import pygame
 
 class State:
@@ -41,6 +42,12 @@ class PatrolState(State):
         print("Entering Patrol State")
 
     def execute(self):
+        # Start patrol in a separate thread
+        patrol_thread = threading.Thread(target=self.handle_patrol)
+        patrol_thread.start()
+
+    def handle_patrol(self):
+        # Patrol logic
         self.enemy.patrol()
 
     def exit(self):
@@ -67,8 +74,13 @@ class ChaseState(State):
         self.enemy.frameIndex = 0
         self.enemy.animationUpdate()  # Ensure the animation is updated immediately
 
-
     def execute(self):
+        # Start chase in a separate thread
+        chase_thread = threading.Thread(target=self.handle_chase)
+        chase_thread.start()
+
+    def handle_chase(self):
+        # Chase logic
         self.enemy.chase(self.enemy.game.player)
 
     def exit(self):
@@ -76,22 +88,17 @@ class ChaseState(State):
 
 class AttackState(State):
     def enter(self):
-        """
-        Set the current animation of the enemy to "attack" and reset the frame index to 0.
-        
-        This method is called when the enemy enters the attack state. It updates the enemy's current animation to "attack" and resets the frame index to 0. It also prints a message indicating that the enemy has entered the attack state.
-        
-        Parameters:
-            self (object): The instance of the class.
-        
-        Returns:
-            None
-        """
         self.enemy.currentAnimation = "attack"
         self.enemy.frameIndex = 0
         print("Entering Attack State")
 
     def execute(self):
+        # Start attack in a separate thread
+        attack_thread = threading.Thread(target=self.handle_attack)
+        attack_thread.start()
+
+    def handle_attack(self):
+        # Attack logic
         self.enemy.attack(self.enemy.game.player)
 
     def exit(self):
@@ -192,42 +199,16 @@ class SpecialMushroomAttackState(AttackState):
 
 class StateMachine:
     def __init__(self, enemy):
-        """
-        Initializes a new instance of the StateMachine class.
-
-        Parameters:
-            enemy (Enemy): The enemy object to associate with the state machine.
-
-        Returns:
-            None
-        """
         self.enemy = enemy
         self.states = {}
         self.current_state = None
         self.last_state_change_time = 0
-        self.state_change_delay = 2000  # Delay in milliseconds
+        self.state_change_delay = 2000
 
     def add_state(self, name, state):
         self.states[name] = state
 
     def change_state(self, new_state):
-        """
-        Change the current state of the state machine to the specified new state.
-
-        Parameters:
-            new_state (str): The name of the new state to transition to.
-
-        Returns:
-            None
-
-        This method checks if the current state is different from the new state and if the time elapsed since the last state change exceeds the state change delay. If both conditions are met, it performs the following steps:
-        1. If the current state is not None, it calls the `exit()` method of the current state to perform any necessary cleanup or exit logic.
-        2. It assigns the new state object from the `states` dictionary to the `current_state` attribute.
-        3. It calls the `enter()` method of the new state object to perform any necessary initialization or entry logic.
-        4. It updates the `last_state_change_time` attribute with the current time.
-
-        Note: This method assumes that the `states` dictionary contains the available states and their corresponding state objects.
-        """
         current_time = pygame.time.get_ticks()
         if self.current_state != new_state and (current_time - self.last_state_change_time > self.state_change_delay):
             if self.current_state:

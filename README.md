@@ -88,4 +88,13 @@ Feel free to contribute or suggest improvements!
 ### July 30,2024
 - **Skeleton Animation**: Skeleton Animation Fixed
 - **Enemy Ai ability Class added**: Shoots prejectile when enemy enters attack 3 [not yet tested]
+- **New Enemy Added**: A fireworm
+
+## August 1, 2024
+**Refactoring Day**
+- **Enemy Status**: Removal of the Flying Eye Enemy, Improvements on the Fire Worm enemy
+- **Improving on StateManager**: Trying to improve responsiveness (threading was added in each state class)
+- **Enemy Logic Update**: I simplified the enemy logic realizing the problem relied here evaluate_combat_state(self, current_time, player) simplifying the state transition logic,Keeping the state changes straightforward can often result in more predictable and stable enemy behavior.
+
+
 
