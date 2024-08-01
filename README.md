@@ -1,10 +1,11 @@
+
 # Knight's Conquest
 
 ## Overview
 "Knight's Conquest" is an action-adventure game inspired by the classic Castlevania series. It combines traditional platformer elements with innovative enemy AI and level design.
 
 ## Credits
-- **Artist**: LuizMelo 
+- **Artist**: LuizMelo
 
 ## Objectives
 The primary goals of this project are:
@@ -14,90 +15,120 @@ The primary goals of this project are:
 
 ## Technologies Used
 - **Programming Language**: Python
-- **Level Design**: Tiled Level Editor
+- **Level Design Tool**: Tiled Level Editor
 - **Game Engine**: Pygame
 
-Feel free to contribute or suggest improvements!
+## Installation
 
-## Current Progress
+### Prerequisites
+You'll need Python and Pygame installed on your system to run "Knight's Conquest." Follow these instructions to set up your environment:
 
-### July 16, 2024
-- **Player Movement**: Player control using keyboard and mouse inputs.
-- **Attack Mechanics**: Basic attack animations and mechanics for engaging enemies are functional.
-- **Animations**: Player movements and attacks are fully animated.
-- **Player Camera**: Camera follows the player, though some issues persist.
-- **Basic Audio**: Basic audio playback is implemented.
+#### Install Python
+1. Download Python from [python.org](https://www.python.org/downloads/).
+2. Follow the installation instructions for your specific operating system.
 
-### July 17, 2024
-- **Enemy AI**: Basic enemy AI for attacking the player is implemented (enemies currently deal no damage).
-- **Health Bar**: Health bar for the player is added.
+#### Install Pygame
+After installing Python, you can install Pygame using pip. Open your command line or terminal and run:
+```bash
+pip install pygame
+```
 
-### July 18, 2024
-- **Bug Fixing**: Addressed issues from the previous day.
-- **Audio Improvements**: Improved audio synchronization.
-- **Enemy State Transition**: Enhanced enemy state transitions and fixed an issue where enemies would spin out of control at the game start by adding an idle state.
-- **New Enemy**: Added a goblin enemy.
-- **State Fix**: Fixed the transition between the goblin's attack1 and attack2.
-- **New Enemy**: Introduced a mushroom-like enemy.
+### Cloning the Repository
+To get the latest version of "Knight's Conquest," clone the repository from GitHub:
+```bash
+git clone https://github.com/JustAjani/Knight-s-Conquest.git
+```
 
-### July 19, 2024
-- **Enemy AI Issues**: Continued resolving enemy AI bugs.
-- **Mushroom Enemy Update**: Added dynamic sound effects for movement and attack.
-- **Enemy AI Status**: Most bugs are fixed.
-- **New Enemy**: Added a bat enemy.
-- **New Enemy Status**: Bats have distinctive behaviors and sounds, though some bugs remain.
-- **Gravity Class**: Developed with the help of ChatGPT (not yet implemented in the game mode, further changes planned).
+### Running the Game
+Navigate to the cloned repository's directory and run the game using:
+```bash
+python main.py
+```
 
-### July 21, 2024
-- **Gravity**: Tweaked gravity logic to affect both player and enemies.
-- **Save and Load Game**: Preliminary implementation as a test for future checkpoints, with assistance from ChatGPT (for encryption).
-- **Tile Loader + Collision**: Player can collide with tiles (not yet tested).
+## Game Development Progress
 
-### July 24, 2024
-- **State Machine Implementation**: Attempting to fix most of the spinning animation effects while switching through states. Works for the skeleton and goblin, but not for the mushroom and the flying eye.
-- **Animations Fix**: Fixed movement animations broken by the state machine implementation.
-- **Flip Direction Fix**: Added a delay to the flip trigger to prevent frequent direction changes causing the spinning effect.
+## July 16, 2024
+- **Player Movement:** Implemented player control using keyboard and mouse inputs.
+- **Attack Mechanics:** Basic attack animations and mechanics for engaging enemies are functional.
+- **Animations:** Player movements and attacks are fully animated.
+- **Player Camera:** Camera follows the player, though some issues persist.
+- **Basic Audio:** Basic audio playback is implemented.
 
-### July 25, 2024
-- **Refactoring**: Significant refactoring led to broken audio and animations for enemies.
-- **AI States Fix**: Fixed the enemy AI animations and logic. Audio issues persist.
-- **Audio Fix**: Addressed most audio issues, added threading to manage the queue, though some inconsistencies remain.
+## July 17, 2024
+- **Enemy AI:** Basic enemy AI for attacking the player is implemented (enemies currently deal no damage).
+- **Health Bar:** Health bar for the player is added.
 
-### July 26, 2024
-- **Audio Fix**: Properly outputted respective audio (except for the player).
-- **Animation Fix**: Fixed most animation issues (except for the skeleton enemy).
-- **Audio Update**: Added a debounce system to prevent repeated audio triggers. However, this sometimes breaks the game over time.
-- **Audio Fix**: Implemented error handling in enqueue_sound() to deal with null data, edited debounce system to prevent rapid channel creation.
-- **Attempting to fix Flying Eye State Manager**: it's comming along slowly...to slow to be honest
+## July 18, 2024
+- **Bug Fixing:** Addressed issues from the previous day.
+- **Audio Improvements:** Improved audio synchronization.
+- **Enemy State Transition:** Enhanced enemy state transitions and fixed an issue where enemies would spin out of control at the game start by adding an idle state.
+- **New Enemy:** Added a goblin enemy.
+- **State Fix:** Fixed the transition between the goblin's attack1 and attack2.
+- **New Enemy:** Introduced a mushroom-like enemy.
 
-### July 27, 2024
-- **added docstring to files**: Trying to improve readility also for future me to remember what each of these functions do.
-- **controller compatibility**: PlayStation & Xbox 
-- **Improved Save State Manager**: Using Firebase to handle save and load state data.
-- **More AI work**: Attempting to Fix the Flying Eye Enemy...not comming along good.
+## July 19, 2024
+- **Enemy AI Issues:** Continued resolving enemy AI bugs.
+- **Mushroom Enemy Update:** Added dynamic sound effects for movement and attack.
+- **Enemy AI Status:** Most bugs are fixed.
+- **New Enemy:** Added a bat enemy.
+- **New Enemy Status:** Bats have distinctive behaviors and sounds, though some bugs remain.
+- **Gravity Class:** Developed with the help of ChatGPT (not yet implemented in the game mode, further changes planned).
 
-### July 29,2024
-- **Sqlite integration**: I made a sqlite datbase to store data locally
-- **Sqlite N Firebase Syncronization**: Save the game locally and backs it up on the cloud
-- **Delete Save Data**: Function to delete the game save added.
-- **AssetManger Tweak**: Yeah tweak some stuff.
-- **GameSaver Update**: Now saves enemy states.
-- **Game Loop Tweek**: instead of a white screen or an unresponsive window, the program will terminate cleanly with an error message.
-- **GameSaver Update**: The Game save the audio state and loads it back.
+## July 21, 2024
+- **Gravity:** Tweaked gravity logic to affect both player and enemies.
+- **Save and Load Game:** Preliminary implementation as a test for future checkpoints, with assistance from ChatGPT (for encryption).
+- **Tile Loader + Collision:** Player can collide with tiles (not yet tested).
 
-### July 30,2024
-- **Skeleton Animation**: Skeleton Animation Fixed
-- **Enemy Ai ability Class added**: Shoots prejectile when enemy enters attack 3 [not yet tested]
-- **New Enemy Added**: A fireworm
+## July 24, 2024
+- **State Machine Implementation:** Attempting to fix most of the spinning animation effects while switching through states. Works for the skeleton and goblin, but not for the mushroom and the flying eye.
+- **Animations Fix:** Fixed movement animations broken by the state machine implementation.
+- **Flip Direction Fix:** Added a delay to the flip trigger to prevent frequent direction changes causing the spinning effect.
+
+## July 25, 2024
+- **Refactoring:** Significant refactoring led to broken audio and animations for enemies.
+- **AI States Fix:** Fixed the enemy AI animations and logic. Audio issues persist.
+- **Audio Fix:** Addressed most audio issues, added threading to manage the queue, though some inconsistencies remain.
+
+## July 26, 2024
+- **Audio Fix:** Properly outputted respective audio (except for the player).
+- **Animation Fix:** Fixed most animation issues (except for the skeleton enemy).
+- **Audio Update:** Added a debounce system to prevent repeated audio triggers. However, this sometimes breaks the game over time.
+- **Audio Fix:** Implemented error handling in `enqueue_sound()` to deal with null data, edited debounce system to prevent rapid channel creation.
+- **Flying Eye State Manager:** Progressing slowly.
+
+## July 27, 2024
+- **Docstring Addition:** Added docstrings to files for improved readability and future reference.
+- **Controller Compatibility:** Added support for PlayStation & Xbox controllers.
+- **Improved Save State Manager:** Using Firebase to handle save and load state data.
+- **More AI Work:** Attempted to fix the Flying Eye Enemy with limited success.
+
+## July 29, 2024
+- **SQLite Integration:** Created a SQLite database to store data locally.
+- **SQLite & Firebase Synchronization:** Local save and cloud backup synchronization.
+- **Delete Save Data:** Added function to delete game save data.
+- **Asset Manager Tweak:** Made adjustments to asset management.
+- **Game Saver Update:** Now saves enemy states.
+- **Game Loop Tweak:** Improved error handling for clean termination instead of a white screen or unresponsive window.
+- **Game Saver Update:** Game saves and loads the audio state.
+
+## July 30, 2024
+- **Skeleton Animation:** Fixed skeleton animation issues.
+- **Enemy AI Ability Class:** Added a class for shooting projectiles when the enemy enters attack 3 (not yet tested).
+- **New Enemy:** Added a fireworm.
 
 ## August 1, 2024
-**Refactoring Day**
-- **Enemy Status**: Removal of the Flying Eye Enemy, Improvements on the Fire Worm enemy
-- **Improving on StateManager**: Trying to improve responsiveness (threading was added in each state class)
-- **Enemy Logic Update**: I simplified the enemy logic realizing the problem relied here evaluate_combat_state(self, current_time, player) simplifying the state transition logic,Keeping the state changes straightforward can often result in more predictable and stable enemy behavior.
-- **Performance Tracker**: Made sure the FPS is being rendered so i can keep track of performance
-- **Worm Ai Tweek**: Enemy now has sound
-- **Tweeked Ability Class**: Removed all the simple mistakes etc [Maybe I'm dyslexic]
+- **Refactoring Day:**
+  - **Enemy Status:** Removed the Flying Eye Enemy, improved the Fire Worm enemy.
+  - **Improving State Manager:** Enhanced responsiveness with added threading in each state class.
+  - **Enemy Logic Update:** Simplified enemy logic, focusing on the `evaluate_combat_state(self, current_time, player)` to ensure more predictable and stable behavior.
+  - **Performance Tracker:** Implemented FPS tracking for performance monitoring.
+  - **Worm AI Tweak:** Added sound effects for the worm enemy.
+  - **Ability Class Tweak:** Corrected minor mistakes and optimizations.
 
+---
 
+## Contributing
+Feel free to contribute or suggest improvements through issues or pull requests. All contributions are welcomed!
 
+## License
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
