@@ -131,4 +131,4 @@ python main.py
 Feel free to contribute or suggest improvements through issues or pull requests. All contributions are welcomed!
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed - see the [LICENSE.md](LICENSE.md) file for details.
