@@ -22,6 +22,7 @@ class Game:
         self.screen = pygame.display.set_mode((SCREENW, SCREENH))
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("Knight's Conquest")
+        self.font = pygame.font.SysFont('Arial', 24)
 
         player1_keys = {
             'left': pygame.K_a,
@@ -77,19 +78,20 @@ class Game:
         self.assetManager.load_sprite_sheet('worm_walk', WORMPATH + '/Walk.png', (90, 90))
         self.assetManager.load_sprite_sheet('worm_attack', WORMPATH + '/Attack.png', (90, 90))
 
-        # #Ability Animations
-        # self.assetManager.load_sprite_sheet('M_Proectile', ABILPATH + '/M_Projectile_sprite.png', (150, 150))
-        # self.assetManager.load_sprite_sheet('FE_Proectile', ABILPATH + '/FE_projectile_sprite.png', (150, 150))
-        # self.assetManager.load_sprite_sheet('Bomb', ABILPATH + '/Bomb_sprite.png', (150, 150))
-        # self.assetManager.load_sprite_sheet('Sword', ABILPATH + '/Sword_sprite.png', (150, 150))
+        #Ability Animations
+        self.assetManager.load_sprite_sheet('M_Projectile', ABILPATH + '/M_Projectile_sprite.png', (50, 50))
+        self.assetManager.load_sprite_sheet('FE_Projectile', ABILPATH + '/FE_projectile_sprite.png', (48, 48))
+        self.assetManager.load_sprite_sheet('Bomb', ABILPATH + '/Bomb_sprite.png', (100, 100))
+        self.assetManager.load_sprite_sheet('Sword', ABILPATH + '/Sword_sprite.png', (102, 102))
+        self.assetManager.load_sprite_sheet('Fireball', ABILPATH + '/Move.png', (46, 46))
         
         self.player = Player(self, pos=[-5, 300], size=[400, 400], inputHandler=self.PlayerInputHandler)
         
         self.enemies = []
         # self.enemies.append(Enemy(self, pos=[105, 288], size=[400, 400], inputHandler=self.enemyInputHandler))
-        self.enemies.append(Goblin(self, pos=[105, 288], size=[400, 400]))
-        self.enemies.append(Mushroom(self, pos=[105, 288], size=[400, 400]))
-        self.enemies.append(FireWorm(self, pos=[210, 356], size=[300, 300]))
+        # self.enemies.append(Goblin(self, pos=[105, 288], size=[400, 400]))
+        # self.enemies.append(Mushroom(self, pos=[105, 288], size=[400, 400]))
+        self.enemies.append(FireWorm(self, pos=[210, 360], size=[300, 300]))
 
         self.health = Health(self, 50, 20, 400, 20, 100, fg_color=(139, 0, 139), bg_color=(255, 0, 0))
         self.gravity = Gravity()
@@ -99,7 +101,7 @@ class Game:
     def run(self):
         try:
             while True:
-                self.deltaTime = pygame.time.Clock().tick(60) / 1000
+                self.deltaTime = self.clock.tick(60) / 1000
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
@@ -124,12 +126,16 @@ class Game:
                     enemy.update(self.deltaTime, self.player)
                     enemy.render()
                 
-                pygame.display.update()
-                self.deltaTime
-        except Exception as e:
-            self.handle_exception(e)
+                 # Calculate and draw FPS
+                fps = self.clock.get_fps()
+                fps_text = self.font.render(f"FPS: {int(fps)}", True, pygame.Color('white'))
+                self.screen.blit(fps_text, (SCREENW - fps_text.get_width() - 10, 10))
 
-    def handle_exception(self, exception):
+                pygame.display.update()
+        except Exception as e:
+            self.cleanUp(e)
+
+    def cleanUp(self, exception):
         print(f"An error occurred: {exception}")
         pygame.quit()
         sys.exit()

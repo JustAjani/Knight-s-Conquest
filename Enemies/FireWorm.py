@@ -16,7 +16,7 @@ class FireWorm(Enemy):
         # Adjusted attributes for the FireWorm
         self.speed = 70
         self.move_distance = 80
-        self.name = "FireWorm"
+        self.name = "fireworm"
         self.attack_cooldown = 5000  # 5 seconds cooldown for attacks
         self.last_attack_time = pygame.time.get_ticks() - self.attack_cooldown  # Allow immediate attack on spawn
 
@@ -30,6 +30,9 @@ class FireWorm(Enemy):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_attack_time > self.attack_cooldown:
             super().attack(player)  # Implement the attack logic from the base class
+            attack = self.audio_player.enqueue_sound(self.audio_player.wormAttack)
+            if self.audio_player.get_channel(2):
+                self.audio_player.enqueue_sound(attack)
             self.last_attack_time = current_time
             print("FireWorm has attacked!")
 

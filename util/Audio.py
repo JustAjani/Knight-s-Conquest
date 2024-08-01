@@ -14,7 +14,8 @@ class AudioPlayer:
         'SKELETSOUND': 'audio/skeleton/',
         'GOBLINSOUND': 'audio/goblin/',
         'MUSHROOMSOUND': 'audio/Mushroom/',
-        'FLYINGSOUND': 'audio/FlyingEye/'
+        'FLYINGSOUND': 'audio/FlyingEye/',
+        'WORMSOUND': 'audio/Worm/'
     }
 
     def __init__(self):
@@ -218,12 +219,14 @@ class AudioPlayer:
         self.leftfoot = SoundData(self.load_audio('knight-left-footstep-forestgrass-5-with-chainmail.wav'), priority=1)
         self.skeletonWalk = SoundData(self.load_audio('step-skeleton.mp3'), priority=1)
         self.goblinWalk = SoundData(self.load_audio('goblin_03.wav'), priority=2)
+        self.wormWalk = SoundData(self.load_audio('snake.wav'), priority=2)
         self.mushroomatt1 = SoundData(self.load_audio('clap.wav'), priority=2)
         self.mushroomatt2 = SoundData(self.load_audio('monster-bite.wav'), priority=2)
         self.mushroomatt3 = SoundData(self.load_audio('projectile-hit.flac'), priority=2)
         self.mushroomWalk = SoundData(self.load_audio('sludge-footsteps-1.wav'), priority=2)
         self.flyingEyeWalk = SoundData(self.load_audio('wing-flap.wav'), priority=1)
         self.flyingAttack = SoundData(self.load_audio('fast-collision-reverb.flac'), priority=3)
+        self.wormAttack = SoundData(self.load_audio('fire-ball.wav'), priority=2)
     
     def get_audio_state(self):
         """

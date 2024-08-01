@@ -10,22 +10,20 @@ class Ability:
         self.pos = list(pos)
         self.abilityRect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
         self.animation_speed = 0.1
-        self.animations = self.load_animations()
+        self.animations =  {
+            "M_shoot": self.game.assetManager.get_asset('M_Projectile'),
+            "FE_shoot": self.game.assetManager.get_asset('FE_Projectile'),
+            "Bomb": self.game.assetManager.get_asset('Bomb'),
+            "Sword": self.game.assetManager.get_asset('Sword'),
+            "Fireball": self.game.assetManager.get_asset('Fireball'),
+        }
         self.frame_index = 0
-        self.current_animation = 'idle'
+        self.current_animation = 'M_shoot'
         self.last_update = pygame.time.get_ticks()
         self.image = pygame.transform.scale(self.animations[self.current_animation][self.frame_index], self.size)
 
         # Counting attacks
         self.attack_counter = 0
-
-    def load_animations(self):
-        return {
-            "M_shoot": self.game.asset_manager.get_asset('M_Projectile'),
-            "FE_shoot": self.game.asset_manager.get_asset('FE_Projectile'),
-            "Bomb": self.game.asset_manager.get_asset('Bomb'),
-            "Sword": self.game.asset_manager.get_asset('Sword'),
-        }
 
     def update(self):
         self.animation_update()

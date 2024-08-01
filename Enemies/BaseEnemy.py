@@ -2,6 +2,7 @@ import pygame
 from Scripts.player import Player
 from util.Audio import *
 from stateManager.stateManager import StateMachine, PatrolState, ChaseState, AttackState
+from Enemies.ability import Ability
 
 class Enemy(Player):
     def __init__(self, game, pos, size, moveDistance=100, inputHandler=None):
@@ -65,6 +66,7 @@ class Enemy(Player):
         self.state_machine.add_state('attack', AttackState(self))
         self.state_machine.change_state('patrol')
         self.animating = False
+        self.ability = Ability(self.game, "none", "none", "none", size, pos)
 
     def update(self, deltaTime, player):
         """
@@ -194,7 +196,7 @@ class Enemy(Player):
         self.attack_count += 1
         if self.attack_count % 3 == 0:
             self.is_third_attack = True
-            self.trigger_ability()
+            self.ability.trigger_ability()
         else:
             self.is_third_attack = False
 
@@ -258,6 +260,9 @@ class Enemy(Player):
             case "flyingeye":
                 if self.audio_player.get_channel(2):
                     self.audio_player.enqueue_sound(self.audio_player.flyingEyeWalk)
+            case "fireworm":
+                if self.audio_player.get_channel(2):
+                    self.audio_player.enqueue_sound(self.audio_player.wormWalk)
 
 
     def render(self):
