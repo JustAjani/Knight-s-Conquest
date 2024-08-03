@@ -125,12 +125,20 @@ python main.py
   - **Worm AI Tweak:** Added sound effects for the worm enemy.
   - **Ability Class Tweak:** Corrected minor mistakes and optimizations.
 
----
-
 ## August 3, 2024
 
 - **Enemy AI Update:** I removed the `update_flip(self, player)` function in the enemy class because it was interuption the flip logic in other states. By centralizing the flip logic within each state and using consistent timing checks, conflicting flip commands are avoided and ensure that the enemy's behavior is more predictable and controlled.
 - **Enemy Ai Update:** The enemy remebers the player last positon after exiting chase mode and patrols that area until the enemy is inrange
+- **Enemy Ai Emotional State [Implemented not yet functional]:** A state that will affect both player and enemy on how they attack and respond to things example - Nuetral(blue), Fear(silver) and Anger(red).
+
+-**Fear Triggers**:
+  -Enemy witnesses the player defeating other enemies.
+  -Isolation or being outnumbered.
+
+-**Anger Triggers**:
+  -Repeated attacks by the player.
+  -Close proximity to the player for extended periods.
+  -Damage to allies or significant environmental destruction caused by the player.
 
 ## Contributing
 Feel free to contribute or suggest improvements through issues or pull requests. All contributions are welcomed!

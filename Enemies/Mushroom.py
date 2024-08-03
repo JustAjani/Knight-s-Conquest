@@ -83,8 +83,8 @@ class Mushroom(Enemy):
         # else:
         #     print(f"Error: Frame index out of range for animation {self.currentAnimation}")
 
-    def update(self, deltaTime, player):
-        super().update(deltaTime, player)
+    def update(self, deltaTime, player, all_enemies):
+        super().update(deltaTime, player, all_enemies)
         current_time = pygame.time.get_ticks()
         if current_time - self.lastUpdate > 1000 * self.animationSpeed:
             self.frameIndex = (self.frameIndex + 1) % len(self.animations[self.currentAnimation])

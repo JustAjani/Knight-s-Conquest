@@ -12,7 +12,7 @@ from Enemies.FireWorm import FireWorm
 from Scripts.health import Health
 from Scripts.Gravity import Gravity
 from util.Audio import AudioPlayer
-from util.SaveLoad import GameSaver
+# from util.SaveLoad import GameSaver
 import sys
 
 class Game:
@@ -94,9 +94,9 @@ class Game:
         self.enemies.append(Mushroom(self, pos=[105, 288], size=[400, 400]))
         self.enemies.append(FireWorm(self, pos=[210, 360], size=[300, 300]))
 
-        self.health = Health(self, 50, 20, 400, 20, 100, fg_color=(139, 0, 139), bg_color=(255, 0, 0))
+        self.health = Health(self, 50, 20, 400, 20, 100, fg_color=(192,192,192), bg_color=(255, 0, 0))
         self.gravity = Gravity()
-        self.gameSaver = GameSaver(self)
+        # self.gameSaver = GameSaver(self)
         self.audioPlayer = AudioPlayer()
 
     def run(self):
@@ -109,22 +109,24 @@ class Game:
                         sys.exit()
                     elif event.type == pygame.KEYDOWN:
                         print("Key pressed:", pygame.key.name(event.key))  # Debug print for any key press
-                        if event.key == pygame.K_p:
-                            self.gameSaver.save_game()
-                        if event.key == pygame.K_l:
-                            self.gameSaver.load_game()
-                        if event.key == pygame.K_m:
-                            self.gameSaver.delete_game()
+                        # if event.key == pygame.K_p:
+                        #     self.gameSaver.save_game()
+                        # if event.key == pygame.K_l:
+                        #     self.gameSaver.load_game()
+                        # if event.key == pygame.K_m:
+                        #     self.gameSaver.delete_game()
 
                 self.screen.fill('#f7b32b')
 
                 self.audioPlayer.update()
 
+                self.health.render()
+
                 self.player.update(self.deltaTime)
                 self.player.render()
                 
                 for enemy in self.enemies:
-                    enemy.update(self.deltaTime, self.player)
+                    enemy.update(self.deltaTime, self.player, self.enemies)
                     enemy.render()
                 
                  # Calculate and draw FPS

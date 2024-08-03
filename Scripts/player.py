@@ -149,8 +149,7 @@ class Player:
     def render(self):
         """
         Renders the current animation of the player on the game screen.
-
-        This function determines the current animation based on the player's flip status and blits it onto the game screen at the player's position. It also prints the coordinates of the player's rendering position for debugging purposes.
+        It uses a mask to create a precise border around the sprite.
 
         Parameters:
             None
@@ -158,12 +157,27 @@ class Player:
         Returns:
             None
         """
-        # adjusted_pos = camera.apply(self)
         if self.flip:
             current_anim = self.image_left
         else:
             current_anim = self.image
-        self.game.screen.blit(current_anim, (self.pos[0],self.pos[1]))
+
+        # Position where the sprite is blitted
+        sprite_pos = (self.pos[0], self.pos[1])
+        self.game.screen.blit(current_anim, sprite_pos)
+
+        # Create a mask from the current animation image
+        mask = pygame.mask.from_surface(current_anim)
+        outline = mask.outline()  # Get the outline of the mask
+
+        border_color = (0, 0, 0)  
+
+        # Draw the outline using the points from the mask
+        for point in outline:
+            # Adjust each point by the sprite's position to align it correctly
+            adjusted_point = (point[0] + sprite_pos[0], point[1] + sprite_pos[1])
+            pygame.draw.circle(self.game.screen, border_color, adjusted_point, 1)  # Draw a small circle at each point
+
 
 
         

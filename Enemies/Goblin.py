@@ -108,7 +108,7 @@ class Goblin(Enemy):
         else:
             print(f"Error: Frame index out of range for animation {self.currentAnimation}")
 
-    def update(self, deltaTime, player):
+    def update(self, deltaTime, player,all_enemies):
         """
         Updates the object's animation and image based on the time elapsed.
 
@@ -121,7 +121,7 @@ class Goblin(Enemy):
 
         This function updates the object's animation and image based on the time elapsed. It first calls the update method of the parent class to update the object's position and state. Then, it checks if enough time has passed since the last update. If enough time has passed, it increments the frame index modulo the length of the current animation, updates the last update time, and calls the update_image method to update the object's image.
         """
-        super().update(deltaTime, player)
+        super().update(deltaTime, player,all_enemies)
         current_time = pygame.time.get_ticks()
         if current_time - self.lastUpdate > 1000 * self.animationSpeed:
             self.frameIndex = (self.frameIndex + 1) % len(self.animations[self.currentAnimation])

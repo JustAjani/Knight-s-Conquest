@@ -6,19 +6,6 @@ from Enemies.ability import Ability
 
 class Enemy(Player):
     def __init__(self, game, pos, size, moveDistance=100, inputHandler=None):
-        """
-        Initializes an instance of the Enemy class.
-
-        Args:
-            game (Game): The game instance.
-            pos (tuple): The position of the enemy as a tuple (x, y).
-            size (tuple): The size of the enemy as a tuple (width, height).
-            moveDistance (int, optional): The distance the enemy can move. Defaults to 100.
-            inputHandler (InputHandler, optional): The input handler for the game. Defaults to None.
-
-        Returns:
-            None
-        """
         super().__init__(game, pos, size, inputHandler)
         self.last_known_player_pos = None  # Initialize as None, will store (x, y) tuple
         self.velocity_y = 0
@@ -60,6 +47,12 @@ class Enemy(Player):
         self.attack_count = 0
         self.is_third_attack = False
         
+        # Emotions variables
+        self.fear = 0
+        self.anger = 0
+        self.isolated = False
+        self.witnessed_powerful_player = False
+        
         # Initialize state machine
         self.state_machine = StateMachine(self)
         self.state_machine.add_state('patrol', PatrolState(self))
@@ -70,43 +63,34 @@ class Enemy(Player):
         self.animating = False
         self.ability = Ability(self.game, "none", "none", "none", size, pos)
 
-    def update(self, deltaTime, player):
-        """
-        Updates the enemy's position, state, and animation based on the given time delta and player position.
-
-        Parameters:
-            deltaTime (float): The time difference between the current and previous frames in seconds.
-            player (Player): The player object that the enemy is interacting with.
-
-        Returns:
-            None
-        """
+    def update(self, deltaTime, player, all_enemies):
         self.enemy_rect.y = self.pos[1]
         self.adjustedspeed = self.speed * deltaTime
         current_time = pygame.time.get_ticks()
 
+        self.check_isolation(all_enemies)
+        self.update_emotions(player)  # Update emotions based on player interactions and game state
         self.state_machine.update()
         self.evaluate_combat_state(current_time, player)
         self.animationUpdate()
     
-    # def update_flip(self, player):
-    #     """
-    #     Updates the flip state of the enemy based on the player's position.
+    def check_isolation(self, all_enemies, isolation_distance=200):
+        nearby_enemies = sum(1 for enemy in all_enemies if enemy != self and 
+                             self.distance_to(enemy) < isolation_distance)
+        self.isolated = nearby_enemies == 0
+    
+    def distance_to(self, other):
+        return ((self.pos[0] - other.pos[0]) ** 2 + (self.pos[1] - other.pos[1]) ** 2) ** 0.5
 
-    #     Parameters:
-    #         player (Player): The player object that the enemy is interacting with.
+    def update_emotions(self, player):
+        if self.isolated:
+            self.fear += 1
+        if self.witnessed_powerful_player:
+            self.fear += 2
+            self.witnessed_powerful_player = False  # Reset after reacting to it
 
-    #     Returns:
-    #         None
-    #     """
-    #     current_time = pygame.time.get_ticks()
-    #     if current_time - self.last_flip_time > self.flip_cooldown:
-    #         if player.pos[0] > self.enemy_rect.x:
-    #             self.flip = False
-    #             self.last_flip_time = current_time
-    #         elif player.pos[0] < self.enemy_rect.x:
-    #             self.flip = True
-    #             self.last_flip_time = current_time
+        self.fear = min(max(self.fear, 0), 100)  # Clamp between 0 and 100
+        self.anger = min(max(self.anger, 0), 100)
 
     def evaluate_combat_state(self, current_time, player):
         player_distance = abs(self.enemy_rect.x - player.pos[0])
@@ -241,19 +225,27 @@ class Enemy(Player):
                 if self.audio_player.get_channel(2):
                     self.audio_player.enqueue_sound(self.audio_player.wormWalk)
 
-
     def render(self):
-        """
-        Renders the current animation of the enemy on the game screen.
-
-        This function determines the current animation based on the enemy's flip status and blits it onto the game screen at the enemy's position. It also prints the coordinates of the enemy's rendering position for debugging purposes.
-
-        Parameters:
-            None
-
-        Returns:
-            None
-        """
         current_anim = self.image_left if self.flip else self.image
         self.game.screen.blit(current_anim, (self.enemy_rect.x, self.enemy_rect.y))
-        # print(f"Rendering at x: {self.enemy_rect.x}, y: {self.enemy_rect.y}")  # Debugging output
+
+        # Create a mask from the current animation image
+        mask = pygame.mask.from_surface(current_anim)
+        outline = mask.outline()
+
+        # Adjust the outline coordinates to match the position on the screen
+        adjusted_outline = [(x + self.enemy_rect.x, y + self.enemy_rect.y) for x, y in outline]
+
+        # Determine the border color based on emotional state
+        border_color = (0, 0, 255)  # Neutral
+        if self.fear > 0:
+            border_color = (192,192,192)  # Fear
+        elif self.anger > 0:
+            border_color = (139, 0, 0)  # Anger
+
+        # Draw the outline using the adjusted coordinates
+        for point in adjusted_outline:
+            pygame.draw.circle(self.game.screen, border_color, point, 1)  # Draw circles at each point in the outline
+
+
+
