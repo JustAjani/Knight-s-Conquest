@@ -197,6 +197,42 @@ class SpecialMushroomAttackState(AttackState):
     def execute(self):
         self.enemy.mushroom_attack()
 
+class MemoryPatrolState(State):
+    def __init__(self, enemy):
+        self.enemy = enemy
+        self.patrol_time = 5000  # Time in milliseconds to patrol last known position
+        self.start_patrol_time = pygame.time.get_ticks()
+
+    def enter(self):
+        self.target_pos = self.enemy.last_known_player_pos
+
+    def execute(self):
+        if self.target_pos is not None:
+            # Move towards the last known player position
+            if self.enemy.enemy_rect.x < self.target_pos[0]:
+                self.enemy.enemy_rect.x += self.enemy.adjustedspeed
+                self.enemy.flip = False
+            elif self.enemy.enemy_rect.x > self.target_pos[0]:
+                self.enemy.enemy_rect.x -= self.enemy.adjustedspeed
+                self.enemy.flip = True
+
+            # Check if reached or close to last known position
+            if abs(self.enemy.enemy_rect.x - self.target_pos[0]) < 10:
+                self.enemy.patrol()
+            
+            # Check if patrol time has elapsed
+            if pygame.time.get_ticks() - self.start_patrol_time > self.patrol_time:
+                self.enemy.last_known_player_pos = None  # Reset memory
+                self.enemy.state_machine.change_state('patrol')  # Change state to normal patrol
+
+    def exit(self):
+        pass
+
+    def patrol_around_last_known_position(self):
+        # Implement logic to patrol around this area
+        pass
+
+
 class StateMachine:
     def __init__(self, enemy):
         self.enemy = enemy

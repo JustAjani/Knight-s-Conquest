@@ -129,7 +129,8 @@ python main.py
 
 ## August 3, 2024
 
-- **Enemy AI Update:** I removed the `update_flip` function in the enemy class because it was interuption the flip logic in other states. By centralizing the flip logic within each state and using consistent timing checks, conflicting flip commands are avoided and ensure that the enemy's behavior is more predictable and controlled.
+- **Enemy AI Update:** I removed the `update_flip(self, player)` function in the enemy class because it was interuption the flip logic in other states. By centralizing the flip logic within each state and using consistent timing checks, conflicting flip commands are avoided and ensure that the enemy's behavior is more predictable and controlled.
+- **Enemy Ai Update:** The enemy remebers the player last positon after exiting chase mode and patrols that area until the enemy is inrange
 
 ## Contributing
 Feel free to contribute or suggest improvements through issues or pull requests. All contributions are welcomed!

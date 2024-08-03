@@ -22,6 +22,7 @@ class Game:
         self.screen = pygame.display.set_mode((SCREENW, SCREENH))
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("Knight's Conquest")
+        pygame.display.set_icon(pygame.image.load('Assets/gameIcon.webp'))
         self.font = pygame.font.SysFont('Arial', 24)
 
         player1_keys = {

@@ -1,7 +1,7 @@
 import pygame
 from Scripts.player import Player
 from util.Audio import *
-from stateManager.stateManager import StateMachine, PatrolState, ChaseState, AttackState
+from stateManager.stateManager import StateMachine, PatrolState, ChaseState, AttackState, MemoryPatrolState
 from Enemies.ability import Ability
 
 class Enemy(Player):
@@ -20,6 +20,7 @@ class Enemy(Player):
             None
         """
         super().__init__(game, pos, size, inputHandler)
+        self.last_known_player_pos = None  # Initialize as None, will store (x, y) tuple
         self.velocity_y = 0
         self.grounded = False
         self.ground_level = 600
@@ -48,7 +49,7 @@ class Enemy(Player):
         self.state_cooldown = 2000
         self.last_state_change = pygame.time.get_ticks()
         self.attack_range = 100
-        self.chase_range = 150
+        self.chase_range = 200
         self.post_attack_cooldown = 2000
         self.last_attack_time = 0
 
@@ -64,7 +65,8 @@ class Enemy(Player):
         self.state_machine.add_state('patrol', PatrolState(self))
         self.state_machine.add_state('chase', ChaseState(self))
         self.state_machine.add_state('attack', AttackState(self))
-        self.state_machine.change_state('patrol')
+        self.state_machine.add_state('memory_patrol', MemoryPatrolState(self))
+
         self.animating = False
         self.ability = Ability(self.game, "none", "none", "none", size, pos)
 
@@ -107,31 +109,19 @@ class Enemy(Player):
     #             self.last_flip_time = current_time
 
     def evaluate_combat_state(self, current_time, player):
-        """
-        Evaluates the combat state of the enemy based on the current time and the player's position.
-
-        Parameters:
-            current_time (int): The current time in milliseconds.
-            player (Player): The player object that the enemy is interacting with.
-
-        Returns:
-            None
-
-        This function calculates the distance between the enemy and the player and checks if it is within a certain range.
-        If the distance is less than or equal to 100, the enemy changes its state to 'attack'.
-        If the distance is less than or equal to 300, the enemy changes its state to 'chase'.
-        Otherwise, the enemy changes its state to 'patrol'.
-
-        The function also updates the time of the last state change to prevent frequent state changes.
-        """
         player_distance = abs(self.enemy_rect.x - player.pos[0])
         if current_time - self.last_state_change > self.state_cooldown:
-            if player_distance <= 100:
+            if player_distance <= self.attack_range:
+                self.last_known_player_pos = None  # Reset memory when engaging in combat
                 self.state_machine.change_state('attack')
-            elif player_distance <= 300:
+            elif player_distance <= self.chase_range:
+                self.last_known_player_pos = player.pos  # Update last known position when in chase range
                 self.state_machine.change_state('chase')
             else:
-                self.state_machine.change_state('patrol')
+                if self.last_known_player_pos is not None:
+                    self.state_machine.change_state('memory_patrol')
+                else:
+                    self.state_machine.change_state('patrol')
             self.last_state_change = current_time  # Update the time of the last state change
 
     def patrol(self):
@@ -150,6 +140,9 @@ class Enemy(Player):
 
     def chase(self, player):
         current_time = pygame.time.get_ticks()
+        self.last_known_player_pos = None  # Reset before updating new chase data
+        self.last_known_player_pos = player.pos  # Update last known player position during chase
+        
         if current_time - self.last_flip_time > self.flip_cooldown:
             if player.pos[0] > self.enemy_rect.x:
                 self.flip = False
@@ -173,7 +166,7 @@ class Enemy(Player):
                 self.flip = True
             self.last_flip_time = current_time
 
-        if not self.audio_player.get_channel(2):
+        if self.audio_player.get_channel(2):
             self.audio_player.sound_queue(self.audio_player.attack1Sound)
         self.last_attack_time = pygame.time.get_ticks()
         
