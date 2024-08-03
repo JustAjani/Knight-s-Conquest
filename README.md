@@ -132,13 +132,13 @@ python main.py
 - **Enemy Ai Emotional State [Implemented not yet functional]:** A state that will affect both player and enemy on how they attack and respond to things example - Nuetral(blue), Fear(silver) and Anger(red).
 
 - **Fear Triggers:**
-  -Enemy witnesses the player defeating other enemies.
-  -Isolation or being outnumbered.
+  - Enemy witnesses the player defeating other enemies.
+  - Isolation or being outnumbered.
 
 - **Anger Triggers:**
-  -Repeated attacks by the player.
-  -Close proximity to the player for extended periods.
-  -Damage to allies or significant environmental destruction caused by the player.
+  - Repeated attacks by the player.
+  - Close proximity to the player for extended periods.
+  - Damage to allies or significant environmental destruction caused by the player.
 
 - **Enemy Ai Update:** I added a fleeing mechanic to the enemy ai
 
