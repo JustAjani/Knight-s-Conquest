@@ -1,7 +1,7 @@
 import pygame
 from Scripts.player import Player
 from util.Audio import *
-from stateManager.stateManager import StateMachine, PatrolState, ChaseState, AttackState, MemoryPatrolState
+from stateManager.stateManager import StateMachine, PatrolState, ChaseState, AttackState, MemoryPatrolState , FleeState
 from Enemies.ability import Ability
 
 class Enemy(Player):
@@ -59,6 +59,7 @@ class Enemy(Player):
         self.state_machine.add_state('chase', ChaseState(self))
         self.state_machine.add_state('attack', AttackState(self))
         self.state_machine.add_state('memory_patrol', MemoryPatrolState(self))
+        self.state_machine.add_state('flee', FleeState(self))
 
         self.animating = False
         self.ability = Ability(self.game, "none", "none", "none", size, pos)
@@ -95,7 +96,9 @@ class Enemy(Player):
     def evaluate_combat_state(self, current_time, player):
         player_distance = abs(self.enemy_rect.x - player.pos[0])
         if current_time - self.last_state_change > self.state_cooldown:
-            if player_distance <= self.attack_range:
+            if self.fear >= 20:  # High fear might trigger a flee or hide state
+                self.state_machine.change_state('flee')
+            elif player_distance <= self.attack_range:
                 self.last_known_player_pos = None  # Reset memory when engaging in combat
                 self.state_machine.change_state('attack')
             elif player_distance <= self.chase_range:
@@ -160,6 +163,24 @@ class Enemy(Player):
             self.ability.trigger_ability()
         else:
             self.is_third_attack = False
+    
+    def flee(self):
+        # Determine direction: away from player
+        player_position = self.last_known_player_pos if self.last_known_player_pos else self.enemy_rect.x  # Fallback to current position if no memory of player
+        if player_position < self.enemy_rect.x:
+            # Player is to the left, move right
+            self.flip = False
+            self.enemy_rect.x += self.adjustedspeed
+        else:
+            # Player is to the right, move left
+            self.flip = True
+            self.enemy_rect.x -= self.adjustedspeed
+        
+        # Increase speed temporarily if needed
+        self.adjustedspeed *= 1.5  # Increase speed by 50% when fleeing
+        
+        # Update animation and position
+        self.animationUpdate()
 
     def animationUpdate(self):
         """

@@ -103,6 +103,26 @@ class AttackState(State):
 
     def exit(self):
         print("Exiting Attack State")
+    
+class FleeState:
+        def __init__(self, enemy):
+            self.enemy = enemy
+        
+        def enter(self):
+            self.enemy.currentAnimation = "run"  # Assuming the run animation shows the enemy in a fleeing state
+            # self.enemy.audio_player.enqueue_sound(self.enemy.audio_player.fearSound)  # Play a fear sound if available
+            self.enemy.frameIndex = 0
+            print("Entering Flee State")
+
+        def execute(self):
+            flee_thread = threading.Thread(target=self.handle_flee)
+            flee_thread.start()
+        
+        def handle_flee(self):
+            self.enemy.flee()
+
+        def exit(self):
+            pass  # Clean up any flee-specific settings if needed
 
 class FlyingEyePatrolState(State):
     def enter(self):
