@@ -87,24 +87,24 @@ class Enemy(Player):
         self.evaluate_combat_state(current_time, player)
         self.animationUpdate()
     
-    def update_flip(self, player):
-        """
-        Updates the flip state of the enemy based on the player's position.
+    # def update_flip(self, player):
+    #     """
+    #     Updates the flip state of the enemy based on the player's position.
 
-        Parameters:
-            player (Player): The player object that the enemy is interacting with.
+    #     Parameters:
+    #         player (Player): The player object that the enemy is interacting with.
 
-        Returns:
-            None
-        """
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_flip_time > self.flip_cooldown:
-            if player.pos[0] > self.enemy_rect.x:
-                self.flip = False
-                self.last_flip_time = current_time
-            elif player.pos[0] < self.enemy_rect.x:
-                self.flip = True
-                self.last_flip_time = current_time
+    #     Returns:
+    #         None
+    #     """
+    #     current_time = pygame.time.get_ticks()
+    #     if current_time - self.last_flip_time > self.flip_cooldown:
+    #         if player.pos[0] > self.enemy_rect.x:
+    #             self.flip = False
+    #             self.last_flip_time = current_time
+    #         elif player.pos[0] < self.enemy_rect.x:
+    #             self.flip = True
+    #             self.last_flip_time = current_time
 
     def evaluate_combat_state(self, current_time, player):
         """
@@ -135,20 +135,11 @@ class Enemy(Player):
             self.last_state_change = current_time  # Update the time of the last state change
 
     def patrol(self):
-        """
-        Updates the enemy's position while patrolling.
-
-        This function checks if the enemy has reached the end position or start position. If it has, it flips the enemy's direction. 
-        Then, based on the flip direction, it moves the enemy towards the opposite direction.
-
-        Parameters:
-            None
-
-        Returns:
-            None
-        """
+        current_time = pygame.time.get_ticks()
         if self.enemy_rect.x >= self.end_pos or self.enemy_rect.x <= self.start_pos:
-            self.flip = not self.flip
+            if current_time - self.last_flip_time > self.flip_cooldown:
+                self.flip = not self.flip
+                self.last_flip_time = current_time
 
         if self.flip:
             self.enemy_rect.x -= self.adjustedspeed
@@ -158,37 +149,30 @@ class Enemy(Player):
         self.audioHandling()
 
     def chase(self, player):
-        """
-        Updates the enemy's position while chasing the player.
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_flip_time > self.flip_cooldown:
+            if player.pos[0] > self.enemy_rect.x:
+                self.flip = False
+            else:
+                self.flip = True
+            self.last_flip_time = current_time
 
-        Parameters:
-            player (Player): The player object that the enemy is chasing.
-
-        Returns:
-            None
-        """
-        if player.pos[0] > self.enemy_rect.x:
-            self.flip = False
-            self.enemy_rect.x += self.adjustedspeed
-        else:
-            self.flip = True
+        if self.flip:
             self.enemy_rect.x -= self.adjustedspeed
+        else:
+            self.enemy_rect.x += self.adjustedspeed
         
         self.audioHandling()
 
     def attack(self, player):
-        """
-        Attacks the player.
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_flip_time > self.flip_cooldown:
+            if player.pos[0] > self.enemy_rect.x:
+                self.flip = False
+            else:
+                self.flip = True
+            self.last_flip_time = current_time
 
-        This function checks if there is no sound playing on channel 2 of the audio player. If not, it queues the attack1Sound from the audio player. 
-        It also updates the last_attack_time to the current time.
-
-        Parameters:
-            player (Player): The player object to attack.
-
-        Returns:
-            None
-        """
         if not self.audio_player.get_channel(2):
             self.audio_player.sound_queue(self.audio_player.attack1Sound)
         self.last_attack_time = pygame.time.get_ticks()

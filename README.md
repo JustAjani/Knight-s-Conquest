@@ -127,8 +127,12 @@ python main.py
 
 ---
 
+## August 3, 2024
+
+- **Enemy AI Update:** I removed the `update_flip` function in the enemy class because it was interuption the flip logic in other states. By centralizing the flip logic within each state and using consistent timing checks, conflicting flip commands are avoided and ensure that the enemy's behavior is more predictable and controlled.
+
 ## Contributing
 Feel free to contribute or suggest improvements through issues or pull requests. All contributions are welcomed!
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed - see the [LICENSE.md](LICENSE.md) file for details.

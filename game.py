@@ -89,8 +89,8 @@ class Game:
         
         self.enemies = []
         # self.enemies.append(Enemy(self, pos=[105, 288], size=[400, 400], inputHandler=self.enemyInputHandler))
-        # self.enemies.append(Goblin(self, pos=[105, 288], size=[400, 400]))
-        # self.enemies.append(Mushroom(self, pos=[105, 288], size=[400, 400]))
+        self.enemies.append(Goblin(self, pos=[105, 288], size=[400, 400]))
+        self.enemies.append(Mushroom(self, pos=[105, 288], size=[400, 400]))
         self.enemies.append(FireWorm(self, pos=[210, 360], size=[300, 300]))
 
         self.health = Health(self, 50, 20, 400, 20, 100, fg_color=(139, 0, 139), bg_color=(255, 0, 0))
