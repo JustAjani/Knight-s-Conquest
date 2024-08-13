@@ -102,6 +102,7 @@ class Player:
             attack2 = True
             if self.audio_player.get_channel(2):  
                 self.audio_player.enqueue_sound(self.audio_player.attack2Sound)
+                self.attack()
 
         self.animationUpdate(moving, self.Jumping, attack1,attack2)
         # print(f"Player position after input: {self.pos}")
@@ -180,9 +181,6 @@ class Player:
         for point in outline:
             adjusted_point = (point[0] + sprite_pos[0], point[1] + sprite_pos[1])
             pygame.draw.circle(self.game.screen, border_color, adjusted_point, 1) 
-        
-        if hasattr(self, 'sword_hitbox') and self.game.debug_mode:
-            pygame.draw.rect(self.game.screen, (255, 0, 0), self.sword_hitbox, 2)  # Draw the sword hitbox in red
 
         # self.health.render() 
     
@@ -194,16 +192,21 @@ class Player:
         if self.can_attack():
             self.last_attack_time = pygame.time.get_ticks()
 
-            if self.currentAnimation in ["attack1", "attack2"] and self.frameIndex in [3, 5]:
-                sword_length = 5
-                # Adjust the position of the hitbox depending on the direction the player is facing
-                if not self.flip:
-                    self.sword_hitbox = pygame.Rect(self.pos[0] + self.size[0], self.pos[1], sword_length, self.size[1])
-                else:
-                    self.sword_hitbox = pygame.Rect(self.pos[0] - sword_length, self.pos[1], sword_length, self.size[1])
+            if self.currentAnimation in ["attack1", "attack2"]:
+                ray_length = 100 
+                ray_start = (self.pos[0] + self.size[0], self.pos[1] + self.size[1] // 2)
+
+                if self.flip: 
+                    ray_end = (ray_start[0] - ray_length, ray_start[1])
+                else:  
+                    ray_end = (ray_start[0] + ray_length, ray_start[1])
+
+                if self.game.debug_mode:
+                    pygame.draw.line(self.game.screen, (255, 0, 0), ray_start, ray_end, 2)
 
                 for enemy in self.game.enemies:
-                    if self.sword_hitbox.colliderect(enemy.enemy_rect):
+                    enemy_rect = pygame.Rect(enemy.pos[0], enemy.pos[1], enemy.size[0], enemy.size[1])
+                    if self.line_rect_collision(ray_start, ray_end, enemy_rect):
                         knockback_distance = 60 if self.currentAnimation == "attack2" else 40
                         direction_multiplier = -1 if self.flip else 1
                         enemy.pos[0] += knockback_distance * direction_multiplier
@@ -213,6 +216,18 @@ class Player:
                     else:
                         enemy.attacked = False
                         print("miss")
+                else:
+                    print("no enemies or not in range")
+
+    def line_rect_collision(self,ray_start, ray_end, rect):
+        # This function needs to determine if the line from ray_start to ray_end intersects the rectangle 'rect'
+        # Simple algorithm to check intersection between a line and a rectangle
+        # For simplicity, this might be an approximation or could use more sophisticated geometry libraries
+        return rect.clipline(ray_start, ray_end)
+
+
+
+
 
 
 

@@ -126,7 +126,6 @@ python main.py
   - **Ability Class Tweak:** Corrected minor mistakes and optimizations.
 
 ## August 3, 2024
-
 - **Enemy AI Update:** I removed the `update_flip(self, player)` function in the enemy class because it was interuption the flip logic in other states. By centralizing the flip logic within each state and using consistent timing checks, conflicting flip commands are avoided and ensure that the enemy's behavior is more predictable and controlled.
 - **Enemy Ai Update:** The enemy remebers the player last positon after exiting chase mode and patrols that area until the enemy is inrange
 - **Enemy Ai Emotional State [Implemented not yet functional]:** A state that will affect both player and enemy on how they attack and respond to things example - Nuetral(blue), Fear(silver) and Anger(red).
@@ -143,12 +142,13 @@ python main.py
 - **Enemy Ai Update:** I added a fleeing mechanic to the enemy ai
 
 ## August 13, 2024
-
-- **Implementing of enemy damage animation:** Simply adding the animation to the `self.animation` associative array.
+- **Implementing of enemy damage animation:** Simply adding the animation to the `self.animation` Dictionary.
 - **Integrated attack handling:** So far no damage is being delt just want to make sure the sword hit box renders properly and the enemy damage animation aswell which isn't working that well but it's something.
 - **Simple debug system:** So I made a debug system...well chatgpt recommended it and I copied what it said so now I can see where the hitbox is printed if the enemy gets hit.
 - **added a new state:** this will handle the hit animation and damage[not yet implement the damage that is].
 - **noteworthy problem:** Hit box inconsistency which needs to be fixed also the audio class.
+- **Improved attacked Handling:** will attack player only if it's in a specific range...[heavily considering ray tracing at this point]
+- **Ray Tracing:** simulated a ray tracing feature like in 3d games and I'm getting better results
 
 ## Contributing
 Feel free to contribute or suggest improvements through issues or pull requests. All contributions are welcomed!
