@@ -124,6 +124,25 @@ class FleeState:
         def exit(self):
             pass  # Clean up any flee-specific settings if needed
 
+class DamageState:
+    def __init__(self, enemy):
+        self.enemy = enemy
+
+    def enter(self):
+        self.enemy.currentAnimation = "hit"
+        self.enemy.frameIndex in [1,3]
+        print("Entering Damage State")
+
+    def execute(self):
+        damage_thread = threading.Thread(target=self.handle_damage)
+        damage_thread.start()
+
+    def handle_damage(self):
+        self.enemy.attacked = True
+
+    def exit(self):
+        print("Exiting Damage State")
+
 class FlyingEyePatrolState(State):
     def enter(self):
         """

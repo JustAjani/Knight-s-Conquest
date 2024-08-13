@@ -27,6 +27,7 @@ class Mushroom(Enemy):
             "attack": game.assetManager.get_asset('mushroom_attack'),
             "attack2": game.assetManager.get_asset('mushroom_attack2'),
             "attack3": game.assetManager.get_asset('mushroom_attack3'),
+            "hit": game.assetManager.get_asset('mushroom_hit')
         }
 
         self.speed = 70

@@ -278,8 +278,9 @@ class AudioPlayer:
         Returns:
             None
         """
-        if not self.currently_playing:
-            print("No sound is currently playing.")
-        else:
-            for channel, sound_data in self.currently_playing.items():
-                print(f"Channel {self.channels.index(channel)} is playing: {sound_data.sound} with priority {sound_data.priority}")
+        # if not self.currently_playing:
+        #     print("No sound is currently playing.")
+        # else:
+        #     for channel, sound_data in self.currently_playing.items():
+        #         print(f"Channel {self.channels.index(channel)} is playing: {sound_data.sound} with priority {sound_data.priority}")
+        pass

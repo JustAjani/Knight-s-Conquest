@@ -2,6 +2,7 @@ import pygame
 from util.settings import *
 from util.Audio import AudioPlayer
 from Scripts.Gravity import Gravity 
+from Scripts.health import Health
 
 class Player:
     def __init__(self, game, pos, size, inputHandler):
@@ -49,6 +50,11 @@ class Player:
         self.animationSpeed = 0.1
         self.lastUpdate = pygame.time.get_ticks()
         self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
+        
+        self.health = Health(self, 50, 20, 400, 20, 100, fg_color=(192,192,192), bg_color=(255, 0, 0))
+
+        self.attack_cooldown = 0.5  # 500 milliseconds
+        self.last_attack_time = 0
 
     def update(self,deltaTime):
         """
@@ -90,6 +96,7 @@ class Player:
             attack1 = True
             if self.audio_player.get_channel(2):  
                 self.audio_player.enqueue_sound(self.audio_player.attack1Sound)
+                self.attack()
 
         if inputs['attack2']:
             attack2 = True
@@ -162,22 +169,62 @@ class Player:
         else:
             current_anim = self.image
 
-        # Position where the sprite is blitted
         sprite_pos = (self.pos[0], self.pos[1])
         self.game.screen.blit(current_anim, sprite_pos)
 
-        # Create a mask from the current animation image
-        mask = pygame.mask.from_surface(current_anim)
-        outline = mask.outline()  # Get the outline of the mask
+        self.mask = pygame.mask.from_surface(current_anim)
+        outline = self.mask.outline()  
 
         border_color = (0, 0, 0)  
 
-        # Draw the outline using the points from the mask
         for point in outline:
-            # Adjust each point by the sprite's position to align it correctly
             adjusted_point = (point[0] + sprite_pos[0], point[1] + sprite_pos[1])
-            pygame.draw.circle(self.game.screen, border_color, adjusted_point, 1)  # Draw a small circle at each point
+            pygame.draw.circle(self.game.screen, border_color, adjusted_point, 1) 
+        
+        if hasattr(self, 'sword_hitbox') and self.game.debug_mode:
+            pygame.draw.rect(self.game.screen, (255, 0, 0), self.sword_hitbox, 2)  # Draw the sword hitbox in red
 
+        # self.health.render() 
+    
+    def can_attack(self):
+        now = pygame.time.get_ticks()
+        return now - self.last_attack_time >= self.attack_cooldown * 1000
+
+    def attack(self):
+        if self.can_attack():
+            self.last_attack_time = pygame.time.get_ticks()
+
+            if self.currentAnimation in ["attack1", "attack2"] and self.frameIndex in [3, 5]:
+                sword_length = 5
+                # Adjust the position of the hitbox depending on the direction the player is facing
+                if not self.flip:
+                    self.sword_hitbox = pygame.Rect(self.pos[0] + self.size[0], self.pos[1], sword_length, self.size[1])
+                else:
+                    self.sword_hitbox = pygame.Rect(self.pos[0] - sword_length, self.pos[1], sword_length, self.size[1])
+
+                for enemy in self.game.enemies:
+                    if self.sword_hitbox.colliderect(enemy.enemy_rect):
+                        knockback_distance = 60 if self.currentAnimation == "attack2" else 40
+                        direction_multiplier = -1 if self.flip else 1
+                        enemy.pos[0] += knockback_distance * direction_multiplier
+                        enemy.enemy_rect.x += knockback_distance * direction_multiplier
+                        enemy.attacked = True
+                        print("hit")
+                    else:
+                        enemy.attacked = False
+                        print("miss")
+
+
+
+
+
+
+
+
+
+    
+
+    
 
 
         

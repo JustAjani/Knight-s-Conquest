@@ -131,17 +131,24 @@ python main.py
 - **Enemy Ai Update:** The enemy remebers the player last positon after exiting chase mode and patrols that area until the enemy is inrange
 - **Enemy Ai Emotional State [Implemented not yet functional]:** A state that will affect both player and enemy on how they attack and respond to things example - Nuetral(blue), Fear(silver) and Anger(red).
 
--**Fear Triggers:**:
-  -Enemy witnesses the player defeating other enemies.
-  -Isolation or being outnumbered.
+- **Fear Triggers:**
+  - Enemy witnesses the player defeating other enemies.
+  - Isolation or being outnumbered.
 
--**Anger Triggers:**
-  -Repeated attacks by the player.
-  -Close proximity to the player for extended periods.
-  -Damage to allies or significant environmental destruction caused by the player.
+- **Anger Triggers:**
+  - Repeated attacks by the player.
+  - Close proximity to the player for extended periods.
+  - Damage to allies or significant environmental destruction caused by the player.
 
-- **Enemy Ai Update:** I added a fleeing mechanic to the enemy class
+- **Enemy Ai Update:** I added a fleeing mechanic to the enemy ai
 
+## August 13, 2024
+
+- **Implementing of enemy damage animation:** Simply adding the animation to the `self.animation` associative array.
+- **Integrated attack handling:** So far no damage is being delt just want to make sure the sword hit box renders properly and the enemy damage animation aswell which isn't working that well but it's something.
+- **Simple debug system:** So I made a debug system...well chatgpt recommended it and I copied what it said so now I can see where the hitbox is printed if the enemy gets hit.
+- **added a new state:** this will handle the hit animation and damage[not yet implement the damage that is].
+- **noteworthy problem:** Hit box inconsistency which needs to be fixed also the audio class.
 
 ## Contributing
 Feel free to contribute or suggest improvements through issues or pull requests. All contributions are welcomed!

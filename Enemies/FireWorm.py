@@ -11,6 +11,7 @@ class FireWorm(Enemy):
             "run": game.assetManager.get_asset('worm_walk'),
             "death": game.assetManager.get_asset('worm_death'),
             "attack": game.assetManager.get_asset('worm_attack'),
+            "hit": game.assetManager.get_asset('worm_hit'),
         }
 
         # Adjusted attributes for the FireWorm

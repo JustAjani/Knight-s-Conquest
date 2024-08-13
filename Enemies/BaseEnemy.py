@@ -1,7 +1,7 @@
 import pygame
 from Scripts.player import Player
 from util.Audio import *
-from stateManager.stateManager import StateMachine, PatrolState, ChaseState, AttackState, MemoryPatrolState , FleeState
+from stateManager.stateManager import StateMachine, PatrolState, ChaseState, AttackState, MemoryPatrolState , FleeState, DamageState
 from Enemies.ability import Ability
 
 class Enemy(Player):
@@ -17,7 +17,8 @@ class Enemy(Player):
             "run": game.assetManager.get_asset('skeleton_walk'),
             "death": game.assetManager.get_asset('skeleton_death'),
             "attack": game.assetManager.get_asset('skeleton_attack'),
-            "shield": game.assetManager.get_asset('skeleton_shield')
+            "shield": game.assetManager.get_asset('skeleton_shield'),
+            "hit": game.assetManager.get_asset('skeleton_hit')
         }
         self.enemy_rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
         self.frameIndex = 0
@@ -60,9 +61,11 @@ class Enemy(Player):
         self.state_machine.add_state('attack', AttackState(self))
         self.state_machine.add_state('memory_patrol', MemoryPatrolState(self))
         self.state_machine.add_state('flee', FleeState(self))
+        self.state_machine.add_state('hit', DamageState(self))
 
         self.animating = False
         self.ability = Ability(self.game, "none", "none", "none", size, pos)
+        self.attacked = False
 
     def update(self, deltaTime, player, all_enemies):
         self.enemy_rect.y = self.pos[1]
@@ -74,6 +77,8 @@ class Enemy(Player):
         self.state_machine.update()
         self.evaluate_combat_state(current_time, player)
         self.animationUpdate()
+
+        print (self.pos, self.enemy_rect.x)
     
     def check_isolation(self, all_enemies, isolation_distance=200):
         nearby_enemies = sum(1 for enemy in all_enemies if enemy != self and 
@@ -104,6 +109,8 @@ class Enemy(Player):
             elif player_distance <= self.chase_range:
                 self.last_known_player_pos = player.pos  # Update last known position when in chase range
                 self.state_machine.change_state('chase')
+            elif self.attacked:
+                self.state_machine.change_state('hit')
             else:
                 if self.last_known_player_pos is not None:
                     self.state_machine.change_state('memory_patrol')
@@ -198,7 +205,10 @@ class Enemy(Player):
         """
         now = pygame.time.get_ticks()
         moving = self.state_machine.current_state in [self.state_machine.states['patrol'], self.state_machine.states['chase']]
-        if moving and self.currentAnimation != "run":
+        if self.state_machine.current_state == self.state_machine.states['hit']:
+            self.currentAnimation = "hit"
+            self.frameIndex in [1, 3]
+        elif moving and self.currentAnimation != "run":
             self.currentAnimation = "run"
             self.frameIndex = 0
         elif self.state_machine.current_state == self.state_machine.states['attack'] and not self.currentAnimation.startswith("attack"):
@@ -250,23 +260,21 @@ class Enemy(Player):
         current_anim = self.image_left if self.flip else self.image
         self.game.screen.blit(current_anim, (self.enemy_rect.x, self.enemy_rect.y))
 
-        # Create a mask from the current animation image
-        mask = pygame.mask.from_surface(current_anim)
-        outline = mask.outline()
+        self.enemy_mask = pygame.mask.from_surface(current_anim)
+        outline = self.enemy_mask.outline()
 
-        # Adjust the outline coordinates to match the position on the screen
         adjusted_outline = [(x + self.enemy_rect.x, y + self.enemy_rect.y) for x, y in outline]
-
-        # Determine the border color based on emotional state
+        
         border_color = (0, 0, 255)  # Neutral
         if self.fear > 0:
             border_color = (192,192,192)  # Fear
         elif self.anger > 0:
             border_color = (139, 0, 0)  # Anger
 
-        # Draw the outline using the adjusted coordinates
         for point in adjusted_outline:
-            pygame.draw.circle(self.game.screen, border_color, point, 1)  # Draw circles at each point in the outline
+            pygame.draw.circle(self.game.screen, border_color, point, 1) 
+
+    
 
 
 

@@ -39,7 +39,8 @@ class Goblin(Enemy):
             "run": game.assetManager.get_asset('goblin_walk'),
             "death": game.assetManager.get_asset('goblin_death'),
             "attack": game.assetManager.get_asset('goblin_attack'),
-            "attack2": game.assetManager.get_asset('goblin_attack2')
+            "attack2": game.assetManager.get_asset('goblin_attack2'),
+            "hit": game.assetManager.get_asset('goblin_hit'),
         }
 
         self.speed = 150
