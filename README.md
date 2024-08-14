@@ -150,6 +150,12 @@ python main.py
 - **Improved attacked Handling:** will attack player only if it's in a specific range...[heavily considering ray tracing at this point]
 - **Ray Tracing:** simulated a ray tracing feature like in 3d games and I'm getting better results
 
+## August 14,2024
+- **Ray Tracing Modification:** so i used multiple rays to get a wider attack area one slightly above, in the middle and in slightly below the player. 
+- **Push Back Modification:** made sure the enemy can only be pushed backed only if they get attacked.
+- **Modified the attack trigger:** so originally onced attacked the enemy would stay in the damaged state so I made recieving damage a higher prioty and i made sure the `enemy.attacked` flag is reset each time.
+- **Modified the Damage State Duration:** The Damage state would last a long long while so I used python Time module to set the state to sleep 0.2 milliseconds, there were inconsitencies due to the thread so we had to calculate it with deltaTime.
+
 ## Contributing
 Feel free to contribute or suggest improvements through issues or pull requests. All contributions are welcomed!
 

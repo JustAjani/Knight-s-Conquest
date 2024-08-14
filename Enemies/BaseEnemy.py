@@ -77,8 +77,6 @@ class Enemy(Player):
         self.state_machine.update()
         self.evaluate_combat_state(current_time, player)
         self.animationUpdate()
-
-        print (self.pos, self.enemy_rect.x)
     
     def check_isolation(self, all_enemies, isolation_distance=200):
         nearby_enemies = sum(1 for enemy in all_enemies if enemy != self and 
@@ -103,14 +101,14 @@ class Enemy(Player):
         if current_time - self.last_state_change > self.state_cooldown:
             if self.fear >= 20:  # High fear might trigger a flee or hide state
                 self.state_machine.change_state('flee')
+            elif self.attacked:
+                self.state_machine.change_state('hit')
             elif player_distance <= self.attack_range:
                 self.last_known_player_pos = None  # Reset memory when engaging in combat
                 self.state_machine.change_state('attack')
             elif player_distance <= self.chase_range:
                 self.last_known_player_pos = player.pos  # Update last known position when in chase range
                 self.state_machine.change_state('chase')
-            elif self.attacked:
-                self.state_machine.change_state('hit')
             else:
                 if self.last_known_player_pos is not None:
                     self.state_machine.change_state('memory_patrol')

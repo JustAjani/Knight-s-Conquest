@@ -116,7 +116,10 @@ class Game:
                     elif event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_x:  # Press 'x' to toggle debug mode
                             self.debug_mode = not self.debug_mode
-                            print('toggled debug mode')
+                            if self.debug_mode:
+                                print('debug on')
+                            else:
+                                print('debug off')
                     # elif event.type == pygame.KEYDOWN:
                     #     print("Key pressed:", pygame.key.name(event.key))  # Debug print for any key press
                         # if event.key == pygame.K_p:

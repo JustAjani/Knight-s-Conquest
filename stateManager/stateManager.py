@@ -124,13 +124,15 @@ class FleeState:
         def exit(self):
             pass  # Clean up any flee-specific settings if needed
 
-class DamageState:
+class DamageState():
     def __init__(self, enemy):
         self.enemy = enemy
+        self.deltaTime = pygame.time.Clock().tick(60) / 1000
 
     def enter(self):
         self.enemy.currentAnimation = "hit"
         self.enemy.frameIndex in [1,3]
+        self.time_in_state = 0
         print("Entering Damage State")
 
     def execute(self):
@@ -138,7 +140,13 @@ class DamageState:
         damage_thread.start()
 
     def handle_damage(self):
-        self.enemy.attacked = True
+        self.time_in_state += self.deltaTime
+        if not self.enemy.attacked:
+            self.enemy.attacked = True
+        else:
+            if self.time_in_state >= 0.2:
+               self.enemy.attacked = False
+               self.exit()
 
     def exit(self):
         print("Exiting Damage State")

@@ -53,7 +53,7 @@ class Player:
         
         self.health = Health(self, 50, 20, 400, 20, 100, fg_color=(192,192,192), bg_color=(255, 0, 0))
 
-        self.attack_cooldown = 0.5  # 500 milliseconds
+        self.attack_cooldown = 0.3
         self.last_attack_time = 0
 
     def update(self,deltaTime):
@@ -192,32 +192,39 @@ class Player:
         if self.can_attack():
             self.last_attack_time = pygame.time.get_ticks()
 
-            if self.currentAnimation in ["attack1", "attack2"]:
-                ray_length = 100 
-                ray_start = (self.pos[0] + self.size[0], self.pos[1] + self.size[1] // 2)
+            if self.currentAnimation in ["attack1", "attack2"] and self.frameIndex in [4,6]:
+                ray_length = 20  
+                ray_start = (self.pos[0] + self.size[0] // 2, self.pos[1] + self.size[1] // 2)
 
-                if self.flip: 
-                    ray_end = (ray_start[0] - ray_length, ray_start[1])
-                else:  
-                    ray_end = (ray_start[0] + ray_length, ray_start[1])
+                # Calculate ray ends based on direction and multiple heights
+                rays = [
+                    ((ray_start[0], ray_start[1] - 10), (ray_start[0] - ray_length, ray_start[1] - 10) if self.flip else (ray_start[0] + ray_length, ray_start[1] - 10)),  # Higher ray
+                    (ray_start, (ray_start[0] - ray_length, ray_start[1]) if self.flip else (ray_start[0] + ray_length, ray_start[1])),  # Middle ray
+                    ((ray_start[0], ray_start[1] + 10), (ray_start[0] - ray_length, ray_start[1] + 10) if self.flip else (ray_start[0] + ray_length, ray_start[1] + 10))  # Lower ray
+                ]
 
-                if self.game.debug_mode:
-                    pygame.draw.line(self.game.screen, (255, 0, 0), ray_start, ray_end, 2)
+                for start, end in rays:
+                    if self.game.debug_mode:
+                        pygame.draw.line(self.game.screen, (255, 0, 0), start, end, 2)
+                        self.render()
 
-                for enemy in self.game.enemies:
-                    enemy_rect = pygame.Rect(enemy.pos[0], enemy.pos[1], enemy.size[0], enemy.size[1])
-                    if self.line_rect_collision(ray_start, ray_end, enemy_rect):
-                        knockback_distance = 60 if self.currentAnimation == "attack2" else 40
-                        direction_multiplier = -1 if self.flip else 1
-                        enemy.pos[0] += knockback_distance * direction_multiplier
-                        enemy.enemy_rect.x += knockback_distance * direction_multiplier
-                        enemy.attacked = True
-                        print("hit")
+                    for enemy in self.game.enemies:
+                        enemy_rect = pygame.Rect(enemy.pos[0], enemy.pos[1], enemy.size[0], enemy.size[1])
+                        if self.line_rect_collision(start, end, enemy_rect):
+                            if not enemy.attacked:
+                                enemy.attacked = True
+                                knockback_distance = 60 if self.currentAnimation == "attack2" else 40
+                                direction_multiplier = -1 if self.flip else 1
+                                enemy.pos[0] += knockback_distance * direction_multiplier
+                                enemy.enemy_rect.x += knockback_distance * direction_multiplier
+                                print(f"Hit enemy at {enemy.pos} from ray {start} to {end}")
+                            else:
+                                print("Already attacked")
+                        else:
+                            enemy.attacked = False
+                            print("Miss")
                     else:
-                        enemy.attacked = False
-                        print("miss")
-                else:
-                    print("no enemies or not in range")
+                        print("No enemies or not in range")
 
     def line_rect_collision(self,ray_start, ray_end, rect):
         # This function needs to determine if the line from ray_start to ray_end intersects the rectangle 'rect'
