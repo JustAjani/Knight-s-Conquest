@@ -42,7 +42,7 @@ git clone https://github.com/JustAjani/Knight-s-Conquest.git
 ### Running the Game
 Navigate to the cloned repository's directory and run the game using:
 ```bash
-python main.py
+python game.py
 ```
 
 ## Game Development Progress
