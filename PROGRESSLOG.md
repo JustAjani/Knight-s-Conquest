@@ -114,3 +114,6 @@
 - **Improving Enemy Overlap:** Spent couple hours trying to improve the logic enemy's will push each other away if they're too close however they're stuck in one place, interfering with the original movement logic.
 - **Moving The Enemy Overlap logic to the Base Enemy Class:** This worked well the enemies don't overlap and they push each other away if they're in the way, same was done for the player.
 - **Implementation of a Collision Detection Class:** Moved all the logic in it's seperate class making for more consistency between player and enemy. [Shout out chatgpt for the assitance], however this is affecting the flee state due to the inherent logic.
+- **Edited Attack Handling:** So basically how the fleeing mechanic works is if the player postion is less than the `enemy_rect` or if only one enemy is avaliable the enemy would flee. However the attack handling Knocks back the enemy so that would trigger the flee slowly making the enemy_rect larger. [still Want the push back thou]
+-**Improving Attack Handling Again:** Set KnockBack to be random so it wouldn't interfere with the flee logic, rather than pushing enemy each time the button is clicked.
+-**Playing With Particles:** Made a particle based class with the help of chatgpt ofc big help explained it well.

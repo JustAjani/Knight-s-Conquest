@@ -52,4 +52,4 @@ Feel free to contribute or suggest improvements through issues or pull requests.
 This project is licensed - see the [LICENSE.md](LICENSE.md) file for details.
 
 ## Progress Log
-see The [PROGRESSLOG.md](PROGRESSLOG.md) file for details.
+See the [PROGRESSLOG.md](PROGRESSLOG.md) file for details.

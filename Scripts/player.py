@@ -1,4 +1,5 @@
 import pygame
+import random
 from util.settings import *
 from util.Audio import AudioPlayer
 from Scripts.Gravity import Gravity 
@@ -199,8 +200,8 @@ class Player:
         if self.can_attack():
             self.last_attack_time = pygame.time.get_ticks()
 
-            if self.currentAnimation in ["attack1", "attack2"] and self.frameIndex in [4,6]:
-                ray_length = 20  
+            if self.currentAnimation in ["attack1", "attack2"] and self.frameIndex in [4, 6]:
+                ray_length = 20
                 ray_start = (self.pos[0] + self.size[0] // 2, self.pos[1] + self.size[1] // 2)
 
                 # Calculate ray ends based on direction and multiple heights
@@ -219,7 +220,8 @@ class Player:
                         if self.line_rect_collision(start, end, enemy.enemy_rect):
                             if not enemy.attacked:
                                 enemy.attacked = True
-                                knockback_distance = 60 if self.currentAnimation == "attack2" else 40
+                                # Randomize the knockback distance within a range
+                                knockback_distance = random.randint(20, 60) if self.currentAnimation == "attack2" else random.randint(10, 40)
                                 direction_multiplier = -1 if self.flip else 1
                                 enemy.pos[0] += knockback_distance * direction_multiplier
                                 enemy.enemy_rect.x += knockback_distance * direction_multiplier
