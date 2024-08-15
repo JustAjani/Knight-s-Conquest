@@ -3,6 +3,7 @@ from Scripts.player import Player
 from util.Audio import *
 from stateManager.stateManager import StateMachine, PatrolState, ChaseState, AttackState, MemoryPatrolState , FleeState, DamageState
 from Enemies.ability import Ability
+from Scripts.CollisionHandler import CollisionHandler
 
 class Enemy(Player):
     def __init__(self, game, pos, size, moveDistance=100, inputHandler=None):
@@ -21,6 +22,7 @@ class Enemy(Player):
             "hit": game.assetManager.get_asset('skeleton_hit')
         }
         self.enemy_rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
+        self.rect = self.enemy_rect
         self.frameIndex = 0
         self.currentAnimation = "idle"
         self.animationSpeed = 0.1
@@ -67,6 +69,8 @@ class Enemy(Player):
         self.ability = Ability(self.game, "none", "none", "none", size, pos)
         self.attacked = False
 
+        self.mask = pygame.mask.from_surface(self.image)
+
     def update(self, deltaTime, player, all_enemies):
         self.enemy_rect.y = self.pos[1]
         self.adjustedspeed = self.speed * deltaTime
@@ -77,6 +81,10 @@ class Enemy(Player):
         self.state_machine.update()
         self.evaluate_combat_state(current_time, player)
         self.animationUpdate()
+        CollisionHandler.resolve_collisions(self, all_enemies, allowed_overlap=305)
+        
+    def update_mask(self):
+        self.mask = pygame.mask.from_surface(self.image)
     
     def check_isolation(self, all_enemies, isolation_distance=200):
         nearby_enemies = sum(1 for enemy in all_enemies if enemy != self and 
@@ -270,7 +278,8 @@ class Enemy(Player):
             border_color = (139, 0, 0)  # Anger
 
         for point in adjusted_outline:
-            pygame.draw.circle(self.game.screen, border_color, point, 1) 
+            pygame.draw.circle(self.game.screen, border_color, point, 1)
+ 
 
     
 

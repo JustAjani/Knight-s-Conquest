@@ -46,6 +46,7 @@ class Goblin(Enemy):
         self.speed = 150
         self.move_distance = 120
         self.enemy_rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
+        self.rect = self.enemy_rect
         self.frameIndex = 0
         self.currentAnimation = "idle"
         self.animationSpeed = 0.1

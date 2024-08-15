@@ -95,7 +95,7 @@ class Game:
         self.player = Player(self, pos=[-5, 300], size=[400, 400], inputHandler=self.PlayerInputHandler)
         
         self.enemies = []
-        self.enemies.append(Enemy(self, pos=[105, 288], size=[400, 400], inputHandler=self.enemyInputHandler))
+        self.enemies.append(Enemy(self, pos=[110, 288], size=[400, 400], inputHandler=self.enemyInputHandler))
         self.enemies.append(Goblin(self, pos=[105, 288], size=[400, 400]))
         # self.enemies.append(Mushroom(self, pos=[105, 288], size=[400, 400]))
         # self.enemies.append(FireWorm(self, pos=[210, 360], size=[300, 300]))
@@ -120,26 +120,18 @@ class Game:
                                 print('debug on')
                             else:
                                 print('debug off')
-                    # elif event.type == pygame.KEYDOWN:
-                    #     print("Key pressed:", pygame.key.name(event.key))  # Debug print for any key press
-                        # if event.key == pygame.K_p:
-                        #     self.gameSaver.save_game()
-                        # if event.key == pygame.K_l:
-                        #     self.gameSaver.load_game()
-                        # if event.key == pygame.K_m:
-                        #     self.gameSaver.delete_game()
 
                 self.screen.fill('#f7b32b')
-
-                # self.audioPlayer.update()
-
-                self.player.update(self.deltaTime)
-                self.player.render()
                 
+                # Spawns All The Enemies
                 for enemy in self.enemies:
                     enemy.update(self.deltaTime, self.player, self.enemies)
                     enemy.render()
                 
+                # Spawns and Updates The Player
+                self.player.update(self.deltaTime, self.enemies)
+                self.player.render()
+
                 self.health.render()
                 
                 # Calculate and draw FPS

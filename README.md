@@ -155,6 +155,13 @@ python main.py
 - **Push Back Modification:** made sure the enemy can only be pushed backed only if they get attacked.
 - **Modified the attack trigger:** so originally onced attacked the enemy would stay in the damaged state so I made recieving damage a higher prioty and i made sure the `enemy.attacked` flag is reset each time.
 - **Modified the Damage State Duration:** The Damage state would last a long long while so I used python Time module to set the state to sleep 0.2 milliseconds, there were inconsitencies due to the thread so we had to calculate it with deltaTime.
+- **Enemy Overlap:** Used Chatgpt to create a simple collision system to prevent enemies from overlapping.
+
+## August 15,2024
+- **Improving Enemy Overlap:** Spent couple hours trying to improve the logic enemy's will push each other away if they're too close however they're stuck in one place, interfering with the original movement logic.
+- **Moving The Enemy Overlap logic to the Base Enemy Class:** This worked well the enemies don't overlap and they push each other away if they're in the way, same was done for the player.
+- **Implementation of a Collision Detection Class:** Moved all the logic in it's seperate class making for more consistency between player and enemy. [Shout out chatgpt for the assitance], however this is affecting the flee state due to the inherent logic
+
 
 ## Contributing
 Feel free to contribute or suggest improvements through issues or pull requests. All contributions are welcomed!

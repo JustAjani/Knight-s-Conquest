@@ -3,6 +3,7 @@ from util.settings import *
 from util.Audio import AudioPlayer
 from Scripts.Gravity import Gravity 
 from Scripts.health import Health
+from Scripts.CollisionHandler import CollisionHandler
 
 class Player:
     def __init__(self, game, pos, size, inputHandler):
@@ -27,6 +28,7 @@ class Player:
         self.gravity = 0.5
         self.velocity = [0,0]
         self.player_rect = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
+        self.rect = self.player_rect
         self.Jumping = False
         self.flip = False
         
@@ -50,13 +52,14 @@ class Player:
         self.animationSpeed = 0.1
         self.lastUpdate = pygame.time.get_ticks()
         self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
+        self.mask = pygame.mask.from_surface(self.image)
         
         self.health = Health(self, 50, 20, 400, 20, 100, fg_color=(192,192,192), bg_color=(255, 0, 0))
 
-        self.attack_cooldown = 0.3
+        self.attack_cooldown = 0.1
         self.last_attack_time = 0
 
-    def update(self,deltaTime):
+    def update(self,deltaTime,all_characters):
         """
         Updates the player's position and state based on the given time delta and input.
 
@@ -106,6 +109,10 @@ class Player:
 
         self.animationUpdate(moving, self.Jumping, attack1,attack2)
         # print(f"Player position after input: {self.pos}")
+        CollisionHandler.resolve_collisions(self, all_characters, allowed_overlap=305)
+    
+    def update_mask(self):
+        self.mask = pygame.mask.from_surface(self.image)
 
     def animationUpdate(self, moving, jumping, attack1,attack2):
         """
@@ -209,8 +216,7 @@ class Player:
                         self.render()
 
                     for enemy in self.game.enemies:
-                        enemy_rect = pygame.Rect(enemy.pos[0], enemy.pos[1], enemy.size[0], enemy.size[1])
-                        if self.line_rect_collision(start, end, enemy_rect):
+                        if self.line_rect_collision(start, end, enemy.enemy_rect):
                             if not enemy.attacked:
                                 enemy.attacked = True
                                 knockback_distance = 60 if self.currentAnimation == "attack2" else 40
@@ -231,8 +237,8 @@ class Player:
         # Simple algorithm to check intersection between a line and a rectangle
         # For simplicity, this might be an approximation or could use more sophisticated geometry libraries
         return rect.clipline(ray_start, ray_end)
-
-
+    
+    
 
 
 
