@@ -178,21 +178,21 @@ class Enemy(Player):
             self.is_third_attack = False
     
     def flee(self):
-        # Determine direction: away from player
-        player_position = self.last_known_player_pos if self.last_known_player_pos else self.enemy_rect.x  # Fallback to current position if no memory of player
-        if player_position < self.enemy_rect.x:
-            # Player is to the left, move right
+        if self.last_known_player_pos is None:
+            player_position = (self.enemy_rect.x, self.enemy_rect.y)
+        else:
+            player_position = self.last_known_player_pos
+
+        print("Debug: player_position used for comparison:", player_position)  
+
+        if player_position[0] < self.enemy_rect.x:
             self.flip = False
             self.enemy_rect.x += self.adjustedspeed
         else:
-            # Player is to the right, move left
             self.flip = True
             self.enemy_rect.x -= self.adjustedspeed
         
-        # Increase speed temporarily if needed
-        self.adjustedspeed *= 1.5  # Increase speed by 50% when fleeing
-        
-        # Update animation and position
+        self.adjustedspeed *= 1.5
         self.animationUpdate()
 
     def animationUpdate(self):
@@ -264,7 +264,10 @@ class Enemy(Player):
 
     def render(self):
         current_anim = self.image_left if self.flip else self.image
+        if current_anim.get_locked():
+            current_anim.unlock()
         self.game.screen.blit(current_anim, (self.enemy_rect.x, self.enemy_rect.y))
+
 
         self.enemy_mask = pygame.mask.from_surface(current_anim)
         outline = self.enemy_mask.outline()

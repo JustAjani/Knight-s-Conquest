@@ -117,3 +117,4 @@
 - **Edited Attack Handling:** So basically how the fleeing mechanic works is if the player postion is less than the `enemy_rect` or if only one enemy is avaliable the enemy would flee. However the attack handling Knocks back the enemy so that would trigger the flee slowly making the enemy_rect larger. [still Want the push back thou]
 -**Improving Attack Handling Again:** Set KnockBack to be random so it wouldn't interfere with the flee logic, rather than pushing enemy each time the button is clicked.
 -**Playing With Particles:** Made a particle based class with the help of chatgpt ofc big help explained it well.
+-**Edited the `flee` function:** When the state was trigger an error in the terminal would appear not affecting the gameloop however the error was that i was comparing an list and an integer with the > sign, also when fixing this the surface was locked so I had to unlock it with a conditional check in the render.
