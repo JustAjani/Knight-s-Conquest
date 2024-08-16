@@ -17,6 +17,10 @@ class Health:
     def update_health(self, change):
         """ Update the health by a specified change amount. """
         self.current_health = max(0, min(self.current_health + change, self.max_health))
+    
+    def apply_decay(self, decay_rate):
+        """Apply a decay to the health over time."""
+        self.update_health(-decay_rate)
 
     def render(self):
         """ Render the health bar directly on the game's main screen. """
@@ -32,3 +36,8 @@ class Health:
         # Draw a border around the health bar, if needed
         if self.border_width > 0:
             pygame.draw.rect(self.game.screen, self.border_color, (self.x, self.y, self.width, self.height), self.border_width)
+        
+         # Debugging text
+        debug_font = pygame.font.Font(None, 30)  # Adjust size as necessary
+        debug_text = debug_font.render(f'Health: {self.current_health}/{self.max_health}', True, (255, 255, 255))
+        self.game.screen.blit(debug_text, (self.x, self.y - 30))  # Adjust position as necessary

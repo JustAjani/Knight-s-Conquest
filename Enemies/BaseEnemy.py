@@ -1,9 +1,10 @@
 import pygame
 from Scripts.player import Player
 from util.Audio import *
-from stateManager.stateManager import StateMachine, PatrolState, ChaseState, AttackState, MemoryPatrolState , FleeState, DamageState
+from stateManager.stateManager import StateMachine, PatrolState, ChaseState, AttackState, MemoryPatrolState , FleeState, DamageState, DeathState
 from Enemies.ability import Ability
 from Scripts.CollisionHandler import CollisionHandler
+from Scripts.health import Health
 
 class Enemy(Player):
     def __init__(self, game, pos, size, moveDistance=100, inputHandler=None):
@@ -64,13 +65,16 @@ class Enemy(Player):
         self.state_machine.add_state('memory_patrol', MemoryPatrolState(self))
         self.state_machine.add_state('flee', FleeState(self))
         self.state_machine.add_state('hit', DamageState(self))
+        self.state_machine.add_state('death', DeathState(self,self.game))
 
         self.animating = False
         self.ability = Ability(self.game, "none", "none", "none", size, pos)
         self.attacked = False
+        self.dead = False
 
         self.mask = pygame.mask.from_surface(self.image)
-
+        self.enemy_health = Health(self.game, 50, 20, 400, 20, max_health=self.health_max(), fg_color=(192,192,192), bg_color=(255, 0, 0))
+    
     def update(self, deltaTime, player, all_enemies):
         self.enemy_rect.y = self.pos[1]
         self.adjustedspeed = self.speed * deltaTime
@@ -82,7 +86,21 @@ class Enemy(Player):
         self.evaluate_combat_state(current_time, player)
         self.animationUpdate()
         CollisionHandler.resolve_collisions(self, all_enemies, allowed_overlap=305)
-        
+
+    def health_max(self):
+        match self.name:
+            case "skeleton":
+                self.max_health = 25
+            case "goblin":
+                self.max_health = 28
+            case "mushroom":
+                self.max_health = 30
+            case "flyingeye":
+                self.max_health = 40
+            case "fireworm":
+                self.max_health = 45
+        return self.max_health
+   
     def update_mask(self):
         self.mask = pygame.mask.from_surface(self.image)
     
@@ -107,10 +125,12 @@ class Enemy(Player):
     def evaluate_combat_state(self, current_time, player):
         player_distance = abs(self.enemy_rect.x - player.pos[0])
         if current_time - self.last_state_change > self.state_cooldown:
-            if self.fear >= 20:  # High fear might trigger a flee or hide state
-                self.state_machine.change_state('flee')
+            if self.enemy_health.current_health <= 0 and not self.dead:
+                self.state_machine.change_state('death')
             elif self.attacked:
                 self.state_machine.change_state('hit')
+            elif self.fear >= 20:  # High fear might trigger a flee or hide state
+                self.state_machine.change_state('flee')
             elif player_distance <= self.attack_range:
                 self.last_known_player_pos = None  # Reset memory when engaging in combat
                 self.state_machine.change_state('attack')
@@ -211,7 +231,10 @@ class Enemy(Player):
         """
         now = pygame.time.get_ticks()
         moving = self.state_machine.current_state in [self.state_machine.states['patrol'], self.state_machine.states['chase']]
-        if self.state_machine.current_state == self.state_machine.states['hit']:
+        if self.state_machine.current_state == self.state_machine.states['death']:
+            self.currentAnimation = "death"
+            self.frameIndex = 0
+        elif self.state_machine.current_state == self.state_machine.states['hit']:
             self.currentAnimation = "hit"
             self.frameIndex in [1, 3]
         elif moving and self.currentAnimation != "run":

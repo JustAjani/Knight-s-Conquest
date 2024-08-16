@@ -1,6 +1,7 @@
 import random
 import threading
 import pygame
+import time
 
 class State:
     def __init__(self, enemy):
@@ -150,6 +151,36 @@ class DamageState():
 
     def exit(self):
         print("Exiting Damage State")
+
+class DeathState():
+    def __init__(self, enemy, game):
+        self.enemy = enemy
+        self.game = game
+        self.deltaTime = pygame.time.Clock().tick(60) / 1000
+
+    def enter(self):
+        self.enemy.currentAnimation = "death"
+        self.enemy.frameIndex = 0
+        self.time_in_state = 0
+        print("Entering Death State")
+
+    def execute(self):
+        death_thread = threading.Thread(target=self.handle_death)
+        death_thread.start()
+
+    def handle_death(self):
+        self.time_in_state += self.deltaTime
+        if not self.enemy.dead:
+            self.enemy.dead = True
+            for enemy in self.game.enemies:
+                if self.enemy.enemy_health.current_health <= 0:
+                    self.game.enemies.remove(enemy)
+        else:
+            if self.time_in_state >= 0.5:
+                self.exit()
+
+    def exit(self):
+        print("Exiting Death State")
 
 class FlyingEyePatrolState(State):
     def enter(self):

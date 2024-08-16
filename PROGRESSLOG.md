@@ -118,3 +118,7 @@
 -**Improving Attack Handling Again:** Set KnockBack to be random so it wouldn't interfere with the flee logic, rather than pushing enemy each time the button is clicked.
 -**Playing With Particles:** Made a particle based class with the help of chatgpt ofc big help explained it well.
 -**Edited the `flee` function:** When the state was trigger an error in the terminal would appear not affecting the gameloop however the error was that i was comparing an list and an integer with the > sign, also when fixing this the surface was locked so I had to unlock it with a conditional check in the render.
+
+## August 16,2024
+
+-**Enemy Death Handling:** Enemy has an integrated health system, they have a death state and they can finally die!!! however the enemy death animation isn't triggered properly, which may lead to some inconsistencies.

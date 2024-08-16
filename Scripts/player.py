@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 from util.settings import *
 from util.Audio import AudioPlayer
 from Scripts.Gravity import Gravity 
@@ -225,7 +226,7 @@ class Player:
                                 direction_multiplier = -1 if self.flip else 1
                                 enemy.pos[0] += knockback_distance * direction_multiplier
                                 enemy.enemy_rect.x += knockback_distance * direction_multiplier
-                                print(f"Hit enemy at {enemy.pos} from ray {start} to {end}")
+                                enemy.enemy_health.apply_decay(20) if self.currentAnimation == "attack2" else enemy.enemy_health.apply_decay(10)
                             else:
                                 print("Already attacked")
                         else:
@@ -239,6 +240,8 @@ class Player:
         # Simple algorithm to check intersection between a line and a rectangle
         # For simplicity, this might be an approximation or could use more sophisticated geometry libraries
         return rect.clipline(ray_start, ray_end)
+    
+    
     
     
 
