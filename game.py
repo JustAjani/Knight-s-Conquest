@@ -96,7 +96,7 @@ class Game:
         
         self.enemies = []
         self.enemies.append(Enemy(self, pos=[110, 288], size=[400, 400], inputHandler=self.enemyInputHandler))
-        # self.enemies.append(Goblin(self, pos=[105, 288], size=[400, 400]))
+        self.enemies.append(Goblin(self, pos=[105, 288], size=[400, 400]))
         # self.enemies.append(Mushroom(self, pos=[105, 288], size=[400, 400]))
         # self.enemies.append(FireWorm(self, pos=[210, 360], size=[300, 300]))
 

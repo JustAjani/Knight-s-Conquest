@@ -1,7 +1,8 @@
 import random
 import threading
 import pygame
-import time
+from concurrent.futures import ThreadPoolExecutor
+
 
 class State:
     def __init__(self, enemy):
@@ -189,7 +190,9 @@ class DeathState():
     def remove_enemy(self):
         with self.lock:
             if self.enemy.dead and self.animation_complete:
-                self.game.enemies = [e for e in self.game.enemies if e is not self.enemy]
+                # Directly remove the specific enemy without additional checks
+                if self.enemy in self.game.enemies:
+                    self.game.enemies.remove(self.enemy)
                 self.exit()
 
     def exit(self):
@@ -331,6 +334,7 @@ class StateMachine:
         self.current_state = None
         self.last_state_change_time = 0
         self.state_change_delay = 2000
+        self.executor = ThreadPoolExecutor(max_workers=10)  # Adjust the number of workers based on expected concurrency
 
     def add_state(self, name, state):
         self.states[name] = state
@@ -346,6 +350,7 @@ class StateMachine:
 
     def update(self):
         if self.current_state:
-            self.current_state.execute()
+            self.executor.submit(self.current_state.execute)  # Use the thread pool to execute the state
+
 
 

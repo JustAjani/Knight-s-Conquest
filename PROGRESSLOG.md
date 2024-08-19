@@ -120,7 +120,9 @@
 -**Edited the `flee` function:** When the state was trigger an error in the terminal would appear not affecting the gameloop however the error was that i was comparing an list and an integer with the > sign, also when fixing this the surface was locked so I had to unlock it with a conditional check in the render.
 
 ## August 19,2024
+-**Enemy Death Handling:** Enemy has an integrated health system, they have a death state and they can finally die!!! however the enemy death animation isn't triggered properly, which may lead to some inconsistencies.
 -**Trying to get Enemy Death Animation to work:** Get some help with my original death class for the enemy however it seems like he's break dancing than dying.
 -**Improved death state:** Has a flag that checks if the animation is complete which is done in a while loop, tracks how long it has been in that state plays the death animation then filters out the enemy out the list safely removing them from the list.
+-**Refining StateManagement:** To prevent memory leaks and thread overhead I looked into threadpooling.[Help from Chagpt]
+-**Refining Audio:** Using thread pool to handle tasks like enqueuing sounds and playing them, ensuring that I don't have to create an excessive number of threads for these operations.[Help from Chatgpt]
 
--**Enemy Death Handling:** Enemy has an integrated health system, they have a death state and they can finally die!!! however the enemy death animation isn't triggered properly, which may lead to some inconsistencies.

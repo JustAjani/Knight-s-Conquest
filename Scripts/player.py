@@ -202,7 +202,7 @@ class Player:
             self.last_attack_time = pygame.time.get_ticks()
 
             if self.currentAnimation in ["attack1", "attack2"] and self.frameIndex in [4, 6]:
-                ray_length = 20
+                ray_length = 5
                 ray_start = (self.pos[0] + self.size[0] // 2, self.pos[1] + self.size[1] // 2)
 
                 # Calculate ray ends based on direction and multiple heights

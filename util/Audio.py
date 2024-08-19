@@ -3,6 +3,8 @@ import os
 import time
 from collections import namedtuple, deque
 import threading
+from concurrent.futures import ThreadPoolExecutor
+import logging
 
 SoundData = namedtuple('SoundData', ['sound', 'priority'])
 
@@ -20,18 +22,7 @@ class AudioPlayer:
 
     def __init__(self):
         """
-        Initializes the AudioPlayer instance.
-
-        This method initializes the AudioPlayer instance by setting up the necessary
-        audio parameters and starting the update thread. It initializes the channels
-        list, sound queue, currently playing dictionary, sound last played dictionary,
-        lock, running flag, and update thread.
-
-        Parameters:
-            None
-
-        Returns:
-            None
+        Initializes the AudioPlayer instance and sets up the thread pool.
         """
         pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=1024)
         self.channels = []
@@ -40,21 +31,19 @@ class AudioPlayer:
         self.sound_last_played = {}
         self.lock = threading.Lock()
         self.running = True
+        self.executor = ThreadPoolExecutor(max_workers=10)  
         self.update_thread = threading.Thread(target=self.run_update)
         self.update_thread.start()
 
     def enqueue_sound(self, sound_data):
         """
-        Enqueues a sound to be played.
+        Enqueues a sound to be played in the thread pool.
+        """
+        self.executor.submit(self._enqueue_sound_task, sound_data)
 
-        This method adds a sound to the sound queue if it is not already being played within the debounce interval.
-        The debounce interval is a time period after which a sound can be played again.
-
-        Parameters:
-            sound_data (SoundData): The sound data to be enqueued.
-
-        Returns:
-            None
+    def _enqueue_sound_task(self, sound_data):
+        """
+        Task to enqueue sound, ensuring it adheres to the debounce interval.
         """
         if sound_data and sound_data.sound:
             current_time = pygame.time.get_ticks()
@@ -63,42 +52,71 @@ class AudioPlayer:
                 with self.lock:
                     self.sound_queue.append(sound_data)
                     self.sound_last_played[sound_data.sound] = current_time
-        #             print(f"Enqueued {sound_data.sound} with priority {sound_data.priority}")
-        #     else:
-        #         print(f"Debounced {sound_data.sound}")
-        # else:
-        #     print("Attempted to enqueue invalid or non-existent sound.")
 
     def run_update(self):
         """
         Runs the update loop for the AudioPlayer.
-
-        This method continuously runs the update loop while the AudioPlayer is running.
-        It sleeps for a specified amount of time (0.05 seconds) to improve responsiveness.
-        The update method is called within a lock to ensure thread safety.
-
-        Parameters:
-            None
-
-        Returns:
-            None
+        Continuously checks for new sounds to play in the thread pool.
+        This method includes comprehensive error handling to manage potential issues
+        with thread pool shutdown, task submission, and other unexpected errors.
         """
         while self.running:
-            time.sleep(0.05)  # Adjust sleep time for better responsiveness
+            try:
+                time.sleep(0.05)  # Adjust sleep time for better responsiveness
+
+                # Only submit tasks if the player is still running and the executor is active
+                if self.running:
+                    try:
+                        self.executor.submit(self.update)
+                    except RuntimeError as e:
+                        # Handle the case where the executor has been shut down
+                        logging.error(f"Task submission failed: {e}")
+                        break  # Exit the loop since we can't submit new tasks
+
+            except Exception as e:
+                # Catch any other unexpected exceptions that could crash the thread
+                logging.error(f"An error occurred in run_update: {e}", exc_info=True)
+                break  # Exit the loop to prevent continuous errors
+
+        logging.info("Exiting run_update loop.")
+
+    def play_sound(self, sound_data):
+        """
+        Plays a sound on a channel using the thread pool.
+        """
+        self.executor.submit(self._play_sound_task, sound_data)
+
+    def _play_sound_task(self, sound_data):
+        """
+        Task to play sound on an appropriate channel based on priority.
+        """
+        channel = self.get_channel(sound_data.priority)
+        if channel:
+            channel.play(sound_data.sound)
             with self.lock:
-                self.update()
+                self.currently_playing[channel] = sound_data
+
+    def update(self):
+        """
+        Updates the audio player by checking and playing sounds from the queue.
+        """
+        with self.lock:
+            self.cleanup_channels()
+            if self.sound_queue:
+                sound_data = self.sound_queue.popleft()
+                self.play_sound(sound_data)
+
+    def stop(self):
+        """
+        Stops the audio player and shuts down the thread pool.
+        """
+        self.running = False
+        self.update_thread.join()
+        self.executor.shutdown(wait=True)  # Ensure all tasks are completed before shutting down
 
     def get_channel(self, required_priority):
         """
-        Returns a channel from the list of channels that is not currently busy and has a priority less than the required priority.
-        If no such channel is found, a new channel is created and returned.
-
-        Parameters:
-            required_priority (int): The minimum priority required for the channel.
-
-        Returns:
-            Channel: The channel that meets the requirements.
-
+        Returns a channel from the list of channels or creates a new one if needed.
         """
         for channel in self.channels:
             if not channel.get_busy():
@@ -111,72 +129,17 @@ class AudioPlayer:
 
     def create_new_channel(self):
         """
-        Creates a new channel if the number of channels is less than the maximum number of channels available.
-        
-        Returns:
-            Channel: A new channel object if a new channel can be created. None otherwise.
+        Creates a new channel if possible.
         """
         if len(self.channels) < pygame.mixer.get_num_channels():
             new_channel = pygame.mixer.Channel(len(self.channels))
             self.channels.append(new_channel)
             return new_channel
-        else:
-            return None
-
-    def play_sound(self, sound_data):
-        """
-        Plays a sound on a channel with the specified priority. If a channel is available with a priority lower than the required priority, the sound will preemptively stop the lower priority sound. If no channel is available, a new channel will be created if possible.
-
-        Parameters:
-            sound_data (SoundData): The sound data to be played.
-
-        Returns:
-            None
-        """
-        channel = self.get_channel(sound_data.priority)
-        if channel:
-            channel.play(sound_data.sound)
-            self.currently_playing[channel] = sound_data
-        #     print(f"Playing sound on channel {self.channels.index(channel)} with priority {sound_data.priority}")
-        # else:
-        #     print("Failed to obtain a channel")
-
-    def update(self):
-        """
-        Updates the audio player by performing the following steps:
-        
-        1. Calls the `cleanup_channels` method to remove any channels that are no longer in use.
-        2. Checks if there are any sounds in the `sound_queue`.
-        3. If there are sounds in the queue, it removes the first sound from the queue and calls the `play_sound` method to play the sound on an available channel.
-        
-        This method does not take any parameters and does not return anything.
-        """
-        self.cleanup_channels()
-        if self.sound_queue:
-            sound_data = self.sound_queue.popleft()
-            self.play_sound(sound_data)
-
-    def stop(self):
-        """
-        Stops the audio player by setting the `running` flag to `False` and joining the `update_thread`.
-
-        This method does not take any parameters.
-
-        Returns:
-            None
-        """
-        self.running = False
-        self.update_thread.join()
+        return None
 
     def cleanup_channels(self):
         """
-        Removes any channels from the `channels` list that are not currently in use.
-        Also removes any entries from the `currently_playing` dictionary that correspond to channels that are no longer in use.
-
-        This method does not take any parameters.
-
-        Returns:
-            None
+        Cleans up channels that are no longer in use.
         """
         self.channels = [channel for channel in self.channels if channel.get_busy()]
         self.currently_playing = {channel: sound for channel, sound in self.currently_playing.items() if channel.get_busy()}
@@ -184,16 +147,6 @@ class AudioPlayer:
     def load_audio(self, path):
         """
         Load an audio file from the specified path.
-
-        Args:
-            path (str): The path to the audio file.
-
-        Returns:
-            pygame.mixer.Sound: The loaded audio file.
-
-        Raises:
-            FileNotFoundError: If the audio file cannot be found in any of the specified directories.
-
         """
         directories = self.AUDIOFILES.values()
         for directory in directories:
@@ -205,14 +158,7 @@ class AudioPlayer:
     def setup_sounds(self):
         """
         Set up sounds with associated priorities and debounce handling.
-
-        This method initializes a series of SoundData objects with associated priorities.
-        The sounds are loaded using the `load_audio` method.
-
-        Returns:
-            None
         """
-        
         self.attack1Sound = SoundData(self.load_audio('sword-hit-medium.wav'), priority=3)
         self.attack2Sound = SoundData(self.load_audio('nasty-knife-stab-2.wav'), priority=3)
         self.rightfoot = SoundData(self.load_audio('knight-right-footstep-forestgrass-2-with-chainmail.wav'), priority=1)
@@ -231,9 +177,6 @@ class AudioPlayer:
     def get_audio_state(self):
         """
         Get the current audio state including currently playing sounds and their priorities.
-
-        Returns:
-            list: A list of tuples containing sound names and their priorities.
         """
         audio_state = []
         for channel, sound_data in self.currently_playing.items():
@@ -245,12 +188,6 @@ class AudioPlayer:
     def set_audio_state(self, audio_state):
         """
         Set the audio state to the provided state.
-
-        Args:
-            audio_state (list): A list of tuples containing sound names and their priorities.
-
-        Returns:
-            None
         """
         self.stop_all_sounds()
         for sound_name, priority in audio_state:
@@ -261,9 +198,6 @@ class AudioPlayer:
     def stop_all_sounds(self):
         """
         Stop all currently playing sounds.
-
-        Returns:
-            None
         """
         for channel in self.channels:
             channel.stop()
@@ -272,15 +206,9 @@ class AudioPlayer:
     def print_currently_playing(self):
         """
         Prints the currently playing sounds and their associated priorities.
-
-        This method iterates over the `currently_playing` dictionary and prints the channel index, sound being played, and priority for each sound.
-
-        Returns:
-            None
         """
-        # if not self.currently_playing:
-        #     print("No sound is currently playing.")
-        # else:
-        #     for channel, sound_data in self.currently_playing.items():
-        #         print(f"Channel {self.channels.index(channel)} is playing: {sound_data.sound} with priority {sound_data.priority}")
-        pass
+        if not self.currently_playing:
+            print("No sound is currently playing.")
+        else:
+            for channel, sound_data in self.currently_playing.items():
+                print(f"Channel {self.channels.index(channel)} is playing: {sound_data.sound} with priority {sound_data.priority}")
