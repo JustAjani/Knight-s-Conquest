@@ -126,7 +126,7 @@ class Game:
                 # Spawns All The Enemies
                 for enemy in self.enemies:
                     enemy.update(self.deltaTime, self.player, self.enemies)
-                    enemy.enemy_health.render()
+                    # enemy.enemy_health.render()
                     enemy.render()
                     # if enemy.enemy_health.current_health <= 0:
                     #                 self.enemies.remove(enemy)

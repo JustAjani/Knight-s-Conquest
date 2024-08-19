@@ -119,6 +119,8 @@
 -**Playing With Particles:** Made a particle based class with the help of chatgpt ofc big help explained it well.
 -**Edited the `flee` function:** When the state was trigger an error in the terminal would appear not affecting the gameloop however the error was that i was comparing an list and an integer with the > sign, also when fixing this the surface was locked so I had to unlock it with a conditional check in the render.
 
-## August 16,2024
+## August 19,2024
+-**Trying to get Enemy Death Animation to work:** Get some help with my original death class for the enemy however it seems like he's break dancing than dying.
+-**Improved death state:** Has a flag that checks if the animation is complete which is done in a while loop, tracks how long it has been in that state plays the death animation then filters out the enemy out the list safely removing them from the list.
 
 -**Enemy Death Handling:** Enemy has an integrated health system, they have a death state and they can finally die!!! however the enemy death animation isn't triggered properly, which may lead to some inconsistencies.

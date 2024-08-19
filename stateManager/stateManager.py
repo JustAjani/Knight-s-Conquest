@@ -157,11 +157,13 @@ class DeathState():
         self.enemy = enemy
         self.game = game
         self.deltaTime = pygame.time.Clock().tick(60) / 1000
+        self.animation_complete = False
+        self.lock = threading.Lock()  
 
     def enter(self):
         self.enemy.currentAnimation = "death"
         self.enemy.frameIndex = 0
-        self.time_in_state = 0
+        self.time_in_state = 2.5
         print("Entering Death State")
 
     def execute(self):
@@ -169,14 +171,25 @@ class DeathState():
         death_thread.start()
 
     def handle_death(self):
-        self.time_in_state += self.deltaTime
+        # Increment the time spent in this state
+        while not self.animation_complete:
+            with self.lock:
+                self.time_in_state += self.deltaTime
+                if self.time_in_state >= len(self.enemy.currentAnimation) * self.deltaTime:
+                    self.animation_complete = True
+                    self.mark_enemy_dead()
+
+        if self.animation_complete:
+            self.remove_enemy()
+
+    def mark_enemy_dead(self):
         if not self.enemy.dead:
             self.enemy.dead = True
-            for enemy in self.game.enemies:
-                if self.enemy.enemy_health.current_health <= 0:
-                    self.game.enemies.remove(enemy)
-        else:
-            if self.time_in_state >= 0.5:
+
+    def remove_enemy(self):
+        with self.lock:
+            if self.enemy.dead and self.animation_complete:
+                self.game.enemies = [e for e in self.game.enemies if e is not self.enemy]
                 self.exit()
 
     def exit(self):
