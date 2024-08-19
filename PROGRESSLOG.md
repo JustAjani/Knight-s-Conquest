@@ -125,4 +125,4 @@
 -**Improved death state:** Has a flag that checks if the animation is complete which is done in a while loop, tracks how long it has been in that state plays the death animation then filters out the enemy out the list safely removing them from the list.
 -**Refining StateManagement:** To prevent memory leaks and thread overhead I looked into threadpooling.[Help from Chagpt]
 -**Refining Audio:** Using thread pool to handle tasks like enqueuing sounds and playing them, ensuring that I don't have to create an excessive number of threads for these operations.[Help from Chatgpt]
-
+- **Improved Error Handling For classes:** Add error handling and exception for audio and state manager class.

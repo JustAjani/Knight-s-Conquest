@@ -163,8 +163,8 @@ class DeathState():
 
     def enter(self):
         self.enemy.currentAnimation = "death"
-        self.enemy.frameIndex = 0
-        self.time_in_state = 2.5
+        self.enemy.frameIndex in [1,4]
+        self.time_in_state = 0.4
         print("Entering Death State")
 
     def execute(self):
@@ -172,11 +172,11 @@ class DeathState():
         death_thread.start()
 
     def handle_death(self):
-        # Increment the time spent in this state
+        start_time = pygame.time.get_ticks() / 1000.0  # get current time in seconds
         while not self.animation_complete:
             with self.lock:
-                self.time_in_state += self.deltaTime
-                if self.time_in_state >= len(self.enemy.currentAnimation) * self.deltaTime:
+                current_time = pygame.time.get_ticks() / 1000.0  # update current time
+                if current_time - start_time >= self.time_in_state:
                     self.animation_complete = True
                     self.mark_enemy_dead()
 

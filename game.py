@@ -96,7 +96,7 @@ class Game:
         
         self.enemies = []
         self.enemies.append(Enemy(self, pos=[110, 288], size=[400, 400], inputHandler=self.enemyInputHandler))
-        self.enemies.append(Goblin(self, pos=[105, 288], size=[400, 400]))
+        # self.enemies.append(Goblin(self, pos=[105, 288], size=[400, 400]))
         # self.enemies.append(Mushroom(self, pos=[105, 288], size=[400, 400]))
         # self.enemies.append(FireWorm(self, pos=[210, 360], size=[300, 300]))
 
@@ -106,7 +106,7 @@ class Game:
         self.audioPlayer = AudioPlayer()
 
     def run(self):
-        # try:
+        try:
             while True:
                 self.deltaTime = self.clock.tick(60) / 1000
                 for event in pygame.event.get():
@@ -143,8 +143,8 @@ class Game:
                 self.screen.blit(fps_text, (SCREENW - fps_text.get_width() - 10, 10))
 
                 pygame.display.update()
-        # except Exception as e:
-        #     self.cleanUp(e)
+        except Exception as e:
+            self.cleanUp(e)
             
     def cleanUp(self, exception):
         print(f"An error occurred: {exception}")
