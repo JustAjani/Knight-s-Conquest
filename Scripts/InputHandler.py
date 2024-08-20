@@ -21,6 +21,13 @@ class InputHandler:
         self.joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
         for joystick in self.joysticks:
             joystick.init()  # Initialize each joystick
+        self.enabled = True
+    
+    def disable_input(self):
+        self.enabled = False  
+
+    def enable_input(self):
+        self.enabled = True  
 
     def get_input(self):
         """
@@ -34,6 +41,16 @@ class InputHandler:
                 - 'attack1' (bool): True if the 'A' key or the left mouse button is pressed, False otherwise.
                 - 'attack2' (bool): True if the 'D' key or the right mouse button is pressed, False otherwise.
         """
+
+        if not self.enabled:
+            return {
+                'move_left': False,
+                'move_right': False,
+                'jump': False,
+                'attack1': False,
+                'attack2': False
+            }
+        
         keys = pygame.key.get_pressed()
         mouse_buttons = pygame.mouse.get_pressed()  # Get mouse button states
         

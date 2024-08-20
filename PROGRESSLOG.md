@@ -133,4 +133,5 @@
 - **Damage State:** Enemy death animation is now visible however damage animation isn't due to certain changes in the in the statemanager.
 - **Enemy Now Deals Damage:** Bascially resused the same code for the player damage but made sure it worked well with the enemy logic.
 - **Moved Attack Logic:** Moved enemy attack logic to state machine it moves consistent, also done some more refactoring for the AttackState.
+- **Player Death Animation:** After Death Player goes into a death animation, the player controller is disabled after death. Player animation doesn't loop over after death criteria is met.
 

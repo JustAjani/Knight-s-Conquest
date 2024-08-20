@@ -48,7 +48,8 @@ class Player:
               "run": game.assetManager.get_asset('knight_run'),
               "jump": game.assetManager.get_asset('knight_jump'),
               "attack1": game.assetManager.get_asset('knight_attack'),
-              "attack2": game.assetManager.get_asset('knight_attack2')
+              "attack2": game.assetManager.get_asset('knight_attack2'),
+              "death": game.assetManager.get_asset('knight_death')
         }
         self.frameIndex = 0
         self.currentAnimation = "idle"
@@ -63,6 +64,7 @@ class Player:
         self.last_attack_time = 0
         
         self.attacked = False
+        self.death_animation_done = False
     def update(self,deltaTime,all_characters):
         """
         Updates the player's position and state based on the given time delta and input.
@@ -118,53 +120,45 @@ class Player:
     def update_mask(self):
         self.mask = pygame.mask.from_surface(self.image)
 
-    def animationUpdate(self, moving, jumping, attack1,attack2):
-        """
-        Updates the animation of the player based on its current state.
-
-        This function checks the current state of the player and updates the animation accordingly. It checks if the player is attacking with attack1 or attack2, and if so, it sets the current animation to "attack1" or "attack2" respectively. If the player is moving, it checks if the current animation is not "run" and sets it to "run" with a frame index of 0. If the player is jumping, it checks if the current animation is not "jump" and sets it to "jump" with a frame index of 0. If none of the above conditions are met, it checks if the current animation is not "idle" and sets it to "idle" with a frame index of 0.
-
-        The function also checks if enough time has passed since the last animation update. If so, it updates the frame index by incrementing it by 1 modulo the length of the current animation. It then scales and flips the image of the current frame and updates the image and image_left attributes of the player.
-
-        Parameters:
-            moving (bool): Indicates whether the player is moving or not.
-            jumping (bool): Indicates whether the player is jumping or not.
-            attack1 (bool): Indicates whether the player is attacking with attack1 or not.
-            attack2 (bool): Indicates whether the player is attacking with attack2 or not.
-
-        Returns:
-            None
-        """
+    def animationUpdate(self, moving, jumping, attack1, attack2):
         now = pygame.time.get_ticks()
-        if attack1:
-            self.currentAnimation != "attack1"
-            self.currentAnimation = "attack1"
-        elif attack2:
-            self.currentAnimation != "attack2"
-            self.currentAnimation = "attack2"
-        elif moving:
-            if self.currentAnimation != "run":
-                self.currentAnimation = "run"
-                self.frameIndex = 0
-        elif jumping:
-            if self.currentAnimation != "jump":
-                self.currentAnimation = "jump"
-                self.frameIndex = 0
-        else:
-            if self.currentAnimation != "idle":
-                self.currentAnimation = "idle"
-                self.frameIndex = 0
 
-        if now - self.lastUpdate > int(1000 * self.animationSpeed):
+        # Only update the frame index if it's time and the death animation isn't completed
+        if now - self.lastUpdate > int(1000 * self.animationSpeed) and not self.death_animation_done:
             self.lastUpdate = now
-            self.frameIndex += 1
-        # Ensure the frameIndex does not exceed the number of frames in the animation
-        if self.frameIndex >= len(self.animations[self.currentAnimation]):
-            self.frameIndex = 0  # Reset or loop the animation
-        
-        self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
-        self.image_left = pygame.transform.flip(self.image,True,False)
-    
+
+            # Ensure the frame index does not exceed the number of frames
+            if self.frameIndex < len(self.animations[self.currentAnimation]) - 1:
+                self.frameIndex += 1
+            elif self.currentAnimation != "death":
+                # Reset the animation only if it's not the death animation
+                self.frameIndex = 0
+            # If it's the death animation and the last frame, set the flag
+            if self.currentAnimation == "death" and self.frameIndex == len(self.animations[self.currentAnimation]) - 1:
+                self.death_animation_done = True
+                self.inputHandler.disable_input()
+
+        # Handling animation states
+        if not self.death_animation_done:
+            if attack1:
+                self.currentAnimation = "attack1"
+            elif attack2:
+                self.currentAnimation = "attack2"
+            elif moving:
+                self.currentAnimation = "run"
+            elif jumping:
+                self.currentAnimation = "jump"
+            else:
+                self.currentAnimation = "idle"
+
+        # Update the sprite image if the current animation and frame index are valid
+        if 0 <= self.frameIndex < len(self.animations[self.currentAnimation]):
+            self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
+            self.image_left = pygame.transform.flip(self.image, True, False)
+        else:
+            # Log an error or handle unexpected case
+            print(f"Invalid frame index {self.frameIndex} for animation {self.currentAnimation}")
+
     def render(self):
         """
         Renders the current animation of the player on the game screen.

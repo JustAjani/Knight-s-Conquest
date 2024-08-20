@@ -44,6 +44,7 @@ class Game:
         self.assetManager.load_sprite_sheet('knight_jump', HEROSPRITEPATH + "/Jump.png", (180, 180))
         self.assetManager.load_sprite_sheet('knight_attack', HEROSPRITEPATH + "/Attack1.png", (180, 180))
         self.assetManager.load_sprite_sheet('knight_attack2', HEROSPRITEPATH + "/Attack2.png", (180, 180))
+        self.assetManager.load_sprite_sheet('knight_death', HEROSPRITEPATH + "/Death.png", (180, 180))
 
         #Enemy Animation
         self.assetManager.load_sprite_sheet('skeleton_idle', SKELETONPATH + "/idle.png", (150, 150))
@@ -107,7 +108,7 @@ class Game:
         self.audioPlayer = AudioPlayer()
 
     def run(self):
-        try:
+        # try:
             while True:
                 self.deltaTime = self.clock.tick(60) / 1000
                 for event in pygame.event.get():
@@ -141,8 +142,8 @@ class Game:
                 self.screen.blit(fps_text, (SCREENW - fps_text.get_width() - 10, 10))
 
                 pygame.display.update()
-        except Exception as e:
-            self.cleanUp(e)
+        # except Exception as e:
+        #     self.cleanUp(e)
             
     def cleanUp(self, exception):
         print(f"An error occurred: {exception}")

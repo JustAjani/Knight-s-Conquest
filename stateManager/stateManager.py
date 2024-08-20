@@ -90,7 +90,7 @@ class AttackState:
             knockback_distance = random.randint(20, 60)
             self.enemy.game.player.pos[0] += knockback_distance * direction_multiplier
             self.enemy.game.player.attacked = True
-            damage = 25
+            damage = 20
             self.enemy.game.player.health.apply_decay(damage)
             print(f"Player hit with attack, knockback {knockback_distance}, damage {damage}.")
             self.has_attacked = True  # Set the flag indicating that an attack has been made
@@ -102,7 +102,6 @@ class AttackState:
     def exit(self):
         print("Exiting Attack State")
         self.enemy.game.player.attacked = False  # Ensure to reset the attacked flag when exiting the state
-
 
 class FleeState:
         def __init__(self, enemy):
