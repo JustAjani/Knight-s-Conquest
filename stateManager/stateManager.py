@@ -55,24 +55,55 @@ class ChaseState(State):
     def exit(self):
         print("Exiting Chase State")
 
-class AttackState(State):
+class AttackState:
+    def __init__(self, enemy):
+        self.enemy = enemy
+        self.has_attacked = False  # This flag will check if an attack has been made during this state entry
+
     def enter(self):
         self.enemy.currentAnimation = "attack"
         self.enemy.frameIndex = 0
+        self.has_attacked = False  # Reset the flag when entering the state
         print("Entering Attack State")
 
     def execute(self):
-        # Start attack in a separate thread
-        attack_thread = threading.Thread(target=self.handle_attack)
-        attack_thread.start()
+        if not self.has_attacked:  # Only execute attack logic once per state entry
+            self.draw_attack_rays()
+            self.handle_attack()
+        # Could also include logic here to transition out of attack state if conditions are met
+
+    def draw_attack_rays(self):
+        ray_length = 50
+        ray_start = (self.enemy.pos[0] + self.enemy.size[0] // 2, self.enemy.pos[1] + self.enemy.size[1] // 2)
+        rays = [
+            ((ray_start[0], ray_start[1] - 10), (ray_start[0] - ray_length, ray_start[1] - 10) if self.enemy.flip else (ray_start[0] + ray_length, ray_start[1] - 10)),
+            (ray_start, (ray_start[0] - ray_length, ray_start[1]) if self.enemy.flip else (ray_start[0] + ray_length, ray_start[1])),
+            ((ray_start[0], ray_start[1] + 10), (ray_start[0] - ray_length, ray_start[1] + 10) if self.enemy.flip else (ray_start[0] + ray_length, ray_start[1] + 10))
+        ]
+        for start, end in rays:
+            pygame.draw.line(self.enemy.game.screen, (255, 0, 0), start, end, 3)
 
     def handle_attack(self):
-        # Attack logic
         self.enemy.attack(self.enemy.game.player)
+        if self.line_rect_collision(self.enemy, self.enemy.game.player.rect) and not self.enemy.game.player.attacked:
+            direction_multiplier = -1 if self.enemy.flip else 1
+            knockback_distance = random.randint(20, 60)
+            self.enemy.game.player.pos[0] += knockback_distance * direction_multiplier
+            self.enemy.game.player.attacked = True
+            damage = 25
+            self.enemy.game.player.health.apply_decay(damage)
+            print(f"Player hit with attack, knockback {knockback_distance}, damage {damage}.")
+            self.has_attacked = True  # Set the flag indicating that an attack has been made
+
+    def line_rect_collision(self, attacker, target_rect):
+        attack_rect = pygame.Rect(attacker.pos[0], attacker.pos[1], 50, 50)
+        return attack_rect.colliderect(target_rect)
 
     def exit(self):
         print("Exiting Attack State")
-    
+        self.enemy.game.player.attacked = False  # Ensure to reset the attacked flag when exiting the state
+
+
 class FleeState:
         def __init__(self, enemy):
             self.enemy = enemy

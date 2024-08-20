@@ -132,8 +132,8 @@ class Game:
                 # Spawns and Updates The Player
                 self.player.update(self.deltaTime, self.enemies)
                 self.player.render()
+                self.player.health.render()
 
-                self.health.render()
                 
                 # Calculate and draw FPS
                 fps = self.clock.get_fps()

@@ -176,33 +176,9 @@ class Enemy(Player):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_flip_time > self.flip_cooldown:
             self.handle_flip(current_time, player)
-        if self.audio_player.get_channel(2):
-            self.audio_player.sound_queue(self.audio_player.attack1Sound)
-        self.last_attack_time = pygame.time.get_ticks()
-
-        if self.currentAnimation.startswith("attack") and self.frameIndex in [1, 3]:
-            ray_length = 5
-            ray_start = (self.pos[0] + self.size[0] // 2, self.pos[1] + self.size[1] // 2)
-
-            rays = [
-                ((ray_start[0], ray_start[1] - 10), (ray_start[0] - ray_length, ray_start[1] - 10) if self.flip else (ray_start[0] + ray_length, ray_start[1] - 10)),  # Higher ray
-                    (ray_start, (ray_start[0] - ray_length, ray_start[1]) if self.flip else (ray_start[0] + ray_length, ray_start[1])),  # Middle ray
-                    ((ray_start[0], ray_start[1] + 10), (ray_start[0] - ray_length, ray_start[1] + 10) if self.flip else (ray_start[0] + ray_length, ray_start[1] + 10))  # Lower ray
-            ]
-
-            for start, end in rays:
-                pygame.draw.line(self.game.screen, (255, 0, 0), start, end, 2)
-            
-            if self.game.player:
-                if self.line_rect_collision(start, end, self.game.player.rect):
-                    if not self.game.player.attacked:
-                        direction_multiplier = -1 if self.flip else 1
-                        knockback_distance = random.randint(20, 60) if self.currentAnimation == "attack2" else random.randint(10, 40)
-                        self.game.player.pos[0] += knockback_distance * direction_multiplier
-                        self.game.player.attacked = True
-                        self.game.player.health.apply_decay(10) if self.currentAnimation == "attack1" else self.game.player.health.apply_decay(5)
-                        pass
-
+    
+        # if self.audio_player.get_channel(2):
+        #     self.audio_player.sound_queue(self.audio_player.attack1Sound)
     
     def handle_flip(self, current_time, player):
         if current_time - self.last_flip_time > self.flip_cooldown:

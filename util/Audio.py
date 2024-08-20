@@ -159,8 +159,8 @@ class AudioPlayer:
         """
         Set up sounds with associated priorities and debounce handling.
         """
-        self.attack1Sound = SoundData(self.load_audio('sword-hit-medium.wav'), priority=3)
-        self.attack2Sound = SoundData(self.load_audio('nasty-knife-stab-2.wav'), priority=3)
+        self.attack1Sound = SoundData(self.load_audio('sword-hit-medium.wav'), priority=2)
+        self.attack2Sound = SoundData(self.load_audio('nasty-knife-stab-2.wav'), priority=2)
         self.rightfoot = SoundData(self.load_audio('knight-right-footstep-forestgrass-2-with-chainmail.wav'), priority=1)
         self.leftfoot = SoundData(self.load_audio('knight-left-footstep-forestgrass-5-with-chainmail.wav'), priority=1)
         self.skeletonWalk = SoundData(self.load_audio('step-skeleton.mp3'), priority=1)

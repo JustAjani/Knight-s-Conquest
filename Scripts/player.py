@@ -57,7 +57,7 @@ class Player:
         self.image = pygame.transform.scale(self.animations[self.currentAnimation][self.frameIndex], self.size)
         self.mask = pygame.mask.from_surface(self.image)
         
-        self.health = Health(self, 50, 20, 400, 20, 100, fg_color=(192,192,192), bg_color=(255, 0, 0))
+        self.health = Health(self.game, 50, 20, 400, 20, 100, fg_color=(192,192,192), bg_color=(255, 0, 0))
 
         self.attack_cooldown = 0.1
         self.last_attack_time = 0
@@ -101,15 +101,15 @@ class Player:
 
         if inputs['attack1']:
             attack1 = True
-            if self.audio_player.get_channel(2):  
-                self.audio_player.enqueue_sound(self.audio_player.attack1Sound)
-                self.attack()
+            # if self.audio_player.get_channel(2):  
+            #     self.audio_player.enqueue_sound(self.audio_player.attack1Sound)
+            self.attack()
 
         if inputs['attack2']:
             attack2 = True
-            if self.audio_player.get_channel(2):  
-                self.audio_player.enqueue_sound(self.audio_player.attack2Sound)
-                self.attack()
+            # if self.audio_player.get_channel(2):  
+            #     self.audio_player.enqueue_sound(self.audio_player.attack2Sound)
+            self.attack()
 
         self.animationUpdate(moving, self.Jumping, attack1,attack2)
         # print(f"Player position after input: {self.pos}")

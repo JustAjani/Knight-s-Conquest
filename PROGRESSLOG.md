@@ -115,21 +115,22 @@
 - **Moving The Enemy Overlap logic to the Base Enemy Class:** This worked well the enemies don't overlap and they push each other away if they're in the way, same was done for the player.
 - **Implementation of a Collision Detection Class:** Moved all the logic in it's seperate class making for more consistency between player and enemy. [Shout out chatgpt for the assitance], however this is affecting the flee state due to the inherent logic.
 - **Edited Attack Handling:** So basically how the fleeing mechanic works is if the player postion is less than the `enemy_rect` or if only one enemy is avaliable the enemy would flee. However the attack handling Knocks back the enemy so that would trigger the flee slowly making the enemy_rect larger. [still Want the push back thou]
-- **Improving Attack Handling Again:** Set KnockBack to be random so it wouldn't interfere with the flee logic, rather than pushing enemy each time the button is clicked.
-- **Playing With Particles:** Made a particle based class with the help of chatgpt ofc big help explained it well.
-- **Edited the `flee` function:** When the state was trigger an error in the terminal would appear not affecting the gameloop however the error was that i was comparing an list and an integer with the > sign, also when fixing this the surface was locked so I had to unlock it with a conditional check in the render.
+-**Improving Attack Handling Again:** Set KnockBack to be random so it wouldn't interfere with the flee logic, rather than pushing enemy each time the button is clicked.
+-**Playing With Particles:** Made a particle based class with the help of chatgpt ofc big help explained it well.
+-**Edited the `flee` function:** When the state was trigger an error in the terminal would appear not affecting the gameloop however the error was that i was comparing an list and an integer with the > sign, also when fixing this the surface was locked so I had to unlock it with a conditional check in the render.
 
 ## August 19,2024
-- **Enemy Death Handling:** Enemy has an integrated health system, they have a death state and they can finally die!!! however the enemy death animation isn't triggered properly, which may lead to some inconsistencies.
-- **Trying to get Enemy Death Animation to work:** Get some help with my original death class for the enemy however it seems like he's break dancing than dying.
-- **Improved death state:** Has a flag that checks if the animation is complete which is done in a while loop, tracks how long it has been in that state plays the death animation then filters out the enemy out the list safely removing them from the list.
-- **Refining StateManagement:** To prevent memory leaks and thread overhead I looked into threadpooling.[Help from Chagpt]
-- **Refining Audio:** Using thread pool to handle tasks like enqueuing sounds and playing them, ensuring that I don't have to create an excessive number of threads for these operations.[Help from Chatgpt]
+-**Enemy Death Handling:** Enemy has an integrated health system, they have a death state and they can finally die!!! however the enemy death animation isn't triggered properly, which may lead to some inconsistencies.
+-**Trying to get Enemy Death Animation to work:** Get some help with my original death class for the enemy however it seems like he's break dancing than dying.
+-**Improved death state:** Has a flag that checks if the animation is complete which is done in a while loop, tracks how long it has been in that state plays the death animation then filters out the enemy out the list safely removing them from the list.
+-**Refining StateManagement:** To prevent memory leaks and thread overhead I looked into threadpooling.[Help from Chagpt]
+-**Refining Audio:** Using thread pool to handle tasks like enqueuing sounds and playing them, ensuring that I don't have to create an excessive number of threads for these operations.[Help from Chatgpt]
 - **Improved Error Handling For classes:** Add error handling and exception for audio and state manager class.
 - **Enemy Death Anim:** Death Animation fix sorta.
 
 ## August 20, 2024
-
 - **StateManager Improved:** removed the thread pooling due to the currency system so I used a flag system instead, I also set a default state if the state the enemy is looking for doesn't exist. I also removed the delays in the statemachine so everything will run smoother, improved the state hierarchy.
 - **Damage State:** Enemy death animation is now visible however damage animation isn't due to certain changes in the in the statemanager.
+- **Enemy Now Deals Damage:** Bascially resused the same code for the player damage but made sure it worked well with the enemy logic.
+- **Moved Attack Logic:** Moved enemy attack logic to state machine it moves consistent, also done some more refactoring for the AttackState.
 
