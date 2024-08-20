@@ -54,7 +54,7 @@ class Goblin(Enemy):
         self.attack_cooldown = 2000
         self.last_attack_time = pygame.time.get_ticks()
         self.name = "goblin"
-        self.update_image()
+        # self.update_image()
 
         self.state_machine.add_state('attack', SpecialGoblinAttackState(self))
         self.state_machine.change_state('patrol')

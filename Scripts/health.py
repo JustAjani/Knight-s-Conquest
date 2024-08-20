@@ -38,6 +38,6 @@ class Health:
             pygame.draw.rect(self.game.screen, self.border_color, (self.x, self.y, self.width, self.height), self.border_width)
         
          # Debugging text
-        debug_font = pygame.font.Font(None, 30)  # Adjust size as necessary
-        debug_text = debug_font.render(f'Health: {self.current_health}/{self.max_health}', True, (255, 255, 255))
-        self.game.screen.blit(debug_text, (self.x, self.y - 30))  # Adjust position as necessary
+        # debug_font = pygame.font.Font(None, 30)  
+        # debug_text = debug_font.render(f'Health: {self.current_health}/{self.max_health}', True, (255, 255, 255))
+        # self.game.screen.blit(debug_text, (self.x, self.y - 30))  

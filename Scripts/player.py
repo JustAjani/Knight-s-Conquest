@@ -33,6 +33,7 @@ class Player:
         self.rect = self.player_rect
         self.Jumping = False
         self.flip = False
+        self.attacked = False
         
         self.velocity_y = 0
         self.grounded = False
@@ -60,7 +61,8 @@ class Player:
 
         self.attack_cooldown = 0.1
         self.last_attack_time = 0
-
+        
+        self.attacked = False
     def update(self,deltaTime,all_characters):
         """
         Updates the player's position and state based on the given time delta and input.
@@ -213,9 +215,9 @@ class Player:
                 ]
 
                 for start, end in rays:
-                    if self.game.debug_mode:
-                        pygame.draw.line(self.game.screen, (255, 0, 0), start, end, 2)
-                        self.render()
+                    # if self.game.debug_mode:
+                    pygame.draw.line(self.game.screen, (255, 0, 0), start, end, 2)
+                        # self.render()
 
                     for enemy in self.game.enemies:
                         if self.line_rect_collision(start, end, enemy.enemy_rect):
@@ -240,7 +242,6 @@ class Player:
         # Simple algorithm to check intersection between a line and a rectangle
         # For simplicity, this might be an approximation or could use more sophisticated geometry libraries
         return rect.clipline(ray_start, ray_end)
-    
     
     
     

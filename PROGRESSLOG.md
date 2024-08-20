@@ -126,3 +126,10 @@
 -**Refining StateManagement:** To prevent memory leaks and thread overhead I looked into threadpooling.[Help from Chagpt]
 -**Refining Audio:** Using thread pool to handle tasks like enqueuing sounds and playing them, ensuring that I don't have to create an excessive number of threads for these operations.[Help from Chatgpt]
 - **Improved Error Handling For classes:** Add error handling and exception for audio and state manager class.
+- **Enemy Death Anim:** Death Animation fix sorta.
+
+## August 20, 2024
+
+- **StateManager Improved:** removed the thread pooling due to the currency system so I used a flag system instead, I also set a default state if the state the enemy is looking for doesn't exist. I also removed the delays in the statemachine so everything will run smoother, improved the state hierarchy.
+- **Damage State:** Enemy death animation is now visible however damage animation isn't due to certain changes in the in the statemanager.
+

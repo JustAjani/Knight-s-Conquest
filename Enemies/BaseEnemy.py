@@ -5,6 +5,7 @@ from stateManager.stateManager import StateMachine, PatrolState, ChaseState, Att
 from Enemies.ability import Ability
 from Scripts.CollisionHandler import CollisionHandler
 from Scripts.health import Health
+import random
 
 class Enemy(Player):
     def __init__(self, game, pos, size, moveDistance=100, inputHandler=None):
@@ -117,32 +118,42 @@ class Enemy(Player):
             self.fear += 1
         if self.witnessed_powerful_player:
             self.fear += 2
-            self.witnessed_powerful_player = False  # Reset after reacting to it
+            self.witnessed_powerful_player = False  
 
-        self.fear = min(max(self.fear, 0), 100)  # Clamp between 0 and 100
+        self.fear = min(max(self.fear, 0), 100)  
         self.anger = min(max(self.anger, 0), 100)
 
     def evaluate_combat_state(self, current_time, player):
         player_distance = abs(self.enemy_rect.x - player.pos[0])
+
+        # Check if the state needs updating based on cooldown
         if current_time - self.last_state_change > self.state_cooldown:
             if self.enemy_health.current_health <= 0 and not self.dead:
                 self.state_machine.change_state('death')
-            elif self.attacked:
+                return  # Early exit to ensure no other state changes override this
+
+            if self.attacked:
                 self.state_machine.change_state('hit')
-            elif self.fear >= 20:  # High fear might trigger a flee or hide state
+                return  # Early exit for immediate response to being hit
+
+            if self.fear >= 20 and not self.attacked:  # Check fear only if not currently being hit
                 self.state_machine.change_state('flee')
-            elif player_distance <= self.attack_range:
-                self.last_known_player_pos = None  # Reset memory when engaging in combat
+                return
+
+            if player_distance <= self.attack_range:
+                self.last_known_player_pos = None  # Engage in combat, forget last seen position
                 self.state_machine.change_state('attack')
             elif player_distance <= self.chase_range:
-                self.last_known_player_pos = player.pos  # Update last known position when in chase range
+                self.last_known_player_pos = player.pos  # Keep track of player position during chase
                 self.state_machine.change_state('chase')
             else:
-                if self.last_known_player_pos is not None:
+                if self.last_known_player_pos:
                     self.state_machine.change_state('memory_patrol')
                 else:
                     self.state_machine.change_state('patrol')
+
             self.last_state_change = current_time  # Update the time of the last state change
+
 
     def patrol(self):
         current_time = pygame.time.get_ticks()
@@ -150,53 +161,73 @@ class Enemy(Player):
             if current_time - self.last_flip_time > self.flip_cooldown:
                 self.flip = not self.flip
                 self.last_flip_time = current_time
-
-        if self.flip:
-            self.enemy_rect.x -= self.adjustedspeed
-        else:
-            self.enemy_rect.x += self.adjustedspeed
-        
+        self.movement()
         self.audioHandling()
 
     def chase(self, player):
         current_time = pygame.time.get_ticks()
         self.last_known_player_pos = None  # Reset before updating new chase data
         self.last_known_player_pos = player.pos  # Update last known player position during chase
-        
+        self.handle_flip(current_time, player)
+        self.movement()
+        self.audioHandling()
+    
+    def attack(self, player):
+        current_time = pygame.time.get_ticks()
         if current_time - self.last_flip_time > self.flip_cooldown:
+            self.handle_flip(current_time, player)
+        if self.audio_player.get_channel(2):
+            self.audio_player.sound_queue(self.audio_player.attack1Sound)
+        self.last_attack_time = pygame.time.get_ticks()
+
+        if self.currentAnimation.startswith("attack") and self.frameIndex in [1, 3]:
+            ray_length = 5
+            ray_start = (self.pos[0] + self.size[0] // 2, self.pos[1] + self.size[1] // 2)
+
+            rays = [
+                ((ray_start[0], ray_start[1] - 10), (ray_start[0] - ray_length, ray_start[1] - 10) if self.flip else (ray_start[0] + ray_length, ray_start[1] - 10)),  # Higher ray
+                    (ray_start, (ray_start[0] - ray_length, ray_start[1]) if self.flip else (ray_start[0] + ray_length, ray_start[1])),  # Middle ray
+                    ((ray_start[0], ray_start[1] + 10), (ray_start[0] - ray_length, ray_start[1] + 10) if self.flip else (ray_start[0] + ray_length, ray_start[1] + 10))  # Lower ray
+            ]
+
+            for start, end in rays:
+                pygame.draw.line(self.game.screen, (255, 0, 0), start, end, 2)
+            
+            if self.game.player:
+                if self.line_rect_collision(start, end, self.game.player.rect):
+                    if not self.game.player.attacked:
+                        direction_multiplier = -1 if self.flip else 1
+                        knockback_distance = random.randint(20, 60) if self.currentAnimation == "attack2" else random.randint(10, 40)
+                        self.game.player.pos[0] += knockback_distance * direction_multiplier
+                        self.game.player.attacked = True
+                        self.game.player.health.apply_decay(10) if self.currentAnimation == "attack1" else self.game.player.health.apply_decay(5)
+                        pass
+
+    
+    def handle_flip(self, current_time, player):
+        if current_time - self.last_flip_time > self.flip_cooldown:
+            previous_flip = self.flip
             if player.pos[0] > self.enemy_rect.x:
                 self.flip = False
             else:
                 self.flip = True
+            print(f"Flipped from {previous_flip} to {self.flip} at time {current_time}")
             self.last_flip_time = current_time
-
+   
+    def movement (self):
         if self.flip:
             self.enemy_rect.x -= self.adjustedspeed
         else:
             self.enemy_rect.x += self.adjustedspeed
-        
-        self.audioHandling()
-
-    def attack(self, player):
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_flip_time > self.flip_cooldown:
-            if player.pos[0] > self.enemy_rect.x:
-                self.flip = False
-            else:
-                self.flip = True
-            self.last_flip_time = current_time
-
-        if self.audio_player.get_channel(2):
-            self.audio_player.sound_queue(self.audio_player.attack1Sound)
-        self.last_attack_time = pygame.time.get_ticks()
-        
+    
+    def attack_counter(self):
         self.attack_count += 1
         if self.attack_count % 3 == 0:
             self.is_third_attack = True
             self.ability.trigger_ability()
         else:
             self.is_third_attack = False
-    
+  
     def flee(self):
         if self.last_known_player_pos is None:
             player_position = (self.enemy_rect.x, self.enemy_rect.y)
@@ -216,19 +247,6 @@ class Enemy(Player):
         self.animationUpdate()
 
     def animationUpdate(self):
-        """
-        Update the animation of the enemy based on its current state.
-
-        This function checks the current state of the enemy and updates the animation accordingly. It checks if the enemy is moving and if the current animation is not "run". If so, it sets the current animation to "run" and resets the frame index to 0. If the enemy's state is "attack" and the current animation does not start with "attack", it sets the current animation to "attack" and resets the frame index to 0.
-
-        The function also checks if the enemy is animating and if the time elapsed since the last animation update is greater than the animation speed. If so, it updates the frame index by incrementing it by 1 modulo the length of the current animation. It then scales and flips the image of the current frame and updates the image and image_left attributes of the enemy.
-
-        Parameters:
-            None
-
-        Returns:
-            None
-        """
         now = pygame.time.get_ticks()
         moving = self.state_machine.current_state in [self.state_machine.states['patrol'], self.state_machine.states['chase']]
         if self.state_machine.current_state == self.state_machine.states['death']:
@@ -257,17 +275,6 @@ class Enemy(Player):
         self.animating = True  
 
     def audioHandling(self):
-        """
-        Handles audio playback based on the enemy's name.
-
-        This function checks the name of the enemy and plays the corresponding audio. It uses a match statement to check the name of the enemy and plays the appropriate audio. If the audio channel 2 is available, it enqueues the sound for the corresponding enemy.
-
-        Parameters:
-            None
-
-        Returns:
-            None
-        """
         match self.name:
             case "skeleton":
                 if self.audio_player.get_channel(2):
